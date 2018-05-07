@@ -1,4 +1,4 @@
-# EGOU [![Software License](https://img.shields.io/crates/l/rustc-serialize.svg)](LICENSE)
+# EGOU [![Software License](https://img.shields.io/hexpm/l/plug.svg)](LICENSE)
 
 > make an app
 
