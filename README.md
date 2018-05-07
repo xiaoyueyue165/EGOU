@@ -7,6 +7,9 @@
 - [草料二维码](https://cli.im/)
 
 ## Download App
+
 **前台**
-[imgs](./downloadApp/QRCode/front.png)
+
+![image](./downloadApp/QRCode/front.png)
+
 **后台**
