@@ -1,5 +1,5 @@
 # EGOU
-> make a app
+> make an app
 
 ## Download App
 
