@@ -13,3 +13,4 @@
 ![image](./downloadApp/QRCode/front.png)
 
 **后台**
+![image](./downloadApp/QRCode/back.png)
