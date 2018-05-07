@@ -1,4 +1,5 @@
-# EGOU 
+# EGOU [![Software License](https://img.shields.io/crates/l/rustc-serialize.svg)](LICENSE)
+
 > make an app
 
 ## Download App
