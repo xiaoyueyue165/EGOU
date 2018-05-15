@@ -15,4 +15,8 @@
 ## Useful links
 - [appcan官方文档](http://newdocx.appcan.cn/document/index)
 - [蒲公英](https://www.pgyer.com/)
+- [极光推送](https://www.jiguang.cn/)
+- [Application Loader
+](http://www.applicationloader.net/index.php)
 - [草料二维码](https://cli.im/)
+
