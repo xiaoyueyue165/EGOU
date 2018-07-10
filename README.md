@@ -4,11 +4,11 @@
 
 ## Download App
 
-**前台**
+**[前台](http://egou.cnpc.com.cn:8080/SHXSKH/comm/layout/index.html?jumpTo=comm/layout/index.html)**
 
 ![image](./downloadApp/QRCode/front.png)
 
-**后台**
+**[后台](http://egou.cnpc.com.cn:8080/SHXS/sys/login.html)**
 
 ![image](./downloadApp/QRCode/back.png)
 
