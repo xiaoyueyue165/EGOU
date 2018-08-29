@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="./css/intention.css">
+    <style>
+        .area-price {
+            width: 20%;
+        }
+    </style>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <form id="formData" style="display: none;">
+        <div class="top-show ub ub-ac ub-pc">
+            <label for="cusName">查看方式：</label>
+            <select id="searchType" name="state" class="mySelect" style="font-size:1em;">
+                <option value="0" selected>未审核单据</option>
+                <option value="">所有配送自提单据</option>
+            </select>
+        </div>
+    </form>
+    <div id="" class="listbox">
+        <div id="listdetail" class="detail bc-border"></div>
+        <div id="more"></div>
+    </div>
+    <div class="" id="pullstatus"></div>
+    <!--footer-->
+    <div id="footer" class="ub ubt bc-border uf tab-foot">
+        <div id="" class="ub uw-a">
+            <div id="" class="ub ub-pc ub-ac uw-1">
+                <div id="" class="umar-l">
+                    <div class="m-check" name="" id="checkall"></div>
+                </div>
+                <div id="" class="umar-l">
+                    <span class="mf-size2">全选</span>
+                </div>
+            </div>
+
+            <div id="sum_price" class="uw-2 ub ub-pe area-price">
+                <span class="umar-r">
+                    <span class="mf-size2 gray-font"></span>
+                    <span class="mf-color">
+                        <span id="heji"></span>
+                    </span>
+                </span>
+            </div>
+
+            <div id="confirmYXD" class="uw-3 ub ub-ac ub-pc sec-btn1" style="margin-right: 0.2em">
+                审核通过
+            </div>
+            <div id="faliedYXD" class="uw-3 ub ub-ac ub-pc sec-btn1">
+                审核不通过
+            </div>
+        </div>
+    </div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/common.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+    <script src="../common/jquery.min.js"></script>
+</body>
+
+<script id="Allorder_list" type="text/html">
+
+    {{each list}}
+
+    <div id="list{{$index}}" class='list-content white-bg'>
+        <div id='orderlist" + i + "'>
+            <div id='' class='ub ub-ac umar-a m-row3'>
+                <div id="check{{$index}}" data-num="{{$index}}" class="checkBox bw0 ub ub-ac " onclick="cellbtnClick(this)">
+                    <div id="{{$index}}" data-state="{{$value.state}}" class="m-check singleSelection"></div>
+                </div>
+                操作&nbsp;
+                <div id="position{{$index}}">
+
+                </div>
+            </div>
+            <div id='' class='ub ub-ac umar-a m-row3'>
+                <!-- 关联付油通知单编号 -->
+
+                计划编号&nbsp;
+                <span id="ordersaleCode">{{$value.planCode}}</span>
+            </div>
+
+            <div id="noticeCode1{{$index}}" class='ub ub-ac umar-a m-row3'>
+                <!-- 关联付油通知单编号 -->
+
+                关联付油通知单编号&nbsp;
+                <span id="ordersaleCode">{{$value.noticeCode1}}</span>
+            </div>
+
+
+            <div id='' class='ub ub-ac umar-a m-row3'>
+                <!-- 单选框 -->
+
+                付油通知单编号&nbsp;
+                <span id="ordersaleCode">{{$value.noticeCode}}</span>
+            </div>
+
+            <div id='' class='ub ub-ac umar-a m-row3'>
+
+                <div id='' class='ub ub-ac t-col1'>
+                    <!-- 油品名称 -->
+
+                    {{$value.oilinfoName}}
+
+                    <input type="hidden" name="orderId" class="orderId" data-sendId={{$value.sendId}} data-snoticeCode="{{$value.noticeCode}}"
+                        data-noticeCode="{{$value.noticeCode1}}" data-applyNum={{$value.applyNum}} data-noticesubId={{$value.noticesubId}}
+                    />
+
+                </div>
+                <div id='' class='ub ub-ac ub-pc t-col2'>
+                    <span class="gray-font">
+                        油品数量
+                    </span>
+                    <span class='umar-r umar-r mf-color'>
+                        <span class='mf-size2 mf-color'></span>
+
+                        {{$value.applyNum}}
+
+                    </span>
+                </div>
+                <div id='type' class='ub ub-ac  ub-pc t-col4'>
+                    <span class='s-state delivery'>
+                        <!-- 配送方式 -->
+                        {{if $value.extractType =='0'}} 配送 {{else}}自提 {{/if}}
+
+                    </span>
+                </div>
+            </div>
+
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class='col-left'>
+                    <span class='gray-font'>客户名称&nbsp;&nbsp;</span>
+                    <span>
+                        {{$value.cusCompany}}
+                    </span>
+                </div>
+                <div id='total' class='col-right'>
+                    <span class='gray-font'>发货油库&nbsp;&nbsp;
+
+                    </span>
+                    <span class='AllPrice'>
+                        {{$value.depotName}}
+                    </span>
+                </div>
+
+            </div>
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class='col-left'>
+                    <span class='gray-font'>状态&nbsp;&nbsp;</span>
+                    <span>
+
+                        {{if $value.state=='0'}} 未审核 {{else if $value.state == '1'}} 分公司审核通过{{else if $value.state == '2'}}分公司审核未通过 {{else if $value.state
+                        == '3'}}总公司审核通过 {{else if $value.state == '4'}}总公司审核未通过 {{else if $value.state == '5'}}已出库 {{else
+                        if $value.state == '6'}}调运处审核通过 {{else if $value.state == '7'}}调运处审核不通过 {{/if}}
+
+                    </span>
+                </div>
+                <div id='total' class='col-right'>
+                    <span class='gray-font'>所属公司&nbsp;&nbsp;</span>
+                    <span>
+                        {{$value.orgName}}
+                    </span>
+
+                </div>
+
+
+            </div>
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class='col-left'>
+                    <span class='gray-font'>运输方式&nbsp;&nbsp;</span>
+                    <span>
+                        {{$value.ysfs}}
+
+                    </span>
+                </div>
+                <div id='total' class='col-right'>
+                    <span class='gray-font'>卸货地址&nbsp;&nbsp;</span>
+                    <span>
+                        {{ if $value.gasstationCity !=undefined && $value.gasstationArea != undefined }} {{ $value.gasstationCity+$value.gasstationArea}}
+                        {{$value.gasstationAddress}} {{else}} &nbsp; {{/if}}
+                    </span>
+
+                </div>
+
+
+            </div>
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class='col-left'>
+                    <span class='gray-font'>车船&nbsp;&nbsp;</span>
+                    <span>
+
+                        {{$value.vehicleCode || $value.vesselName}}
+
+                    </span>
+                </div>
+                <div id='total' class='col-right'>
+                    <span class='gray-font'>司机&nbsp;&nbsp;</span>
+                    <span>
+
+                        {{$value.driveName}} {{$value.driverMobile}}
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+            <!-- 创建时间 -->
+            <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class=''>
+
+                    <span class='gray-font'>创建时间 </span>
+                    <span class='AllPrice'>
+                        {{$value.createDate}}
+                    </span>
+                </div>
+            </div>
+            <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class=''>
+
+                    <span class='gray-font'>提货时间 </span>
+                    <span class='AllPrice'>
+                        {{$value.sendDate}}
+                    </span>
+                </div>
+            </div>
+            <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='' class=''>
+
+                    <span class='gray-font'>备注 </span>
+                    <span class='AllPrice'>
+                        {{$value.remark}}
+                    </span>
+                </div>
+            </div>
+            <div <div class="gap" id="idx{{$index}}"></div>
+
+        </div>
+    </div>
+
+    {{/each}}
+
+    <!-- orderId,oilinfoId,oilinfoName,applyNum -->
+
+</script>
+<script>
+    var listData = {},
+        listNum = 0,
+        totalRows = 0,
+        ISPAGE = false,
+        dataLength = null;
+
+    // 当所有组件准备好后执行内部回调方法
+    appcan.ready(function () {
+
+        uexWindow.setWindowScrollbarVisible('false');
+        appcan.window.subscribe("orderRefresh", function (para) {
+            if (para == "true") {
+                appcan.window.openToast({
+                    msg: '配送申请已提交',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+            }
+            uexWindow.reload();
+        });
+
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("松手了,产生事件了,开始更新数据！");
+            // 下拉事件发生
+            appcan.frame.resetBounce(1);
+            // 当前总条数
+            var num = Number(pageNo) * limit;
+
+
+            $("#pullstatus").html("");
+
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '没有更多',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+
+            newPageNo = Number(pageNo) + 1;
+
+            alert('准备加载第' + newPageNo + '页')
+
+            Order.queryOrderList(newPageNo);
+        });
+        Order.init();
+
+    });
+    var Order = {
+        init: function () {
+            var y = this;
+            y.queryOrderList();
+            document.getElementById("searchType").onchange = function () {
+                getNewOrderList();
+            }
+        },
+        queryOrderList: function (newPageNo) {
+            var y = this;
+            // 先判断searchData是否有数据
+            var isSearchData = getVal("searchData");
+            if (isSearchData != undefined && isSearchData != "0") {
+                var result = JSON.parse(isSearchData);
+                if (result.type === "toPSZT") {
+                    listData = result.data;
+                    listNum = listData.length;
+                    var html = template('Allorder_list', {
+                        list: listData
+                    })
+
+                    $('#listdetail').append(html);
+                    // 分页开始
+                    pagerParam = getVal("toPSZT_pagerParam");
+                    if (pagerParam != undefined) {
+                        pagerParam = JSON.parse(pagerParam);
+                        loadMore.init({
+                            ele: "more",
+                            data: listData,
+                            totalNum: pagerParam["pager.totalRows"],
+                            limit: 15,
+                            clickFn: morePagerData
+                        });
+                    }
+                    return;
+                }
+            } else if (isSearchData === "0") {
+                nodata('listdetail', '您没有查询到需要配送自提审核的订单！');
+                return;
+            }
+
+            var pageNo = newPageNo ? newPageNo : 1;
+            var url = URL + "/app/backgrd/billSend/getBilSendList";
+            var orgTypeText = getVal("companyType") === "总部" ? 'zongbu' : "";
+            // 查询方式 状态
+            var selectTypeParam = serialize(document.getElementById("formData"));
+            var paramJsonStr = selectTypeParam + "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&orgId=" +
+                getVal("orgId");
+            var func = y.getOrderListCallback.bind(y);
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+        },
+        getOrderListCallback: function (data) {
+            appcan.window.closeToast();
+            if (data === "") {
+                nodata('listdetail', '您没有需要配送自提审核的订单！')
+                return;
+            }
+            if (typeof (data) === 'string' && data != "") {
+                var data = JSON.parse(data);
+            }
+
+            var totalCount = data.rows;
+            listData = totalCount;
+            listNum = totalCount.length;
+            dataLength = listNum;
+
+            if (totalCount.length == 0) {
+                nodata('listdetail', '您没有需要配送自提审核的订单！')
+                return;
+            } else {
+                show(document.getElementById("formData"));
+                var html = template('Allorder_list', {
+                    list: data.rows
+                })
+
+                $('#listdetail').append(html);
+
+                // 分页器bug修改
+                if (ISPAGE) {
+                    var checkArr = Array.prototype.slice.call(document.querySelectorAll('.checkBox'));
+                    dataLength = checkArr.length;
+                    checkArr.forEach(function (v, i) {
+                        v.dataset.num = i
+                    })
+
+                    var myCheckArr = Array.prototype.slice.call(document.querySelectorAll('.singleSelection'));
+                    myCheckArr.forEach(function (v, i) {
+                        v.id = i
+                    })
+
+                    if ($("#checkall")[0].className === "m-check m-check-active") {
+                        CheckAll(); // 全选
+                        $("#checkall")[0].className === "m-check m-check-active"
+                    }
+
+                }
+                // document.querySelector("#listdetail .gap:last-child").remove();
+
+                loadMore.init({
+                    ele: "more",
+                    data: listData,
+                    totalNum: data["pager.totalRows"],
+                    limit: 15,
+                    clickFn: func2
+                });
+
+            }
+            // document.querySelector(" .list-content:last-child .gap").style.height = "5em"
+            var orderList = data.rows;
+            var listHtml = "";
+
+            for (var i = 0; i < orderList.length; i++) {
+
+                var orderId = orderList[i].orderId;
+                var state = orderList[i].state;
+
+                var oilinfoId = orderList[i].oilinfoId;
+                var oilinfoName = orderList[i].oilinfoName;
+                var extractType = orderList[i].extractType;
+                var noticeCode1 = orderList[i].noticeCode1;
+
+                var oilNumber = orderList[i].oilNumber ? orderList[i].oilNumber : 000;
+                var oilPrice = orderList[i].oilPrice;
+                var companyType = appcan.locStorage.getVal("companyType");
+
+                //自提审核合资公司分配
+
+                if (companyType != "合资") {
+                    $("#noticeCode1" + i).remove();
+                }
+
+                if (state == '0' && companyType == '合资' && noticeCode1 == undefined) {
+                    // 合资公司未审核且没有noticeCode1分配
+
+                    var appendHtml = "<div id='" + orderList[i]["orderId"] +
+                        "' class='ub ub-ac ub-pe m-row4'><span class='y-font umar-l' onclick='fenPei(id,\"" +
+                        orderList[i].orderId + "\",\"" + orderList[i].oilinfoId + "\",\"" + orderList[i].extractType +
+                        "\",\"" + orderList[i].ysfs + "\",\"" + orderList[i].oilinfoName + "\",\"" + orderList[
+                            i].applyNum + "\",\"" + orderList[i].sendId + "\")'>分配</span></div>";
+
+                    $("#position" + i)[0].innerHTML = appendHtml;
+                }
+                if (state == '0' && companyType == '合资' && noticeCode1 != undefined) {
+                    // 合资公司分配过可修改关联的付油通知单号
+
+                    var appendHtml = "<div id='" + orderList[i]["orderId"] +
+                        "' class='ub ub-ac ub-pe m-row4'><span class='y-font umar-l' onclick='genGai(id,\"" +
+                        orderList[i].orderId + "\",\"" + orderList[i].oilinfoId + "\",\"" + orderList[i].extractType +
+                        "\",\"" + orderList[i].ysfs + "\",\"" + orderList[i].oilinfoName + "\",\"" + orderList[
+                            i].applyNum + "\",\"" + orderList[i].sendId + "\",\"" + orderList[i].noticeCode1 +
+                        "\")'>更改</span></div>";
+
+                    $("#position" + i)[0].innerHTML = appendHtml;
+                }
+
+            }
+        },
+        loadMoreOrder: function () {
+            var y = this;
+            $('#loadMore').remove();
+            var newPageNo = Number(pageNo) + 1;
+            y.queryOrderList(newPageNo);
+        }
+    }
+
+
+    function func2(current_page, max_page, totalNum) {
+        $('#loadMore').remove();
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+
+        var y = this;
+        ISPAGE = true;
+        Order.queryOrderList(current_page);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+
+    //分配，打开orderList
+    function fenPei(id, orderId, oilinfoId, oilinfoName, applyNum) {
+
+
+        var args = Array.prototype.slice.call(arguments);
+        //存储数据
+        appcan.locStorage.setVal('fenpeiObj', args);
+        appcan.window.open("orderlist", "orderlist.html", 10);
+    }
+    // 更改
+    function genGai(ud, orderId, oilinfoId, extractType, ysfs, oilinfoName, applyNum, sendId, noticeCode1) {
+
+        var args = Array.prototype.slice.call(arguments);
+        //存储数据
+        appcan.locStorage.setVal('fenpeiObj', args);
+        appcan.window.open("orderlist", "orderlist.html", 10);
+    }
+
+    //审核 多个审核通过
+    appcan.button("#confirmYXD", "ani-act", function () {
+
+        var oillist = [];
+        var orderIdArr = [],
+            noticeCodes = [];
+        for (var i = 0; i < listNum; i++) {
+
+            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
+
+                if ($("#" + i)[0].dataset.state != "0") {
+                    uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
+                    return;
+                }
+                var element = $("#list" + i).find($('.orderId'))[0].dataset;
+
+                orderIdArr.push(element.sendid);
+                noticeCodes.push(element.snoticecode);
+            }
+        }
+
+        if (orderIdArr.length == 0) {
+            appcan.window.openToast('请选择要提交的意向单', '1000', '5', '0');
+            return;
+        }
+
+        var oils = oillist.join(',');
+
+        var url = URL + "/app/backgrd/billSend/updateBatchBilSend";
+        var paramJsonStr = "sendIds=" + orderIdArr.join(",") + "&noticeCodes=" + noticeCodes.join(",") +
+            "&state" + "=1" + "&temp" + "=1";
+
+        if (getVal("companyType") != "合资") {
+            paramJsonStr += "&quanziState" + "=1";
+        }
+        var func = okOrderCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+
+    })
+
+
+    //审核 多个审核不通过
+    appcan.button("#faliedYXD", "ani-act", function () {
+        var orderIdArr = [],
+            ids = "",
+            noticeCodes = "",
+            applyNums = "",
+            noticesubIds = "";
+        for (var i = 0; i < listNum; i++) {
+
+            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
+                var element = $("#list" + i).find($('.orderId'))[0];
+                if ($("#" + i)[0].dataset.state != "0") {
+                    uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
+                    return;
+                }
+                var itemData = element.dataset;
+                orderIdArr.push(itemData.sendid);
+                ids += itemData.sendid + ",";
+                var str = itemData.noticecode || undefined;
+                noticeCodes += str + ",";
+                applyNums += itemData.applynum + ",";
+                noticesubIds += itemData.noticesubid + ",";
+            }
+        }
+
+        if (orderIdArr.length == 0) {
+            appcan.window.openToast('请选择要提交的意向单', '1000', '5', '0');
+            return;
+        }
+
+
+        var url = URL + "/backgrd/newBilSend/updateBatchBilSend1";
+
+        var paramJsonStr = "sendIds=" + ids + "&noticeCodes=" + noticeCodes + "&applyNums=" + applyNums +
+            "&noticesubIds=" + noticesubIds +
+            "&state" + "=2";
+        if (getVal("companyType") != "合资") {
+            paramJsonStr += "&quanziState" + "=1";
+        }
+        var func = failedOrderCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+
+    })
+
+    //分配回调
+    function okOrderCallback(data) {
+        appcan.window.closeToast();
+        if (data == "1") {
+            oneAlert("全部审核通过", "确定", function () {
+                uexWindow.reload();
+            })
+        }
+    }
+
+    function failedOrderCallback(data) {
+
+        appcan.window.closeToast();
+        oneAlert("全部审核未通过", "确定", function () {
+            uexWindow.reload();
+        })
+    }
+
+    function getNewOrderList() {;
+        document.getElementById('listdetail').innerHTML = "";
+        if (document.getElementById('more')) {
+            document.getElementById('more').innerHTML = "";
+        }
+        var selectData = serialize(document.getElementById("formData"));
+        setVal("toPSZT_SelectData", selectData)
+        Order.queryOrderList();
+    }
+
+    function morePagerData(current_page, max_page, totalNum) {
+        $('#loadMore').remove();
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+        ISPAGE = true;
+        var paramJsonStr = pagerParam.baseParam + "&pageNo=" + current_page;
+        var func = pagerCallback;
+        ajaxPostQuery(pagerParam.url, paramJsonStr, func, "text");
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+
+    }
+
+    function pagerCallback(data) {
+        appcan.window.closeToast();
+        if (data === "") {
+            nodata('listdetail', '您没有符合条件的订单数据！')
+            return;
+        }
+        if (typeof data === "string" && data != "") {
+            var data = JSON.parse(data);
+        }
+        var totalCount = data.rows;
+        listNum = totalCount.length;
+        dataLength = listNum,
+            listData = data.rows;
+
+        // 处理过滤数据 默认显示未审核的的订单，已审核的不显示；
+
+        if (totalCount.length == 0) {
+            nodata('listdetail', '您没有符合条件的订单数据！')
+            return;
+        } else {
+            var html = template('Allorder_list', {
+                list: data.rows
+            })
+
+            $('#listdetail').append(html);
+
+            loadMore.init({
+                ele: "more",
+                data: listData,
+                totalNum: data["pager.totalRows"],
+                limit: 15,
+                clickFn: morePagerData
+            });
+
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+	<link rel="stylesheet" href="../build/css/ui-box.css">
+	<link rel="stylesheet" href="../build/css/ui-base.css">
+	<link rel="stylesheet" href="../build/css/ui-color.css">
+	<link rel="stylesheet" href="../build/css/appcan.icon.css">
+	<link rel="stylesheet" href="../build/css/appcan.control.css">
+	<link rel="stylesheet" type="text/css" href="../ordermgmt/css/ordermgmt.css" />
+	<link rel="stylesheet" type="text/css" href="css/delivery.css" />
+	<script src="../common/comm.js"></script>
+	<style type="text/css">
+		::-webkit-scrollbar {
+			width: 0px;
+		}
+
+		::-webkit-scrollbar {
+			display: none;
+			/*隐藏滚轮*/
+		}
+	</style>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+	<div id="content">
+
+	</div>
+
+</body>
+<script src="../build/js/appcan.js"></script>
+<script src="../build/js/appcan.control.js"></script>
+<script>
+	var cusNoticeData = {};
+	var cusNoticeArray = [];
+
+	appcan.ready(function () {
+		uexWindow.setWindowScrollbarVisible('false');
+		queryCusNoticeList();
+	});
+
+	function queryCusNoticeList() {
+		var username = appcan.locStorage.getVal("username");
+		if (!username) {
+			nodata('content', '请先登录再查看提油记录')
+			return;
+		}
+		var url = URL + "/app/oil/queryCusNoticeList";
+		//访问路径
+		var paramJsonStr = "";
+		//参数
+		var func = showCusNoticeList;
+		//返回的方法
+		var dataType = "text";
+		ajaxPostQuery(url, paramJsonStr, func, dataType);
+		appcan.window.openToast('加载中...', '0', '5', '1');
+	}
+
+	function showCusNoticeList(data) {
+		appcan.window.closeToast();
+		if (typeof data == "string") {
+			cusNoticeData = eval("(" + data + ")");
+
+		}
+
+		if (cusNoticeData.pojoList) {
+			cusNoticeArray = cusNoticeData.pojoList;
+			if (cusNoticeArray.length > 0) {
+				for (var i = 0; i < cusNoticeArray.length; i++) {
+					var listCellData = cusNoticeArray[i];
+
+					// 0 待处理 1,3,6 处理中 5 出库
+					var state = listCellData.state;
+					//状态：0待处理 1处理中 2已出库
+					var getState = function (str) {
+						var value = null;
+						if (str === 0) {
+							value = 0;
+						} else if (str === 1 || str === 3 || str === 6) {
+							value = 1;
+						} else if (str === 5) {
+							value = 2;
+						}
+						return value;
+					}
+
+					var nowState = getState(state);
+
+					//客户名称
+					var cusName = listCellData.cusName;
+					//付油通知单号
+					var noticeCode = listCellData.noticeCode;
+					//油品信息
+					var oilInfoName = listCellData.oilInfoName;
+					//driverId位-1的时候为自提
+					var driverId = listCellData.driverId;
+					var quyouGasstationName = listCellData.quyouGasstationName;
+					if (typeof (quyouGasstationName) == "undefined") {
+						quyouGasstationName = "";
+					} else {
+						quyouGasstationName = '<span class="umar-l inline-block site">' + quyouGasstationName + '</span>';
+					}
+
+					//配送时间段
+					var timeInterval = listCellData.timeInterval;
+					//提油时间
+					var sendDate = listCellData.sendDate;
+					var sendRealDate = "";
+					if (typeof (sendDate) != "undefined") {
+						sendRealDate = sendDate.substring(0, 10) + " " + timeInterval;
+					}
+					//出库时间
+					var outstoreTime = listCellData.outstoreTime;
+					if (typeof (outstoreTime) != "undefined") {
+						outstoreTime = outstoreTime.substring(0, 10) + " " + timeInterval;
+					}
+					//配送or取油数量
+					var applyNum = listCellData.applyNum;
+					//备注
+					var remark = listCellData.remark;
+
+					var peisongTitle = "";
+					if (driverId == -1) {
+						peisongTitle = "配送时间";
+					} else {
+						peisongTitle = "提油时间";
+					}
+					var complete = "";
+					if (nowState == 5) {
+						complete = "complete";
+						peisongTitle = "出库时间";
+						sendRealDate = outstoreTime;
+					}
+
+					var stateHtml = '<div class="ub ub-ver sc-bg mf-size2"' + complete + '" id="">' +
+						'<div class="ub mf-size1 padding-a" id="">' + '<div class="ub ub-pc w1" id="">待处理</div>' +
+						'<div class="ub ub-pc w2" id=""><span class="gray-font">处理中</span></div>' + '<div class="ub ub-pc w3" id="">' +
+						'<span class="gray-font">已出库</span></div></div>' + '<div class="ub ub-ac ub-pc"><span class="progress step' + (
+							nowState + 1) + '"></span></div>';
+
+					var fyHtml = '<div class="ub m-row">' + '<div class="ub ub-ac label-width2 umar-l">' +
+						'<span class = "gray-font">付油通知单号</span>' + '</div><div class="ub ub-ac ub-f1 umar-r"><span class="mf-color">' +
+						noticeCode + '</span>';
+					if (driverId == -1) {
+						fyHtml = fyHtml + '</div></div>';
+					} else {
+						fyHtml = fyHtml + quyouGasstationName + '</div></div>';
+					}
+
+					var oilInfoHtml = '<div class="ub m-row">' + '<div class="ub ub-ac label-width2 umar-l">' +
+						'<span class="gray-font">油品信息</span></div><div class="ub ub-ac">' + oilInfoName +
+						'</div><div class="ub ub-ac umar-l"><span class="mf-size1 m-act2">' + applyNum + '&nbsp;吨</span></div></div>';
+
+					var timeHtml = '<div class="ub m-row  no-border-b">' + '<div class="ub ub-ac label-width2 umar-l">' +
+						'<span class="gray-font">' + peisongTitle + '</span></div><div class="ub ub-ac">' + sendRealDate +
+						'</div></div></div>';
+
+					var gapHtml = '<div class="gap"></div>';
+
+					var htmlString = stateHtml + fyHtml + oilInfoHtml + timeHtml;
+					if (i < cusNoticeArray.length - 1) {
+						htmlString = htmlString + gapHtml;
+					}
+					$("body").append(htmlString);
+
+				}
+			} else {
+
+				nodata('content', '暂无数据')
+				return;
+			}
+		} else {
+			nodata('content', '暂无数据')
+			return;
+		}
+	}
+</script>
+
+</html>

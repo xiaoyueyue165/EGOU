@@ -1,0 +1,135 @@
+.row-last .bc-border {
+    border-bottom: none !important;
+}
+
+.ulev-me1 {
+    font-size: 0.9em;
+}
+
+.uw-app1 {
+    width: 33.3%;
+    text-align: center;
+}
+
+.ui-manager {
+    padding-top: 3.5em;
+    background-repeat: no-repeat;
+    background-position: 50% 0em;
+    background-size: 3.25em 3.11em;
+}
+
+.ui-discount {
+    background-image: url('myImg/icon_discount.png');
+}
+
+.ui-chart {
+    background-image: url('myImg/icon_chart.png');
+}
+
+.ui-report {
+    background-image: url('myImg/icon_report.png');
+}
+
+.ui-price {
+    background-image: url('myImg/icon_price.png');
+}
+
+.ui-user {
+    background-image: url('myImg/icon_user.png');
+}
+
+.ui-file {
+    background-image: url('myImg/icon_file.png');
+}
+
+/* .gap {
+    height: 3.5% !important;
+} */
+
+.item-height1 {
+    height: 10%;
+}
+
+.item-height-intention {
+    height: 17%;
+    border-bottom: 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.item-height-cus {
+    height: 27%;
+}
+
+.item-height2 {
+    height: 16%;
+}
+
+.item-height3 {
+    height: 46%;
+}
+
+.item-width {
+    width: 30%;
+    text-align: center;
+}
+
+.ui-s-state {
+    height: 1.8em;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 1.8em 1.8em;
+}
+
+.state-delivery {
+    background-image: url('myImg/icon_delivery.png');
+}
+.state-car {
+    background-image: url('myImg/car.svg');
+}
+
+.state-order {
+    background-image: url('myImg/icon_order.png');
+}
+.state-search {
+    background-image: url('myImg/search.png');
+}
+.state-table {
+    background-image: url('myImg/table.png');
+}
+
+.state-trace {
+    background-image: url('myImg/icon_trace.png');
+}
+
+.lis {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0.4em;
+}
+
+.ui-s-state1 {
+    height: 1.8em;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 1.8em 1.8em;
+}
+
+.state1-tbd {
+    background-image: url('myImg/icon_tbd.png');
+}
+
+.state1-pay {
+    background-image: url('myImg/icon_card.png');
+}
+
+.state1-exchange {
+    background-image: url('myImg/icon_exchange.png');
+}
+
+.state1-cancel {
+    background-image: url('myImg/icon_cancel.png');
+}
+
+#logout {
+    margin-right: 0.4em;
+}

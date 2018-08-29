@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+  <link rel="stylesheet" href="../build/css/ui-box.css">
+  <link rel="stylesheet" href="../build/css/ui-base.css">
+  <link rel="stylesheet" href="../build/css/ui-color.css">
+  <link rel="stylesheet" href="../build/css/appcan.icon.css">
+  <link rel="stylesheet" href="../build/css/appcan.control.css">
+  <link rel="stylesheet" href="css/intentionList.css">
+  <link rel="stylesheet" type="text/css" href="../common/css/yue.css" />
+  <style type="text/css">
+    ::-webkit-scrollbar {
+      width: 0px;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+      /*隐藏滚轮*/
+    }
+
+    table tr td:first-child {
+      width: 42%;
+      text-align: center;
+      border: 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table tr td:nth-child(2) {
+      padding-left: 0.4em;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid #ddd;
+      border-left: 1px solid #ddd;
+    }
+
+    table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    table tr:first-child td {
+      border-top: 1px solid #ddd;
+    }
+
+    .list-wrapper {
+      width: 96%;
+      border: 1px solid #ccc;
+      margin: 2%;
+      padding: 0.2em;
+      border-radius: 0.5em;
+      box-sizing: border-box;
+      height: 6em;
+    }
+
+    .table {
+      display: none !important;
+      opacity: 0;
+    }
+
+    .table1 {
+      opacity: 1;
+      transition: all 10s linear;
+    }
+
+    .list-cell {
+      height: 2.4em;
+      text-align: center;
+    }
+
+    .list-cell p {
+      padding-left: 1em;
+      text-align: left;
+      line-height: 2.8em;
+    }
+  </style>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+  <!--header开始-->
+  <div id="header" class="fix uh bc-text-head ub bc-head">
+    <div class="nav-btn" id="nav-left">
+      <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+    </div>
+    <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">提货单查询</h1>
+    <div class="nav-btn nav-bt" id="nav-right"></div>
+  </div>
+  <div id="header1" class="uh bc-text-head ub bc-head">
+    <div class="nav-btn" id="nav-left">
+      <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+    </div>
+    <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">隐藏</h1>
+    <div class="nav-btn nav-bt" id="nav-right"></div>
+  </div>
+
+  <div id="content">
+
+  </div>
+  <div id="more"></div>
+
+</body>
+
+<script src="../build/js/appcan.js"></script>
+<script src="../build/js/appcan.control.js"></script>
+<script type="text/javascript" src="../common/comm.js"></script>
+<script src="../common/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+
+<script type="text/html" id="lists">
+  {{each list}}
+  <div id="list1" class="list list-wrapper bg-ff ">
+    <div class="list-cell">
+
+      <p>
+        付油通知单号
+        <span class="ulev-1">{{$value.noticeCode}}</span>
+      </p>
+    </div>
+    <div class="list-cell">
+
+      <p>
+        油品提货单号
+        <span class="ulev-1">
+          {{$value.demandCode}}
+        </span>
+      </p>
+    </div>
+  </div>
+
+  {{/each}}
+
+</script>
+
+<script id="pickup_list" type="text/html">
+
+  {{each list}}
+  <div id='list" + i + "' class='list-content white-bg'>
+    <div id='orderlist" + i + "'>
+
+      <div id='' class='ub ub-ac umar-a m-row3'>
+        <span class='gray-font'>付邮通知单号&nbsp;&nbsp;</span>
+        <span>
+          {{$value.noticeCode}}
+        </span>
+      </div>
+
+      <div id='' class='ub ub-ac umar-a m-row3'>
+        <span class='gray-font'>油品提货单号&nbsp;&nbsp;</span>
+        <span>
+          {{$value.demandCode}}
+        </span>
+      </div>
+      <div id='' class='ub ub-ac umar-a m-row3'>
+        <div id='' class='ub ub-ac t-col1'>
+          <!-- 油品名称 -->
+
+          {{$value.oilInfoName}}
+
+        </div>
+        <div id='' class='ub ub-ac ub-pc t-col2'>
+          <span class='umar-r mf-color umar-r'>
+            <span class='mf-size2'>￥</span>
+            <!-- 油品价格 -->
+
+            {{$value.oilPrice|Fmoney}}
+            <span class='gray-font mf-size2'>/吨</span>
+          </span>
+          <span class='umar-l'>
+            <!-- 油品数量-->
+            x{{$value.oilNumber}}
+
+          </span>
+        </div>
+        <div id='type' class='ub ub-ac  ub-pc t-col4'>
+          <span class='s-state delivery'>
+            <!-- 配送方式 -->
+            {{if $value.extractType== '0'}} 配送 {{else}} 自提 {{/if}}
+
+          </span>
+        </div>
+      </div>
+      <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+        <div id='' class='col-left'>
+          <span class='gray-font'>运输方式&nbsp;&nbsp;</span>
+          <span>
+            {{if $value.extractType=='0'}} 公路 {{else if $value.extractType == '1'}} 水运 {{/if}}
+          </span>
+        </div>
+
+        <div id='' class='col-left'>
+          <span class='gray-font'>车船编号&nbsp;&nbsp;</span>
+          <span>
+            {{$value.vehicleCode}}
+          </span>
+        </div>
+
+      </div>
+
+      <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+
+        <div id='total' class='col-left'>
+          <span class='gray-font'>司机姓名&nbsp;&nbsp;</span>
+          <span class='mf-color AllPrice'>
+            {{$value.driveName}}
+          </span>
+        </div>
+        <div id='total' class='col-right'>
+          <span class='gray-font'>司机电话&nbsp;&nbsp;</span>
+          <span class='mf-color AllPrice'>
+            {{$value.driverMobile}}
+          </span>
+        </div>
+      </div>
+
+      <!-- 油库地点，所属公司 -->
+      <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+        <div id='' class='col-left'>
+          <span class='gray-font'>发货地点&nbsp;&nbsp;</span>
+          <span>
+            {{$value.ykdd}}
+          </span>
+        </div>
+        <div id='total' class='col-right'>
+          <span class='gray-font'>收货单位 </span>
+          <span class="fgs">
+            {{$value.gasstationAddress}}
+          </span>
+          <span class='mf-color AllPrice'>
+
+          </span>
+        </div>
+      </div>
+
+      <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+        <div id='' class=''>
+          <span class='gray-font'>提货日期&nbsp;&nbsp;</span>
+          <span>
+            {{$value.sendDate}}
+          </span>
+        </div>
+      </div>
+      <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+        <div id='' class=''>
+          <span class='gray-font'>备注&nbsp;&nbsp;</span>
+          <span>
+            {{$value.remark}}
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class='gap'></div>
+  {{/each}}
+</script>
+
+<script type="text/javascript" charset="utf-8">
+  var OEDER_ARR = null;
+  PAGENO = pageNo || 1,
+    CURRENT_ARR = [];
+
+  //格式化金额
+  template.defaults.imports.Fmoney = function (price) {
+
+    var newPrice = fmoney(price, 2);
+    return newPrice;
+  }
+
+  appcan.ready(function () {
+    uexWindow.setWindowScrollbarVisible('false');
+    appcan.frame.setBounce(1, function (type) {
+      $("#pullstatus").html("");
+    }, function (type) {
+      $("#pullstatus").html("");
+    }, function (type) {
+      $("#pullstatus").html("");
+      appcan.frame.resetBounce(1);
+      var num = Number(pageNo) * limit;
+      $("#pullstatus" + type).html("");
+      if (Number(totalRows) <= num) {
+        appcan.window.openToast({
+          msg: '无更多信息',
+          duration: 1000,
+          position: 5,
+          type: 0
+        });
+        return;
+      }
+      pageNo = Number(pageNo) + 1;
+
+    });
+
+    Order.init();
+
+  })
+
+  var Order = {
+    init: function () {
+      var y = this;
+      y.getOrderList();
+    },
+    getOrderList: function (newPageNo) {
+      var y = this;
+      var pageNo = newPageNo || 1;
+      var url = URL + "/app/cus/userSendBill";
+
+      var paramJsonStr = "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+      var func = y.getOrderListCallback.bind(y);
+      var dataType = "text";
+      ajaxPostQuery(url, paramJsonStr, func, dataType);
+    },
+
+    getOrderListCallback: function (data) {
+      var y = this;
+      if (data && typeof (data) == 'string' && data != '') {
+        var data = JSON.parse(data);
+      }
+
+      if (!data.length || data.length == 0) {
+        nodata('content', '您没有符合条件的付油通知单')
+        return;
+      } else if (data.length < 15) {
+        // 不需要分页
+        var html = template('pickup_list', {
+          list: data
+        })
+
+        $('#content').append(html);
+
+      } else {
+        var arr = data.slice(0, 15);
+        console.log(arr)
+        var html = template('pickup_list', {
+          list: arr
+        })
+
+        $('#content').append(html);
+
+        loadMore.init({
+          ele: "more",
+          data: data,
+          totalNum: data.length,
+          limit: 15,
+          clickFn: func2,
+          frontendPager: true
+        });
+      }
+    }
+  }
+
+  // 前端分页
+  function func2(current_page, current_data, max_page, totalNum) {
+
+    alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+    console.log(current_data)
+    var html = template('pickup_list', {
+      list: current_data
+    })
+
+    $('#content').append(html);
+  }
+
+  appcan.button(".nav-btn", "btn-act", function () {
+    appcan.window.close(-1);
+  })
+</script>
+
+</html>

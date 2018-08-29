@@ -1,0 +1,187 @@
+.uinn3 {
+    padding: none !important;
+}
+.sc-bg-search {
+    border-radius: .25em;
+    background: #eef3f7;
+    border-width: 0;
+}
+.icon-color {
+    color: #b6b6b6;
+}
+.ptxt {
+    text-decoration: line-through;
+    font-size: 1em;
+}
+.ul_btn {
+    display: -webkit-box;
+    -webkit-box-align: right;
+    -webkit-box-orient: horizontal;
+}
+
+.ul_price {
+    width: 90%;
+    line-height: 1.8em;
+}
+.sale-price {
+    color: #ea2c2d;
+    font-size: 1.4em;
+}
+.txt-gray {
+    color: #aaaaaa;
+}
+
+.onsale {
+    background-position: left top;
+    background-repeat: no-repeat;
+    width: 6em;
+    height: 5em;
+    background-size: 2.5em 2.5em;
+    background-image: url('myImg/onsale_tag.png');
+}
+.myimg {
+    border: 0.1em solid #dddddd;
+    display: block;
+    width: 6em;
+    height: 5em;
+    background-size: 5em 4em;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('myImg/sample_pic1.jpg');
+}
+.myicon-cart-add {
+    margin-left: 38%;
+}
+.oil-name {
+    font-size: 1.125em;
+}
+.item-wrapper {
+    width: 49.5%;
+    float: left;
+}
+.item-content {
+    margin-top: 0.4em;
+    margin-left: 0.4em;
+    background: #fff;
+    border: 1px solid #dddddd;
+}
+.t-section {
+    height: 3em;
+    width: 100%;
+    background: #f6f8fa;
+}
+.t-section .title {
+    display: block;
+    margin-top: 0.8em;
+}
+.c-block {
+    margin-top: 1em;
+    padding: 0.3em;
+    border-radius: .4em;
+    -webkit-border-radius: .4em;
+    color: #fff;
+    /*background-color: #d7393a;*/
+    background-color: #121d98;
+}
+
+.p-area {
+    margin: 0.8em;
+}
+.action-add {
+    margin-top: 1em;
+    margin-bottom: 1.4em;
+}
+.my-btn {
+    padding: 0.5em 1.4em;
+    padding-left: 2.2em;
+    border-radius: 0.2em;
+    font-size: 0.8em;
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #fdaf5c;
+}
+.btn-cart-add-gray {
+    background-image: url("../../build/imgs/myicon_cart_add_g.png");
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    background-position: 0.4em 50%;
+}
+.btn-cart-add {
+    background-image: url("../../build/imgs/myicon_cart_add.png");
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    background-position: 0.4em 50%;
+}
+
+.float-bar-wrapper {
+    background: #fd7e14;
+    color: #ffffff;
+    /*position: fixed;
+     top: 0;*/
+    z-index: 99;
+    width: 100%;
+}
+.float-bar {
+    padding: 0.5em;
+}
+.f-size {
+    font-size: 1.6em;
+}
+.item-select {
+    margin-top: 0.4em;
+    margin-left: 0.4em;
+    background: #fff;
+    border: 1px solid #0000FF;
+}
+
+.l-width {
+    width: 4.5em;
+}
+
+/*弹出框*/
+
+
+.m-input span {
+    color: #000;
+}
+.mySelect option {
+    font-zize: 1em !important;
+}
+.action-group {
+
+    text-align: center;
+}
+.selected {
+    border: 1px solid #000 !important;
+    padding: 0.2em;
+    border-radius: 10%;
+}
+#chk {
+
+    width: 4em;
+    height: 4em;
+    border: 1px solid #999;
+}
+.m-btn {
+    width: 4em;
+    height: 2em;
+    font-size: 1em;
+    text-align: center;
+    border-radius: 10%;
+    border: 0;
+    border: 1px solid #999;
+}
+#peisong, #ziti {
+    border: 1px solid transparent;
+    padding: 0.2em;
+}
+.chuku {
+    position: absolute;
+    left: 5.2em;
+    top: 0;
+    line-height: 1.8em;
+}
+.um3 {
+    margin-left: 3em;
+}
+

@@ -1,0 +1,212 @@
+var titHeight = 0;
+appcan.locStorage.setVal('Homepage', 0);
+var idx = appcan.locStorage.getVal("tabviewindex") == null ? 0 : appcan.locStorage.getVal("tabviewindex");
+
+appcan.ready(function () {
+    appcan.window.disableBounce();
+    //禁用页面弹动效果
+
+    //open indexPage
+    appcan.frame.open({
+        id: "content",
+        url: [{
+            inPageName: "p1",
+            inUrl: "page1.html",
+            inData: ""
+        }, {
+            inPageName: "p3",
+            inUrl: "page3.html",
+            inData: ""
+        }],
+        left: 0,
+        index: 0,
+        change: function (err, res) {
+            tabview.moveTo(res.multiPopSelectedIndex);
+            changeIcon(res.multiPopSelectedIndex);
+
+        }
+    });
+    window.onorientationchange = window.onresize = function () {
+        appcan.frame.resize("content", 0, top);
+    }
+    // push_func();
+
+});
+
+var tabview = appcan.tab({
+    selector: "#tabview",
+    hasIcon: true,
+    hasAnim: false,
+    hasLabel: true,
+    hasBadge: true,
+    index: idx,
+    data: [{
+        id: "1",
+        label: "首页",
+        icon: "iconhome_act ub-img ub"
+    }, {
+        id: "3",
+        label: "我的账户",
+        icon: "iconuser ub-img ub"
+    }]
+});
+
+tabview.on("click", function (obj, index) { /*TAB变更时切换多浮动窗口*/
+    appcan.window.selectMultiPopover("content", index);
+
+    changeIcon(index);
+
+})
+// {
+// inPageName : "p2",
+// inUrl : "page2.html",
+// inData : ""
+// },
+// {
+// id : "2",
+// label : "服务中心",
+// icon : "iconservice ub-img ub"
+// },
+
+function push_func() {
+
+    // alert('极光推送，注册监听...')
+
+    uexJPush.onReceiveRegistration = function (data) {
+        // alert(data);
+    };
+    //获取连接状态
+    uexJPush.cbGetConnectionState = function (data) {
+        // alert(data);
+    };
+    //极光推送，收到了通知
+    uexJPush.onReceiveNotification = function (data) {
+
+        // alert("收到通知：" + data);
+    };
+    //极光推送，用户点击了通知
+    uexJPush.onReceiveNotificationOpen = function (data) {
+
+        alert("点击通知：" + data);
+        var json = JSON.parse(data);
+        var strArr = json.content.split(' '),
+            content = strArr[0],
+            downLoadUrl = strArr[1],
+            newAppVersion = strArr[2];
+        alert('新版本号为' + newAppVersion)
+
+        var flag = false;
+
+        alert('准备更新...')
+        appcan.window.alert({
+            title: "提示",
+            content: content,
+            buttons: ["马上更新", "取消"],
+            callback: function (err, data, dataType, optId) {
+                if (data == '0') {
+                    downLoadApp(downLoadUrl);
+                } else if (data == '1') {
+
+                }
+                console.log(err, data, dataType, optId);
+
+            }
+        });
+
+    }
+}
+
+
+
+function downLoadApp(downLoadUrl) {
+    appcan.window.alert({
+        title: "提示",
+        content: "选择下载方式",
+        buttons: ["window.open", "openBrower"],
+        callback: function (err, data, dataType, optId) {
+            if (data == '0') {
+                appcan.window.open({
+                    name: 'demo',
+                    dataType: 0,
+                    data: downLoadUrl
+                });
+
+            }
+            if (data == '1') {
+                openBrower(downLoadUrl);
+            }
+            console.log(err, data, dataType, optId);
+        }
+    });
+}
+
+function getUexJPush(OldAppVersion) {
+    // 传递数据类型 string
+    // 版本升级提醒1.修改若干bug2.提高系统稳定性 http://106.38.74.245:9009/SHXSKH/downloadApp/app.apk 最新版本号:00.00.0021
+
+    // alert('极光推送，注册监听...')
+    uexJPush.onReceiveRegistration = function (data) {
+        // alert(data);
+    };
+    //获取连接状态
+    uexJPush.cbGetConnectionState = function (data) {
+        // alert(data);
+    };
+    //极光推送，收到了通知
+    uexJPush.onReceiveNotification = function (data) {
+
+        // alert("收到通知：" + data);
+    };
+    //极光推送，用户点击了通知
+    uexJPush.onReceiveNotificationOpen = function (data) {
+
+        var y = this;
+        var json = JSON.parse(data);
+        var strArr = json.content.split(' '),
+            // 更新说明
+            content = strArr[0],
+            // 下载地址
+            downLoadUrl = strArr[1],
+            newAppVersion = strArr[2];
+        // 当前系统版本
+        alert('新版本号为' + newAppVersion)
+
+        var OldNum = Number(OldAppVersion.slice(-4));
+        // 新版本号
+        var newNum = Number(newAppVersion.slice(-4));
+        if (newNum > oldNum) {
+            alert('准备更新...')
+            appcan.window.alert({
+                title: "提示",
+                content: content,
+                buttons: ["马上更新", "取消"],
+                callback: function (err, data, dataType, optId) {
+                    if (data == '0') {
+                        LayoutIndex.downLoadApp();
+                    } else if (data == '1') {
+
+                    }
+                    console.log(err, data, dataType, optId);
+
+                }
+            });
+        } else {
+            appcan.window.alert({
+                title: "提示",
+                content: "您的应用已经是最新的版本，无需更新",
+                buttons: ["确定"],
+                callback: function (err, data, dataType, optId) {
+                    if (data == '0') {
+
+                    } else if (data == '1') {
+
+                    }
+                    console.log(err, data, dataType, optId);
+
+                }
+            });
+        }
+
+
+    }
+}

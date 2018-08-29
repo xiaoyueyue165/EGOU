@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/intentionList.css">
+
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div id="content">
+        <!-- <div class="box36 ub ub-ac ub-pc">
+                <button class="btn ub ub-ac uc-a ub-pc" id="loadMore">
+                    加载更多...
+                </button>
+            </div> -->
+
+        <div id="listdetail" class="white-bg bc-border">
+
+        </div>
+        <div id="more"></div>
+    </div>
+    </div>
+
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    <script type="text/javascript" src="../../common/comm.js"></script>
+    <script src="../../common/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../common//template-web.js"></script>
+
+    <script src="../../common/numeral.min.js"></script>
+
+    <script type="text/html" id="orderTpl">
+        {{each list}}
+
+       
+        <div id="list{{$index}}" class="list-content white-bg">
+
+            <div id="orderInfo{{$index}}" class="ub ub-ac ub-pc m-row3 ub-pj">
+
+                    {{if $value.state=== 0}}
+
+                    <div id="info{{$index}}" class="ub ub-ac">
+                            <div id="check{{$index}}" class="ub ub-ac">
+                                    <span class='state state1'>未审核</span>
+                            </div>
+                        </div>
+
+                   <div id="{{$value.orderId}}&0" class='ub ub-ac ub-pc' onclick='actBtnClick(id)'><span class='y-font'>取消意向单</span></div>
+                   {{else if $value.state === 3}}
+                     <div id="info{{$index}}" class="ub ub-ac">
+                            <div id="check{{$index}}" class="ub ub-ac">
+
+                   <span class='state state2'>审核通过</span>
+                            </div>
+                        </div>
+
+                   <div id="{{$value.orderId}}&1"  class='ub ub-ac ub-pc' onclick='actBtnClick(id)'><span class='y-font'>付款</span></div>
+                   {{else if $value.state ===4}}
+
+                   
+                   <div id="info{{$index}}" class="ub ub-ac">
+                        <div id="check{{$index}}" class="ub ub-ac">
+                                <span class='state state2'>审核未通过</span>
+                        </div>
+                    </div>
+
+               <div id="{{$value.orderId}}&1" class='ub ub-ac ub-pc' onclick='actBtnClick(id)'><span class='y-font'>付款</span></div>
+               {{else}}
+
+               <div id="info{{$index}}" class="ub ub-ac">
+                    <div id="check{{$index}}" class="ub ub-ac">
+                            <span class='state state3'>已撤销</span>
+                    </div>
+                </div>
+
+                <div id={{$value.orderId}} class='ub ub-ac ub-pc'><span class='y-font'></span></div>
+                    {{/if}}
+               
+            </div>
+
+            {{each $value.orderSub}}
+            <div id="orderlist{{$index}}" >
+
+                <div class="ub ub-ac umar-a m-row3">
+                    <div class="ub ub-ac t-col1">{{$value.oilinfoName}}</div>
+                    <div class="ub ub-ac ub-pc t-col2">
+                        <span class="umar-r mf-color umar-r">
+                            <span class="fs08">￥</span>
+                           {{$value.oilPrice | changeMoney}}
+                            <span class="gray-font fs08">
+                               /吨
+                            </span>
+                            <span class="umar-l">  
+                              x{{$value.oilNumber | OneDecimal}} 
+                            </span>
+                          
+                        </span>
+                    </div>
+                    <div class="ub ub-ac ub-pc t-col4">
+                        <span class="s-state delivery">{{$value.ysfs}}</span>
+                    </div>
+                </div>
+                <div class="ub ub-ac umar-l umar-r m-row3">
+                    <div class="col-left">
+
+                        <span class="gray-font">运输方式&nbsp;&nbsp;</span>
+                        {{if $value.extractType==0}}
+                        <span>公路</span>
+                        {{else if $value.extractType ==1}}
+                        <span>水路</span>
+                        {{/if}}
+
+                    </div>
+                    <div  class="col-right">
+                        <span class="gray-font">合计&nbsp;&nbsp;</span> 
+                        <span class="mf-color">{{$value.oilAmot | changeMoney}}</span>
+                    </div>
+                </div>
+                <div class="ub ub-ac umar-l umar-r m-row3">
+                        <div class="col-left">
+                            <span class="gray-font">油库地点&nbsp;&nbsp;</span>
+                            <span>{{$value.ykdd}}</span>
+                        </div>
+                        <div  class="col-right">
+                            <span class="gray-font">销售单位&nbsp;&nbsp;</span> 
+                            <span class="mf-color">{{$value.gyfgs}}</span>
+                        </div>
+                    </div>
+                <div class="ub ub-pj ub-ac umar-l umar-r m-row4 border-bottom-line">
+                    <div class="b-width1 gray-font">备注信息</div>
+                    <div class="b-width2 w-break" id={{$value.oilinfoId}}></div>
+                </div>
+
+            </div> 
+            <div class='gap'></div>   
+            {{/each}}
+          
+
+
+        </div> 
+
+        {{/each}}
+    
+    </script>
+</body>
+<script>
+    var orderlist = [],
+        listdata = [],
+        listParam = [],
+        delivery,
+        info,
+        params,
+        param,
+        ifcheck = false,
+        totalNum = 0,
+        MAX_PAGE = 1,
+        CURRENT_PAGE = 1,
+        isOpen = true;
+
+    template.defaults.imports.changeMoney = function (value) {
+        return fmoney(value)
+    }
+    template.defaults.imports.OneDecimal = function (number) {
+        return number.toFixed(1);
+    }
+    appcan.ready(function () {
+
+        uexWindow.setWindowScrollbarVisible('false');
+
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("松手了,产生事件了,开始更新数据！");
+            // 下拉事件发生
+            appcan.frame.resetBounce(1);
+            // 当前总条数
+            var num = Number(pageNo) * limit;
+
+            $("#pullstatus").html("");
+            // alert("totalRows=" + totalRows)
+
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '没有更多',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+
+            newPageNo = Number(pageNo) + 1;
+
+            alert('准备加载第' + newPageNo + '页')
+
+            getOrder(newPageNo);
+        });
+
+        appcan.window.subscribe("cancelYXD", function (cancelYXD) {
+            if (cancelYXD == "true") {
+                reload();
+                appcan.locStorage.setVal('deleteOrder', 'true');
+                uexWindow.evaluateScript("intention3", 0, "reload()");
+                appcan.window.openToast({
+                    msg: '意向单已取消',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+            }
+        })
+        appcan.window.subscribe("payPopOrderId", function (orderId) {
+            appcan.locStorage.setVal("payorderId", orderId);
+            appcan.window.open("intentionPay", "intentionPay.html", 10);
+        })
+        appcan.window.subscribe("tiaoguo", function (tiaoguo) {
+
+            if (tiaoguo == "true") {
+                //window.location.reload();
+                reload();
+            }
+        })
+
+        Order.init();
+
+    })
+
+    function reload() {
+
+        $("#listdetail").html("");
+        getOrder();
+    }
+
+    function loadMoreOrder() {
+        newPageNo = Number(pageNo) + 1;
+
+        alert('准备加载第' + newPageNo + '页')
+
+        $('#loadMore').remove();
+
+        Order.getOrder(newPageNo);
+    }
+
+    // 0：未审核
+    // 3：审核通过
+    // 4：审核未通过
+    // 5：已撤销
+
+
+    var Order = {
+        init: function () {
+            var y = this;
+            y.getOrder();
+        },
+        getOrder: function (newPageNo) {
+            var y = this;
+            var pageNo = newPageNo ? newPageNo : 1;
+
+            var url = URL + "/app/bill/getOrder",
+                paramJsonStr = "pageNo=" + pageNo + "&pageSize=" + 15 + "&allState=0,1,2,3",
+                func =
+                    y.getOrderListCallback.bind(y),
+                dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('数据加载中...', '0', '5', '1');
+        },
+        getOrderListCallback: function (data) {
+            var y = this;
+            appcan.window.closeToast();
+            var data = JSON.parse(data);
+            var listOrder = data.list;
+            if (listOrder.length == 0) {
+                nodata('listdetail', '您没有符合条件的付油通知单')
+                return;
+            } else {
+                var html = template('orderTpl', {
+                    list: listOrder
+                })
+
+                $('#listdetail').append(html);
+
+                loadMore.init({
+                    ele: "more",
+                    data: listOrder,
+                    totalNum: data.totalRows,
+                    limit: 15,
+                    clickFn: func2
+                });
+            }
+        }
+
+    }
+
+    function func2(current_page, max_page, totalNum) {
+        console.log(arguments)
+        var y = this;
+        console.log(this);
+        $('#loadMore').remove();
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+        var y = this;
+        Order.getOrder(current_page);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+
+    var orderId = "";
+    function actBtnClick(id) {
+
+        // alert(id)
+        orderId = id.split("&")[0];
+        var actType = id.split("&")[1];
+        if (actType == 0) {
+            //取消意向单
+
+            appcan.locStorage.setVal("cancelReasonID", orderId);
+            // alert('回调,调用弹出框');
+            uexWindow.evaluateScript("intentionList", 0, "opencancelReason()");
+
+            open2PopPage("cancelReason");
+
+        } else {
+            //付款
+            oneAlert("本系统暂仅支持线下付款", "确定")
+        }
+    }
+
+    function onClickItem(dateType) {
+        if (dateType == 0) {
+            appcan.window.open("intentionPay", "intentionPay.html", 10);
+        } else if (dateType == 1) {
+            var url = URL + "app/bill/newPayOrder",
+                paramJsonStr = "orderId=" + orderId,
+                func =
+                    newPayOrderCallBack,
+                dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+        } else {
+
+        }
+    }
+
+    //提交数据回调
+    function newPayOrderCallBack(data) {
+        if (data == "ok") {
+            //alert("ok");
+        }
+    }
+</script>
+
+</html>

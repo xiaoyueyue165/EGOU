@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" href="../build/css/project/new.css">
+        <link rel="stylesheet" href="../build/css/project/main.css">
+        <style>
+            .base {
+                background-color: #fff;
+                margin: 1em 0.4em;
+                border: 1px dashed #ccc;
+                padding: 0.4em 0.4em;
+            }
+            .header {
+                height: 3em;
+            }
+            .border {
+                border-bottom: 1px solid #999;
+            }
+            ul > li {
+                float: left;
+                margin-left: 0.4em;
+            }
+
+            #customers {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            #customers td, #customers th {
+                font-size: 1em;
+                border: 1px solid #98bf21;
+                padding: 3px 7px 2px 7px;
+                text-align: center;
+            }
+
+            #customers th {
+                font-size: 1.1em;
+                text-align: center;
+                padding-top: 0.2em;
+                padding-bottom: 0.2em;
+                background-color: #A7C942;
+                color: #ffffff;
+            }
+
+            #customers tr.alt td {
+                color: #000000;
+                background-color: #EAF2D3;
+                font-size: 0.9em
+            }
+            .item {
+                display: none;
+                text-align: center;
+                background-color: #fff;
+                position: relative;
+                top: -1px;
+            }
+
+        </style>
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+
+            <div id="content" class="base ub-f1 ub ub-ver">
+
+                <div id="table">
+                    <table id="customers" class="oilPrice">
+                        <tr>
+
+                            <th id="date"></th>
+                            <th>价格</th>
+                            <th>涨跌幅</th>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+
+    </body>
+     <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../common/comm.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../common/template-web.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var mentionOil = {
+            init : function() {
+                var yue = this;
+                yue.queryMentOilOrder();
+            },
+            queryMentOilOrder : function() {
+                var yue = this;
+                var func = yue.showOrderCallback.bind(yue);
+
+                ajaxPostQuery(URL + "/app/oil/selectOilPriceListBy", "", func, "text");
+                appcan.window.openToast('加载中...', '0', '5', '1');
+            },
+            showOrderCallback : function(data) {
+
+                appcan.window.closeToast();
+                if ( typeof data == "string") {
+                    data = JSON.parse(data)
+                }
+                if (!data.rows || data.rows.length == 0) {
+                    nodata('content', '您没有符合条件的付油通知单')
+
+                    return;
+                }
+
+                this.render($('.oilPrice tbody'), data.rows);
+
+            },
+            render : function(ele, data) {
+                var html = '';
+                if (!data || data.length == 0) {
+                    $('#content').html('')
+                    nodata('content', '您没有符合条件的付油通知单')
+
+                    return;
+                }
+                for (var i = 0; i < data.length; i++) {
+
+                    if (data[i].length != 0 && data[i].interOilname.length>5) {//有数据
+                        var dateArr = data[i].updateDate.split(' '),
+                        date =dateArr[0],
+                        oilName = data[i].interOilname,
+                        oilPrice = data[i].interOilprice,
+                        zhangdie = data[i].interChg;
+
+                        $('#date').html(date)
+
+                        if (i % 2 == 0) {
+                            html += '<tr class="del">' + '<td>' + oilName + '</td>' + '<td>' + oilPrice + '</td>' + '<td>' + zhangdie + '</td></tr>'
+                        } else if (i % 2 != 0)
+                            {html += '<tr class="alt del">' + '<td>' + oilName + '</td>' + '<td>' + oilPrice + '</td>' + '<td>' + zhangdie + '</td></tr>'
+                        }
+
+                    }
+
+                }
+                ele.append(html)
+
+            }
+        }
+
+        mentionOil.init();
+
+    </script>
+
+</html>

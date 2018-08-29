@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/register.css">
+</head>
+
+<body class="um-vp " ontouchstart>
+    <div class="ub ub-ver white-bg mf-size1" id="inputContent">
+        <!-- <div class="ub m-row ">
+            <div class="ub ub-ac l-width1 umar-l">
+                <span class="">登录账号</span>
+            </div>
+            <div class="ub ub-ac ub-f1">
+                <div class="uinput ub ub-f1">
+                    <input placeholder="在此输入登录账号" type="text" class="ub-f1" value="">
+                </div>
+            </div>
+        </div> -->
+
+        <div class="ub m-row">
+            <div class="ub ub-ac l-width1 umar-l">
+                <span class="">验证码</span>
+            </div>
+            <div class="ub ub-ac  ub-f1">
+                <div class="uinput ub ub-f1">
+                    <input placeholder="请输入验证码" type="number" class="ub-f1" id="code" name="code">
+                </div>
+            </div>
+            <button type="button" class="ub ub-ac mp-btn2 btn-vcode" id="message" onclick="getValidCode()"> 获取验证码 </button>
+
+        </div>
+
+        <div class="ub m-row ">
+            <div class="ub ub-ac l-width1 umar-l">
+                <span class="">新密码</span>
+            </div>
+            <div class="ub ub-ac ub-f1">
+                <div class="uinput ub ub-f1">
+                    <input placeholder="在此输入新密码" type="password" class="ub-f1" value="">
+                </div>
+            </div>
+        </div>
+        <div class="ub m-row ">
+            <div class="ub ub-ac l-width1 umar-l">
+                <span class="">再次输入</span>
+            </div>
+            <div class="ub ub-ac ub-f1">
+                <div class="uinput ub ub-f1">
+                    <input placeholder="与以上新密码保持一致" type="password" class="ub-f1" value="">
+                </div>
+            </div>
+        </div>
+
+        <div id="retStr" class="pop-tip mf-size1"></div>
+    </div>
+
+    <div class="umar-a margin-t-l">
+        <div class="btn ub ub-ac bc-text-head ub-pc bc-btn mp-btn" id="ok">
+            验&nbsp;&nbsp;证
+        </div>
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/common.js"></script>
+    <script src="../common/jquery.min.js"></script>
+</body>
+<script>
+    var tag = 0;
+        TIME = 120,
+        timeoutID = null,
+        PHONE = null;
+
+
+    appcan.button("#ok", "btn-act", function () {
+        if (tag == 0) {
+            var loginName = $("input")[0].value;
+            var password = $("input")[1].value;
+            if (password == "") {
+                uexWindow.alert("提示", "请输入验证码", "确定");
+            }
+        } else {
+            updatePassword();
+        }
+    })
+
+    // 获取验证码
+    function getValidCode() {
+
+        var url = URL + "/app/user/updateLoginPasswordToSendSMS";
+        var paramJsonStr = "";
+        var func = onlySendSMSByLoginNameCallBack;
+        var dataType = "text";
+        ajaxPostQueryDNnotVerifySid(url, paramJsonStr, func, dataType);
+
+        $("#message")[0].innerHTML = "请在<span id='time'></span>秒内输入验证码";
+        setTimeInterval();
+    }
+    //验证验证码回调
+    function onlySendSMSByLoginNameCallBack(data) {
+        appcan.window.closeToast();
+        if (typeof data == 'string') {
+            data = JSON.parse(data);
+        }
+        PHONE = data.phone;
+        if (data.retMsg === "true") {
+            $("#ok")[0].innerHTML = "确定";
+            tag = 1;
+        } else {
+            uexWindow.alert("提示", "验证码验证失败，请重试", "确定");
+        }
+    }
+    //验证码有效时间
+
+
+    function setTimeInterval() {
+        timeoutID = window.setInterval(function () {
+            var btn = document.querySelector('#message');
+            if (TIME > 0 && btn) {
+                TIME--;
+                btn.innerHTML = '已发送(' + TIME + ')';
+            } else {
+                btn.innerHTML = '重新获取';
+                TIME = 120;
+                window.clearTimeout(timeoutID);
+            }
+
+        }, '1000')
+    }
+
+    //修改
+    function updatePassword() {
+        var vaildCode = $("input")[0].value;
+        var pswdTxt = $("input")[1].value;
+        var check_pswdTxt = $("input")[2].value;
+
+        if (pswdTxt == "" || check_pswdTxt == "") {
+            uexWindow.alert("提示", "请确认完成输入后再提交", "确定");
+            return;
+        }
+        if (pswdTxt.length > 25) {
+            uexWindow.alert("提示", "密码过长，请修改至25字符以内！", "确定");
+            return;
+        }
+        if (pswdTxt != check_pswdTxt) {
+            uexWindow.alert("提示", "两次输入不一致，请重新输入！", "确定");
+            return;
+        }
+
+        var url = URL + "/app/user/updateUserPass";
+        var paramJsonStr = "phone=" + PHONE + "&code=" + vaildCode + "&password=" + pswdTxt;
+        var func = updatePasswordCallBack;
+        var dataType = "text";
+        ajaxPostQueryDNnotVerifySid(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('正在更正验证码...', '0', '5', '1');
+    }
+    //修改密码回调
+    function updatePasswordCallBack(data) {
+        if (data == "true") {
+            uexWindow.evaluateScript("pwdForget", 0, "closepage()");
+        }
+    }
+
+
+</script>
+
+</html>

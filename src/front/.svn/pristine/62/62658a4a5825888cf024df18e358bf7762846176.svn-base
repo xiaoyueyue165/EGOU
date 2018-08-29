@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="../index/page3/index.css">
+    <link rel="stylesheet" type="text/css" href="./css/register.css" />
+    <script type="text/javascript" src="../common/comm.js"></script>
+</head>
+
+<body class="um-vp white-bg" ontouchstart onload="useInfoLoad()">
+    <div id="" class="ub ub-ver">
+        <div id="img" class="ub ub-ac ub-pc ub-img m-logo">
+            <img src="../index/page3/myImg/logo1.png" />
+        </div>
+
+        <div id="login" class="ub-login umar-a">
+            <div class="uba bc-border c-wh">
+                <div class="ub ub-ac ubb umh5 bc-border uinput ub-f1">
+                    <div class="uinn fa fa-user sc-text"></div>
+                    <input onfocus placeholder="账号/用户编号/手机号" type="text" class="ub-f1" id="username">
+                </div>
+                <div class="ub ub-ac umh5 uinput">
+                    <div class="uinn fa fa-key sc-text"></div>
+                    <input placeholder="登录密码" type="password" class="umw4 ub-f1" id="password">
+                </div>
+            </div>
+            <div class="ub bc-border" style="height:3em;margin-top:0.6em">
+                <div class="ub ub-ac uw-reg">
+                    <span class="sc-text-warn"> </span>
+                    验证码
+                </div>
+                <div class="ub ub-ac  ub-f1">
+                    <div class="uinput ub ub-f1">
+                        <input placeholder="请输入验证码" type="text" class="ub-f1" id="code" name="code">
+                    </div>
+                </div>
+                <button type="button" class="ub ub-ac mp-btn2 btn-vcode" id="message"> 获取验证码 </button>
+            </div>
+
+        </div>
+
+        <div id="btnarea" class="">
+            <div class="ub ub-ver">
+                <div id="" class="ub ub-ac ub-pe umar-a">
+                    <div class="mf-size1 gray-font" id="forgetPwd">
+                        忘记密码?
+                    </div>
+                </div>
+
+                <div class="uinn-at1 umar-a" style="margin-top:0.7em;">
+
+                    <div class="btn ub ub-ac ub-pc bc-text-head bc-btn uc-a1 mp-btn" id="submit">
+                        登录
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+    <script src="../common/jquery.min.js"></script>
+</body>
+<script>
+
+    appcan.ready(function () {
+        LoginCtrl.init();
+    })
+    var TIME = 180,
+        timeoutID = null,
+        clickNum = 0;
+
+    var LoginCtrl = {
+        options: function () {
+            var options = {
+                "VerificationCode": null
+            }
+            this.options = options;
+            return this;
+
+        },
+        init: function () {
+            var y = this;
+            y.options().bind();
+            console.log(y.options.VerificationCode)
+        },
+        bind: function () {
+            var y = this;
+
+            appcan.button("#message", "ani-act", function () {
+                y.getVerificationCode();
+            })
+
+            appcan.button("#submit", "ani-act", function () {
+                y.submitLogin();
+            })
+            appcan.button("#nav-left", "ani-act", function () {
+                appcan.window.close(-1);
+            })
+
+            appcan.button("#forgetPwd", "btn-act", function () {
+                appcan.window.open("pwdForget", "../userpage/pwdForget.html", 10);
+            })
+
+            appcan.button("#right", "btn-act", function () {
+                appcan.window.open("vip_right", "../vipzone/vip_right.html", 10);
+            })
+        },
+        // 获取验证码
+        getVerificationCode: function () {
+
+            var username = document.getElementById("username").value.trim();
+            var pswd = document.getElementById("password").value.trim();
+            if (!username) {
+                uexWindow.alert("提示", "请输入登录账号", "确定");
+                return;
+            }
+
+            clickNum++;
+
+            // 计时器执行时，节省短信条数
+            if (clickNum != 1 && TIME != 180) {
+                uexWindow.alert("提示", "验证码有效时间为3分钟，请输入有效期内的验证码！", "确定");
+                return;
+
+            }
+
+            $.ajax({
+                type: "POST", //用POST方式传输
+                url: URL + '/comm/user/login1',
+                data: "loginName=" + username + "&loginPassword=" + pswd,
+                success: function (data) {
+                    if (typeof data == "string") {
+                        data = JSON.parse(data);
+                    }
+                    console.dir(data)
+
+
+                    uexWindow.alert("提示", data.retStr, "确定");
+                    //计时器
+                    if (data.hasOwnProperty("sid")) {
+
+                        lsSetItems({
+                            "sid": data.sid,
+                        })
+
+                        timeoutID = window.setInterval(function () {
+                            var btn = document.querySelector('#message');
+                            if (TIME > 0 && btn) {
+                                TIME--;
+                                btn.innerHTML = '已发送(' + TIME + ')';
+                            } else {
+                                btn.innerHTML = '重新获取';
+                                TIME = 180;
+                                window.clearTimeout(timeoutID);
+                            }
+
+                        }, '1000')
+                    }
+
+                }
+            })
+        },
+        submitLogin: function () {
+            // useInfoLoad(); // 存储中读取可能有的用户名密码
+            var username = document.getElementById("username").value.trim();
+            var pswd = document.getElementById("password").value.trim();
+            var VerificationCode = document.getElementById("code").value.trim();
+            var sid = appcan.locStorage.getVal("sid");
+            if (username == "" || pswd == "") {
+                uexWindow.alert("提示", "请输入用户名和密码！", "确定");
+                return;
+            } else if (!VerificationCode) {
+                uexWindow.alert("提示", "请输入验证码！", "确定");
+
+            } else {
+                if (username != "" && pswd != "") {
+                    appcan.window.openToast('登录中...', '0', '5', '1');
+                    //向后台发送数据
+
+                    $.ajax({
+                        type: "POST", //用POST方式传输
+                        url: URL + '/comm/user/login2',
+                        data: "loginName=" + username + "&loginPassword=" + pswd + "&vCode=" + VerificationCode + "&sid=" + sid,
+                        success: function (data) {
+                            if (typeof data == "string") {
+                                data = JSON.parse(data);
+
+                            }
+                            var sid = data.sid;
+                            var cusId = data.cusId;
+                            var userType = data.userType;
+                            if (data.retStr == "正确") {
+                                //alert("用户名密码正确！");
+                                appcan.window.closeToast();
+
+                                //存储
+                                lsSetItems({
+                                    "username": username,
+                                    "password": pswd,
+                                    "userId": data.userId,
+                                    "userType": data.userType,
+                                    "isLogin": true
+                                })
+
+                                //用户身份
+                                cusId ? lsSetItems({ "cusId": cusId }) : '';
+
+                                //跳转关联公司
+                                if (data.userForCompany == "1") {
+                                    appcan.window.open("chooseCompany", "chooseCompany.html", 10);
+                                    appcan.window.publish("afterLogin", data.userId);
+                                    uexWindow.evaluateScript("login", 0, "closeLoginPage()");
+                                    return;
+                                };
+                                if (data.userStr != 1) {
+
+                                    appcan.window.publish("afterLogin", data.userId);
+                                    uexWindow.evaluateScript("login", 0, "closeLoginPage()");
+                                }
+
+                            } else {
+                                appcan.window.closeToast();
+                                uexWindow.alert("提示", data.retStr, "确定");
+                            }
+
+                        }
+                    })
+                }
+
+            }
+        }
+
+    }
+
+
+
+
+</script>
+
+</html>

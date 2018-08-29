@@ -1,0 +1,66 @@
+.detailbox{
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: left;
+    -webkit-box-flex: 1;
+}
+
+
+/*列表内容宽度设置*/
+.bw0{
+    text-align:left;
+    width: 8%;
+}
+.bw1{
+    text-align:left;
+    width: 45%;
+}
+.bw2{
+    text-align:center;
+    width: 14%;
+}
+.bw3{
+    text-align:right;
+    width: 33%;
+}
+
+.edit-bw2{
+    width: 20%;
+}
+
+/*footer宽度设置*/
+.uw-a{
+    display: -webkit-box;
+    -webkit-box-align:center;
+    -webkit-box-orient:horizontal;
+    width: 100%;
+}
+
+
+/***/
+
+.area-price{
+    width:50%;  
+}
+.detailbox{
+    padding: 0.4em !important;
+}
+.oil-name{
+    font-size: 0.9em !important;
+}
+.amount{
+    font-size: 0.8em ;
+}
+.hide{
+    visibility: hidden;
+}
+
+.d-nav{
+    border-bottom: 0.1em solid #cccccc !important;
+    background: red !important;
+}
+#page_0 #content #slider {
+    height:12em !important;
+}
+    
+

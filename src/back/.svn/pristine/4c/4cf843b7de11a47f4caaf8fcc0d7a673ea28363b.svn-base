@@ -1,0 +1,86 @@
+/*注册页面样式*/
+.c-txt {
+    color: #218dd5;
+}
+.uinnh5 {
+    padding: 0.8em 0.5em;
+    margin: 0;
+}
+.uw-reg {
+    min-width: 4em;
+}
+.uinn-at1 {
+    padding-top: 1em;
+}
+.c-wh {
+    background-color: #FFF;
+}
+
+/*完善信息页面样式*/
+.btn-submit{
+    width: 6.0em;
+}
+
+.lbl-title{
+    width:4.5em;
+}
+.org-list{
+    width: 100%;
+    border: none;
+}
+
+.uinput input:focus{
+    outline: none !important;
+}
+/*单位选择页面样式*/
+.zd-w {
+    margin-right: 0.8em;
+    margin-bottom: 0.6em;
+    display: inline-block;
+    width: 6.2em;
+    height: 2em;
+    line-height: 2em;
+    text-align: center;
+    border-radius: 1.2em;
+    background: #f5f5f5;
+    color: #888888;
+    border: 1px solid #cccccc;
+}
+.zd-w-active{
+    background: #ffa03c;
+    color:#ffffff;
+    border-color: #ffa03c !important;
+}
+.margin-t{
+    margin-top: 0.6em;
+}
+
+.action-group .mp-btn2,.action-group .mp-btn{
+    width: 37%;
+}
+
+.user-info .line1{
+    color: #aaaaaa;
+}
+
+.user-info  .lis{
+    padding-left: 0 !important;
+    border: none !important;
+}
+
+.btn-vcode{
+    font-size: 0.8em;
+    margin-top: 0.7em;
+    height: 2.4em;
+    padding: 0 0.6em;
+    color:#ffffff;
+    border: none !important;
+}
+
+.l-width{
+    width: 4em;
+}
+.l-width1{
+    width: 4.7em;
+}
+

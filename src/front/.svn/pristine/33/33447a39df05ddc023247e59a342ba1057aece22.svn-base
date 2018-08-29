@@ -1,0 +1,291 @@
+/*2017.0904
+ *WEB前端开发 xiaoyueyue
+ *
+ * * * * * * * * * /
+ /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+* {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    font-size: 1em;
+    color: #333;
+}
+/*app背景色*/
+.bg-ff {
+    background-color: #FFFFFF
+}/*白色*/
+.bg-f6 {
+    background-color: #F6F6F6
+}/*浅灰色*/
+/*app辅助背景色*/
+.bg-red {
+    background-color: #FC7979
+}/*红色*/
+.bg-green {
+    background-color: #78C44F
+}/*绿色*/
+.bg-blue {
+    background-color: #4DCBDE
+}/*蓝色*/
+.bg-yellow {
+    background-color: #F89D3C
+}/*黄色*/
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*app字体颜色*/
+.fc-ff {
+    color: #FFF;
+}
+.fc-00 {
+    color: #000;
+}
+
+/*app辅助字体颜色*/
+.fc-red {
+    color: #FC7979
+}/*红色*/
+.fc-gree {
+    color: #78C44F
+}/*绿色*/
+.fc-blue {
+    color: #4DCBDE
+}/*蓝色*/
+.fc-yellow {
+    color: #F89D3C
+}/*黄色*/
+
+.fs12 {
+    font-size: 12px;
+}
+.fs14 {
+    font-size: 14px;
+}
+.fs16 {
+    font-size: 16px;
+}
+.fs18 {
+    font-size: 18px;
+}
+.fs24 {
+    font-size: 24px;
+}
+.fs32 {
+    font-size: 32px;
+}
+.fs42 {
+    font-size: 42px;
+}
+/*app字体大小*/
+.fs-36 {
+    font-size: 1.125em
+}/*页面标题*/
+.fs-28 {
+    font-size: 0.875em
+}/*选项卡*/
+.fs-24 {
+    font-size: 0.750em
+}/*正文*/
+
+/*浮动*/
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+/*清除浮动*/
+.clearfix:after {
+    content: '';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.clearfix {
+    *zoom: 1;
+    /* ie67专用 */
+}
+
+/*显示隐藏*/
+
+.block {
+    display: block !important
+}
+.inline {
+    display: inline !important
+}
+.inline-block {
+    display: inline-block !important;
+}
+.hide {
+    display: none !important;
+}
+.hidden {
+    visibility: hidden !important;
+}
+
+/*单行文字截断*/
+.am-text-truncate {
+    word-wrap: normal; /* for IE */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+/*多行文字截断*/
+.line-clamp {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /*这里修改为要显示的行数*/
+    -webkit-box-orient: vertical;
+}
+
+.margin-all {
+    margin: 0.5em;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*盒子定位*/
+.pos-r {
+    position: relative
+}
+.pos-a {
+    position: absolute
+}
+.pos-f {
+    position: fixed
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * */
+/*盒子宽*/
+.w3 {
+    width: 33.33%;
+}
+.w5 {
+    width: 50%;
+}
+
+/*盒子专用*/
+.list-wrapper {
+    width: 98%;
+    border: 1px solid #ccc;
+    margin: 1%;
+    padding: 0.2em;
+    border-radius: 0.5em;
+    box-sizing: border-box;
+}
+
+/*mui百分比*/
+
+.mui-col-xs-12 {
+    width: 100%;
+}
+
+.mui-col-xs-11 {
+    width: 91.66666667%;
+}
+
+.mui-col-xs-10 {
+    width: 83.33333333%;
+}
+
+.mui-col-xs-9 {
+    width: 75%;
+}
+
+.mui-col-xs-8 {
+    width: 66.66666667%;
+}
+
+.mui-col-xs-7 {
+    width: 58.33333333%;
+}
+
+.mui-col-xs-6 {
+    width: 50%;
+}
+
+.mui-col-xs-5 {
+    width: 41.66666667%;
+}
+
+.mui-col-xs-4 {
+    width: 33.33333333%;
+}
+
+.mui-col-xs-3 {
+    width: 25%;
+}
+
+.mui-col-xs-2 {
+    width: 16.66666667%;
+}
+
+.mui-col-xs-1 {
+    width: 8.33333333%;
+}
+
+/*线条*/
+.line:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+.yue_select {
+    min-height: 1.5em !important;
+    height: 1.5em !important;
+    padding: 0 !important;
+    border-radius: 0.2em;
+    box-shadow: inset 0.1em 0.1em 0.3em #cccccc;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 0;
+    border: 1px solid #999;
+    border-radius: 0.2em;
+}
+.ellipsis {
+   
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    
+}
+.arrow {
+    border: solid 1px #000;
+    /*很关键：将默认的select选择框样式清除*/
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    /*在选择框的最右侧中间显示小箭头图片*/
+    background: url("../../imgs/arrow.png") no-repeat scroll right center transparent;
+    /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+    padding-right: 14px;
+    
+}
+.s-state {
+    padding: 0.1em 0.4em;
+  border-radius: 0.3em;
+  border: 0.1em solid;
+  border-color: #cccccc;
+  color: #999999;
+}
+

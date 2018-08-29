@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/infomgmt.css">
+    <script src="../common/comm.js"></script>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+</body>
+<script>
+    var driverData = {};
+    appcan.ready(function () {
+        appcan.window.subscribe("driverOK", function (refresh) {
+            if (refresh == "0") {
+                //window.location.reload();
+                reload();
+            }
+        })
+
+        appcan.window.subscribe("deletealert", function (alert) {
+            if (alert == "true") {
+                delDriver();
+            }
+        })
+        queryCusDriver();
+    });
+
+    function reload() {
+        $("body").html("");
+        queryCusDriver();
+    }
+
+    function queryCusDriver() {
+        var url = URL + "/app/cus/driver/queryCusDriver";
+        var paramJsonStr = "pager.pageNo=" + offset + "&pager.pageSize=" + limit;
+        var func = initDriverData;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+    }
+
+    function initDriverData(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+        }
+        var driverHtml = "";
+        if (data.rows) {
+            var rowArray = data.rows;
+            for (var i = 0; i < rowArray.length; i++) {
+                var driverId = rowArray[i].driverId;
+                var driverName = rowArray[i].driverName;
+                var driverCode = rowArray[i].driverCode;
+                if (typeof (driverCode) == "undefined") {
+                    driverCode = "";
+                }
+                var driverOfficephone = rowArray[i].driverOfficephone;
+                if (typeof (driverOfficephone) == "undefined") {
+                    driverOfficephone = "";
+                }
+                var driverMobile = rowArray[i].driverMobile;
+                if (typeof (driverMobile) == "undefined") {
+                    driverMobile = "";
+                }
+
+                var param = {
+                    driverName: driverName,
+                    driverCode: driverCode,
+                    driverOfficephone: driverOfficephone,
+                    driverMobile: driverMobile
+                }
+                driverData[driverId] = param;
+
+                driverHtml += '<div class="ub ub-ver sc-bg"><div class="ub ub-ver white-bg mf-size1">' +
+                    '<div class="ub m-row umar-l umar-r"><div class="ub ub-ac l-width">' +
+                    '<span class="gray-font">司机姓名</span></div><div class="ub ub-ac ub-f1">' +
+                    driverName + '</div></div>' +
+                    '<div class="ub m-row umar-l umar-r"><div class="ub ub-ac l-width">' +
+                    '<span class = "gray-font">驾驶证号</span></div><div class="ub ub-ac ub-f1">' +
+                    driverCode + '</div></div>' +
+                    '<div class="ub m-row umar-l umar-r"><div class="ub ub-ac l-width">' +
+                    '<span class="gray-font">联系电话</span></div><div class="ub ub-ac ub-f1">' +
+                    driverOfficephone + '</div></div>' +
+                    '<div class="ub m-row umar-l umar-r"><div class="ub ub-ac l-width">' +
+                    '<span class="gray-font">手机号码</span></div><div class="ub ub-ac ub-f1">' +
+                    driverMobile + '</div></div></div>' +
+                    '<div class="ub ub-pe umar-l padding-a"><div class="ub ub-ac umar-r" id="">' +
+                    '<div id="' + driverId +
+                    '" class="umar-r m-btn border-btn btn-edit" onclick="editDriver(id)">编辑</div>' +
+                    '<div id="' + driverId +
+                    '" class="umar-l m-btn border-btn btn-delete" onclick="deleteDriver(id)">删除</div></div></div></div>';
+                if (i < rowArray.length - 1) {
+                    driverHtml += '<div class="gap"></div>';
+                }
+            };
+        }
+        $("body").append(driverHtml);
+    }
+
+    function deleteDriver(id) {
+        appcan.locStorage.setVal("deleId", id);
+        uexWindow.evaluateScript("driverMgmt", 0, "openalert()");
+    }
+
+    //删除司机
+    function delDriver() {
+        var id = appcan.locStorage.getVal("deleId");
+        var url = URL + "/app/cus/driver/delCusDriver";
+        var paramJsonStr = "driverId=" + id;
+        var func = delCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+    }
+
+    function delCallback(data) {
+        appcan.window.closeToast();
+        if (data == "0") {
+            // window.location.reload();
+            reload();
+        }
+    }
+
+    function editDriver(id) {
+        var driverInfo = driverData[id];
+        appcan.locStorage.setVal("driverId", id);
+        appcan.locStorage.setVal("driverInfo", driverInfo);
+        appcan.window.open("driverAdd", "driverAdd.html", 10);
+    }
+</script>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="uinn">
+        <div id="listview1" class="white-bg ubr ubl ubt bc-border"></div>
+        <br>
+        <div id="listview2" class="white-bg ubr ubl ubt bc-border"></div>
+    </div>
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    <script src="../../build/js/appcan.listview.js"></script>
+    <script src="../../common/comm.js" type="text/javascript" charset="utf-8"></script>
+</body>
+<script>
+    var Version;
+    appcan.ready(function () {
+        uexWidgetOne.getCurrentWidgetInfo();
+        var widgetInfo=uexWidgetOne.getCurrentWidgetInfo();
+        uexWidgetOne.cbGetCurrentWidgetInfo = function (opId, dataType, data) {
+            var json = JSON.parse(data);
+            //alert(json.version)
+            Version = json.version || widgetInfo.version;
+            lv2.set([{
+                title: "当前版本",
+                subTitle: Version
+            }]);
+        }
+        //Version=uexWidgetOne.platformVersion;
+
+        var lv1 = appcan.listview({
+            selector: "#listview1",
+            type: "thinLine",
+            hasAngle: false,
+            hasControl: true,
+            hasSubTitle: true
+        });
+        var lv2 = appcan.listview({
+            selector: "#listview2",
+            type: "thinLine",
+            hasAngle: false,
+            hasControl: true,
+            hasSubTitle: true
+        });
+        lv1.set([{
+            title: "清理缓存"
+        }]);
+
+        lv1.on("click", function (obj, data, subObj) {
+            lsrmItems(["sid", "cusId", "password", "userId", "username", "userType", "tag", "QRCode"]);
+            appcan.locStorage.setVal("status", "out");
+
+            uexWidgetOne.cleanCache();
+            uexWidgetOne.cbCleanCache = cbCleanCache;
+            setTimeout(function () {
+                appcan.window.publish("logout", "logout");
+                appcan.window.open("index", "../../index.html", 0);
+            }, 1000);
+
+            function cbCleanCache(opId, dataType, data) {
+                //alert(data);
+                if (data == 0) {
+
+                    lsrmItems(["sid", "cusId", "password", "userId", "username", "userType", "tag",
+                        "QRCode"
+                    ]);
+                    appcan.locStorage.setVal("status", "out");
+
+                    appcan.window.alert("提示", "缓存清除完成", "确定");
+                    openindex();
+                } else {
+                    alert("非主widget不能清除Cache！");
+
+                }
+            }
+
+            /**appcan.widgetOne.cleanCache(function(err,data,dataType,opId){
+             if(err){
+             alert(err);
+             }else{
+             alert("清理完成！");
+             }
+             });
+             */
+        });
+
+    });
+</script>
+
+</html>

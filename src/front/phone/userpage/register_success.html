@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/register.css">
+</head>
+
+<body class="um-vp bc-bg white-bg" ontouchstart>
+    <!--header开始-->
+    <div class="uh bc-text-head ub bc-head nav-style2" id="header">
+        <div class="nav-btn" id="nav-left">
+        </div>
+        <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">注册完成</h1>
+        <div class="nav-btn" id="nav-right">
+        </div>
+    </div>
+    <!--header结束-->
+
+    <div class="c-wh uinnh5 umar-t ">
+        <div class=" uc-a1 mf-size1">
+            <div class="ub uinn5">
+                <div class="ub uw-reg ulev-app1 m-lineheight">
+                    您已完成注册，公司会尽快对您的申请进行审核，并为您分配专属的客户经理。
+                </div>
+            </div>
+            <div class="ub uinn5">
+                <div class="ub uw-reg ulev-app1 m-lineheight">
+                    您暂时不能登录购油宝；待资质审核通过后，我们会给您发送账号激活短信，请耐心等待。
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="uinn-at1">
+            <div class="btn ub ub-ac bc-text-head ub-pc bc-btn mp-btn" id="btn-backtoindex">
+                返回首页
+            </div>
+        </div>
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+        appcan.initBounce();
+    })
+
+    appcan.button("#btn-backtoindex", "ani-act", function () {
+        appcan.window.open("index", "../index.html", 5);
+        //appcan.window.open("register_success", "http://appcan.cn", "10","0","0","0","0");
+    })
+</script>
+
+</html>

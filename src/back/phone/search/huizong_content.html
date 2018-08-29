@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <!--标准mui.css-->
+    <link rel="stylesheet" href="../build/mui-dtpicker/css/mui.css">
+    <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/mui.picker.min.css" />
+    <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/app.css" />
+    <style type="text/css">
+        .base {
+            background-color: #fff;
+            margin: 1em 0.4em;
+            border: 1px dashed #ccc;
+            padding: 0.4em 0.4em;
+        }
+
+        .header {
+            height: 3em;
+        }
+
+        .border {
+            border-bottom: 1px solid #999;
+        }
+
+        ul>li {
+            float: left;
+            margin-left: 0.4em;
+        }
+
+        .customers {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .customers td,
+        .customers th {
+            font-size: 1em;
+            border: 1px solid #D3D4D6;
+            padding: 3px 7px 2px 7px;
+        }
+
+        .customers td {
+            font-size: 0.9em;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #FEFEFE;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: #f6f6f6;
+        }
+
+        .customers th {
+            font-size: 1.1em;
+            text-align: center;
+            padding-top: 0.2em;
+            padding-bottom: 0.2em;
+            background-color: #E9EAEC;
+            color: #333;
+        }
+
+        .customers tr.alt td {
+            color: #000000;
+            font-size: 0.9em
+        }
+
+        .item {
+            display: none;
+            text-align: center;
+            background-color: #fff;
+            position: relative;
+            top: -1px;
+        }
+
+        .show {
+            display: block;
+        }
+
+        .current {
+            color: blue;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body class="um-vp " ontouchstart>
+
+    <div class="base" id="content" style="display: none;">
+
+        <div id="OneDate" class="ub">
+            <div class="ub ub-f1">
+                <button data-options='{"type":"month"}' class="btn">
+                    选择查询时段
+                </button>
+            </div>
+
+            <div id="result" class="ub-f1 ub ub-ac ub-pc"></div>
+
+        </div>
+
+        <div class="ub ub-pc ub-ac header border">
+            <ul>
+                <li class="current">
+                    销售订单
+                </li>
+                <li>
+                    批发订单
+                </li>
+                <li>
+                    调拨订单
+                </li>
+            </ul>
+        </div>
+        <div class="item show">
+            <div id="table">
+                <table class="xiaoshou customers">
+                    <tr>
+                        <th>公司</th>
+                        <th>合计</th>
+                        <th>汽油</th>
+                        <th>柴油</th>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+        <div class="item">
+            <div id="">
+                <table class="pifa customers">
+                    <tr>
+                        <th>公司</th>
+                        <th>合计</th>
+                        <th>汽油</th>
+                        <th>柴油</th>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+        <div class="item">
+            <div id="">
+                <table class="diaobo customers">
+                    <tr>
+                        <th>公司</th>
+                        <th>合计</th>
+                        <th>汽油</th>
+                        <th>柴油</th>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+        <div id="showTableData"> </div>
+    </div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/template-web.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../common/common.js"></script>
+    <script src="../common/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../build/mui-dtpicker/js/mui.min.js"></script>
+    <script src="../build/mui-dtpicker/js/mui.picker.all.js"></script>
+
+    <script type="text/javascript" charset="utf-8">
+        var isComplate = false;
+        var mentionOil = {
+            options: function () {
+                var y = this;
+                var options = {},
+                    monthDate = null;
+
+                if ($('#result')[0].innerText != '') {
+
+                    monthDate = $('#result')[0].innerText;
+                    // 再次查詢，清空數據
+                    $('.del').remove();
+                } else {
+                    monthDate = getMonth();
+                }
+                y.options.monthDate = monthDate
+
+            },
+
+            init: function () {
+                var yue = this;
+                if (isComplate) {
+                    return;
+                }
+                yue.options();
+                yue.queryMentOilOrder();
+            },
+
+            queryMentOilOrder: function () {
+                var orgId = appcan.locStorage.getVal("orgId")
+                var yue = this;
+                var paramJsonStr = "&time=" + yue.options.monthDate;
+
+                var func = yue.showOrderCallback.bind(yue);
+
+                ajaxPostQuery(URL + "/app/oil/selectOrderNumByOilType", paramJsonStr, func, "text");
+                openToast();
+            },
+            showOrderCallback: function (data) {
+                closeToast();
+                if (typeof data == "string") {
+                    var data = JSON.parse(data);
+                }
+
+                var xiaoshouList = data.xiaoshouList;
+                // 批发
+                var pifaList = data.pifaList;
+                // 调拨
+                var diaoboList = data.diaoboList;
+
+                this.render('.xiaoshou', xiaoshouList);
+                this.render('.pifa', pifaList);
+                this.render('.diaobo', diaoboList);
+                isComplate = false;
+
+            },
+            render: function (ele, data) {
+
+                var domSelect = $(ele + ' tbody');
+                var html = '';
+                if (!data || data.length == 0) {
+                    $('#content')[0].style.display = 'block';
+                    nodata('showTableData', '您没有符合条件的付油通知单')
+
+                    return;
+                }
+                $('#content')[0].style.display = 'block';
+                for (var i = 0; i < data.length; i++) {
+
+                    if (data[i].length != 0) { //有数据
+                        document.querySelector("#showTableData").innerHTML = "";
+                        var orgName = data[i][0].orgName,
+                            qiyouNum = data[i][0].qiyouNum ? toFixed(data[i][0].qiyouNum, 0) : 0,
+                            chaiyouNum = data[i][0].chaiyouNum ? toFixed(data[i][0].chaiyouNum, 0) : 0,
+                            gonji = toFixed(data[i][0].sumNum, 0);
+                        if (i % 2 == 0) {
+                            html += '<tr class="del">' + '<td>' + orgName + '</td>' + '<td>' + gonji + '</td>' +
+                                '<td>' + qiyouNum + '</td>' + '<td>' + chaiyouNum + '</td>' + '</tr>'
+                        } else if (i % 2 != 0)
+                            (html += '<tr class="alt del">' + '<td>' + orgName + '</td>' + '<td>' + gonji +
+                                '</td>' + '<td>' + qiyouNum + '</td>' + '<td>' + chaiyouNum + '</td>' + '</tr>'
+                            )
+
+                    }
+
+                }
+
+                domSelect.append(html);
+                // 合计
+                var beLinkedData_heji = convertToArray(document.querySelectorAll(ele + ' tr td:nth-child(2)'));
+                // 汽油
+                var beLinkedData_qiyou = convertToArray(document.querySelectorAll(ele + ' tr td:nth-child(3)'));
+                // 柴油
+                var beLinkedData_chaiyou = convertToArray(document.querySelectorAll(ele + ' tr td:nth-child(4)'));
+                var ArrayToNumber = function (arr) {
+                    var total = 0;
+                    arr.forEach(function (v) {
+                        total += Number(v.innerHTML);
+                    })
+                    return total;
+                }
+
+                var hejiHTml = '<tr class="last">' + '<td>合计</td>' + '<td>' + ArrayToNumber(beLinkedData_heji) +
+                    '</td>' +
+                    '<td>' + ArrayToNumber(beLinkedData_qiyou) + '</td>' + '<td>' + ArrayToNumber(
+                        beLinkedData_chaiyou) + '</td>' + '</tr>';
+                // 添加合计
+
+                domSelect.append(hejiHTml);
+            }
+        }
+
+        appcan.ready(function () {
+
+            mentionOil.init();
+
+        });
+        var tab = {
+            options: function () {
+                var y = this;
+                var options = {};
+                y.options.clickLi = document.querySelectorAll('.base ul li');
+                y.options.showItem = document.querySelectorAll('.item');
+                return y;
+            },
+            init: function () {
+                var y = this;
+                y.options();
+                var arrLi = y.options.clickLi;
+                var arrSpan = y.options.showItem;
+
+                for (var i = 0; i < arrLi.length; i++) {
+                    arrLi[i].index = i;
+                    arrLi[i].onclick = function () {
+                        for (var j = 0; j < arrLi.length; j++) {
+                            // 排他思想，干掉所有人
+                            arrLi[j].className = "";
+                            arrSpan[j].className = "item";
+                        }
+                        // 只剩我自己
+                        this.className = "current";
+                        arrSpan[this.index].className = "show item";
+                    }
+                }
+            }
+        }
+        tab.init();
+
+        function removeOtherTD() {
+            $('.xiaoshou tr:gt(1)').remove();
+            $('.pifa tr:gt(1)').remove();
+            $('.diaobo tr:gt(1)').remove();
+        }
+
+        function once(fn) {
+            return function (args) {
+                if (fn) {
+                    var ret = fn.apply(this, args);
+                    fn = null;
+                    return ret;
+                }
+            }
+        }
+        (function ($) {
+            $.init();
+            var result = $('#result')[0];
+            var btns = $('.btn');
+            btns.each(function (i, btn) {
+                btn.addEventListener('tap', function () {
+                    var _self = this;
+                    if (_self.picker) {
+
+                        _self.picker.show(function (rs) {
+                            result.innerText = rs.text;
+                            var IsOpen = false;
+                            if (rs.text) {
+                                IsOpen = true;
+                            }
+                            if (IsOpen) {
+                                removeOtherTD();
+                                once(mentionOil.init());
+                                isComplate = true;
+                                IsOpen = false;
+                            }
+                            _self.picker.dispose();
+                            _self.picker = null;
+                        });
+                    } else {
+
+                        var optionsJson = this.getAttribute('data-options') || '{}';
+                        var options = JSON.parse(optionsJson);
+                        var id = this.getAttribute('id');
+                        /*
+                         * 首次显示时实例化组件
+                         * 示例为了简洁，将 options 放在了按钮的 dom 上
+                         * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+                         */
+                        _self.picker = new $.DtPicker(options);
+                        _self.picker.show(function (rs) {
+
+                            /*
+                             * rs.value 拼合后的 value
+                             * rs.text 拼合后的 text
+                             * rs.y 年，可以通过 rs.y.vaue 和 rs.y.text 获取值和文本
+                             * rs.m 月，用法同年
+                             * rs.d 日，用法同年
+                             * rs.h 时，用法同年
+                             * rs.i 分（minutes 的第二个字母），用法同年
+                             */
+                            result.innerText = rs.text;
+                            // 根據時間查詢
+                            // if ($('.del')[0]) {
+                            //     $('.xiaoshou tr:gt(1)').remove();
+                            //     $('.pifa tr:gt(1)').remove();
+                            //     $('.diaobo tr:gt(1)').remove();
+                            //     mentionOil.init();
+                            // }
+
+
+
+                            /*
+                             * 返回 false 可以阻止选择框的关闭
+                             * return false;
+                             */
+                            /*
+                             * 释放组件资源，释放后将将不能再操作组件
+                             * 通常情况下，不需要示放组件，new DtPicker(options) 后，可以一直使用。
+                             * 当前示例，因为内容较多，如不进行资原释放，在某些设备上会较慢。
+                             * 所以每次用完便立即调用 dispose 进行释放，下次用时再创建新实例。
+                             */
+                            _self.picker.dispose();
+                            _self.picker = null;
+                        });
+                    }
+
+                }, false);
+            });
+        })(mui);
+    </script>
+
+</html>

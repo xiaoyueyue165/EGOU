@@ -1,0 +1,17 @@
+.msg-list .line1{
+    font-size: 0.8em !important;
+    color: #999999 !important;
+    line-height: 1.5em;
+}
+.msg-list .sc-text1{
+    font-size: 0.9em !important;
+    line-height: 1.5em;
+}
+.msg-list .ub-img{
+    width: 3.4em;
+    height: 3.4em;
+}
+
+.msg-list .fa-angle-right{
+    color: #888888;
+}

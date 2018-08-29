@@ -1,0 +1,10 @@
+.guide-wrapper h1{
+    font-size: 1em;
+    text-align: center;
+    line-height: 3em;
+ }
+ .guide-wrapper p{
+     font-size: 0.9em;
+     line-height:  2.2em;
+     padding: 0 0.6em;
+ }

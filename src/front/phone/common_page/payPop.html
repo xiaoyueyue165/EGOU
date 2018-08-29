@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/common_page.css" />
+</head>
+
+<body class="pop-body" ontouchstart>
+
+    <div class="pop-wrapper">
+        <div class="pop-content">
+            <div id="btn" class="ub ub-ac pop-info">
+                <div id="ignore" class="ub ub-pc gray-btn uinn5 uba bc-border ub-f4">
+                    <span>跳过 </span>
+                </div>
+                <div id="uploadPayImg" class="ub ub-pc mp-btn uinn5 ub-f1 margin-l mp-border">
+                    <span class="white-font">上传付款回执</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+        appcan.initBounce();
+    })
+
+    var orderId = appcan.locStorage.getVal("payorderId");
+
+    function reasonChange() {
+        var reason = $("textarea")[0].value;
+    }
+
+    appcan.button("#ignore", "act-ani", function () {
+        var url = URL + "/app/bill/newPayOrder";
+        var paramJsonStr = "orderId=" + orderId;
+        var func = newPayOrderCallBack;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+    })
+
+    function newPayOrderCallBack(data) {
+        if (data == "ok") {
+            appcan.window.publish('tiaoguo', true);
+            closepop();
+        } else {
+
+        }
+    }
+
+    appcan.button("#uploadPayImg", "act-ani", function () {
+        appcan.window.publish('payPopOrderId', orderId);
+        closepop();
+    })
+
+    //关闭浮动窗口
+    function closepop() {
+        appcan.closePopover("payPop");
+    }
+</script>
+
+</html>

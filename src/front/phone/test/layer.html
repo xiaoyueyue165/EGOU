@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="./css/appcan.control.css"/>
+        <link rel="stylesheet" type="text/css" href="./css/appcan.icon.css"/>
+        <link rel="stylesheet" type="text/css" href="./css/ui-base.css"/>
+        <link rel="stylesheet" type="text/css" href="./css/ui-box.css"/>
+        <link rel="stylesheet" type="text/css" href="./css/ui-color.css"/>
+
+        <style type="text/css">
+            table {
+                width: 100%;
+            }
+            tr {
+                width: 100%;
+            }
+            td {
+                width: 50%;
+                padding: 0.4em;
+                text-align: center;
+            }
+            table td:first-child {
+                color: green;
+            }
+            table td:last-child {
+                color: red
+            }
+
+        </style>
+    </head>
+
+    <!-- 购油弹出框 -->
+    <script src="../common/layer_mobile/layer.js" type="text/javascript" charset="utf-8"></script>
+
+    </body>
+
+    <script type="text/javascript" charset="utf-8">
+        //询问框
+        layer.open({
+            content : '您确定要刷新一下本页面吗？',
+            btn : ['不要', '确定'],
+            yes : function(index) {
+                choose();
+                layer.close(index);
+            }
+        });
+
+        function choose() {
+            alert(1)
+        }
+
+    </script>
+</html>

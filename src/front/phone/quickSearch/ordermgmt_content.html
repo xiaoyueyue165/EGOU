@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/ordermgmt.css">
+
+</head>
+
+<body class="um-vp bc-bg">
+    <div id="fuyou" class="ub-f1 tx-l content-info">
+        <div id="titlebar" class="ub title-bar gray-font  uhide">
+            <div id="" class="ub ub-ac ub-pc col1">
+                付油通知单号
+            </div>
+            <div id="" class="ub ub-ac ub-pc col2">
+                油品品号
+            </div>
+            <div id="" class="ub ub-ac ub-pc col3">
+                数量
+            </div>
+            <div id="" class="ub ub-ac ub-pc col4">
+                操作
+            </div>
+        </div>
+
+        <div id="carlist" class="listbox">
+            <div id="listdetail" class="detail ubb bc-border"></div>
+        </div>
+    </div>
+    <div class="" id="pullstatus"></div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script type="text/javascript" src="../common/comm.js"></script>
+    <script src="../common/numeral.min.js"></script>
+</body>
+<script>
+    var totalRows = 0;
+    appcan.ready(function () {
+        uexWindow.setWindowScrollbarVisible('false');
+
+        appcan.window.subscribe('smsValid', function (data) {
+            if (data == "true") {
+                appcan.window.open("QRCode", "QRCode.html", 10);
+            }
+        });
+
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+            appcan.frame.resetBounce(1);
+            var num = Number(pageNo) * limit;
+            $("#pullstatus" + type).html("");
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '无更多信息',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+            pageNo = Number(pageNo) + 1;
+            addNewData(pageNo);
+        });
+
+        Order.init();
+    });
+
+    var Order = {
+        init: function () {
+            var y = this;
+            y.getAllNotice();
+        },
+        getAllNotice: function () {
+            var y = this;
+            var url = URL + "/app/bill/getAllNotice";
+            var paramJsonStr = "pageSize=" + limit + "&pageNo=" + pageNo;
+            var func = y.getAllNoticeCallBack.bind(y);
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('数据加载中...', '0', '5', '1');
+        },
+        loadMoreNotice: function (current_page, max_page, totalNum) {
+            console.log(arguments)
+            var y = this;
+            console.log(this);
+            $('#loadMore').remove();
+            var newPageNo = Number(pageNo) + 1;
+            console.log("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+            var y = this;
+            var url = URL + "/app/bill/getAllNotice";
+            var paramJsonStr = "pageSize=" + limit + "&pageNo=" + newPageNo;
+            var func = y.getAllNoticeCallBack.bind(y);
+            var dataType = "text";
+            // ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('数据加载中...', '0', '5', '1');
+        },
+        getAllNoticeCallBack: function (data) {
+            var y = this;
+            var isOpen = true;
+            appcan.window.closeToast();
+            if (typeof data == "string") {
+                data = JSON.parse(data)
+            }
+            totalRows = data.totalRows;
+            var fyList = data.list;
+            var listhtml = "";
+            if (fyList.length == 0) {
+                var listhtml = "<div id='time' class='ub ub-pc' style='margin: 0.8em 0;'>" +
+                    "<span class='mf-size1 time'>暂无数据</span>" + "</div>";
+
+                $("#fuyou").append(listhtml);
+                return;
+            } else {
+
+                $("#titlebar")[0].className = "ub title-bar gray-font";
+                for (var i = 0; i < fyList.length; i++) {
+                    var noticeSub = fyList[i];
+                    var noticeCode = noticeSub.noticeCode;
+                    var noticeId = noticeSub.noticeId;
+                    var noticesubId = noticeSub.noticesubId;
+                    var keshenqing = noticeSub.keshenqing;
+                    var oilinfoName = noticeSub.oilinfoName;
+                    var num = Number(noticeSub.oilNumber) - Number(noticeSub.completeNum);
+                    num = numeral(num).format('0[.][00]');
+                    var state = noticeSub.state;
+                    var extractType = noticeSub.extractType;
+
+                    var actHtml = "";
+                    if (extractType === 0) {
+                        actHtml =
+                            "<div class='ub ub-ac ub-pc col4'><span class='isPeisong m-act bg-yellow' onclick='gotoDelivery(\"" +
+                            noticesubId + "\",\"" + extractType + "\")'>配送</span></div>";
+                    } else if (extractType === 1) {
+                        actHtml =
+                            "<div class='ub ub-ac ub-pc col4'><span class='isPeisong m-act bg-green' onclick='gotoDelivery(\"" +
+                            noticesubId + "\",\"" + extractType + "\")'>自提</span></div>";
+                    }
+
+                    var param = noticesubId + "@" + oilinfoName + "@" + noticeSub.oilNumber + "@" + noticeSub.completeNum +
+                        "@" + extractType;
+
+                    listhtml += "<div id='list" + i +
+                        "' class='list-content white-bg'><div id='' class='ub ub-ac umar-l umar-r m-row item-row'><div id='' class='ub ub-ac ub-pc col1'><span class=''>" +
+                        noticeCode + "</span></div><div id='' class='ub ub-ac ub-pc col2'>" + oilinfoName +
+                        "</div><div id='' class='ub ub-ac ub-pc col3'>" + noticeSub.oilNumber + "</div>" + actHtml +
+                        "</div></div>";
+                };
+                $("#listdetail").append(listhtml);
+                loadMore.init({
+                    ele: "listdetail",
+                    data: data.list,
+                    totalNum: totalRows,
+                    limit: limit,
+                    clickFn: loadMoreNotice
+                })
+
+            }
+        }
+    }
+
+    function loadMoreNotice(current_page, max_page, totalNum) {
+        console.log(arguments)
+        var y = this;
+        console.log(this);
+        $('#loadMore').remove();
+        var newPageNo = Number(pageNo) + 1;
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+        var y = this;
+        var url = URL + "/app/bill/getAllNotice";
+        var paramJsonStr = "pageSize=" + limit + "&pageNo=" + newPageNo;
+        var func = Order.getAllNoticeCallBack;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+
+    function checkCode(code) {
+
+        appcan.locStorage.setVal("validCode", code);
+        openPopPage("validMsg");
+    }
+
+    function gotoDelivery(id, num) {
+
+        appcan.locStorage.setVal("yuyuenoticeId", id);
+
+        if (num === '0') {
+            appcan.window.open("delivery", "../mentionOil/delivery.html", 10);
+        } else {
+            appcan.window.open("delivery", "../mentionOil/zitipage.html", 10);
+        }
+
+    }
+</script>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="build/css/ui-box.css">
+        <link rel="stylesheet" href="build/css/ui-base.css">
+        <link rel="stylesheet" href="build/css/ui-color.css">
+        <link rel="stylesheet" href="build/css/appcan.icon.css">
+        <link rel="stylesheet" href="build/css/appcan.control.css">
+        <link rel="stylesheet" href="index/css/index.css" />
+
+        <style type="text/css">
+            .iconhome {
+                width: 1.1em;
+                height: 1.1em;
+                background-image: url('index/myImg/t_icon_home.png');
+            }
+
+            .iconhome_act {
+                width: 1.1em;
+                height: 1.1em;
+                background-image: url('index/myImg/t_icon_home_active.png');
+            }
+
+            .iconservice {
+                width: 1.1em;
+                height: 1.1em;
+                background-image: url('index/myImg/t_icon_service.png');
+            }
+
+            .iconuser {
+                width: 1.1em;
+                height: 1.1em;
+                background-image: url('index/myImg/t_icon_user.png');
+            }
+        </style>
+    </head>
+
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="bc-text-head ub bc-head">
+                <div id="header0" class="uh bc-text-head ub bc-head"></div>
+                <div class="uhide" id="header1"></div>
+                <div class="uhide" id="header2"></div>
+                <div class="uhide" id="header3"></div>
+            </div>
+            <!--header结束-->
+            <!--content开始-->
+            <div id="content" class="ub-f1 tx-l ">
+
+            </div>
+            <!--content结束-->
+
+            <div id="footer" class="uf t-bla ub ubt">
+                <div id="tabview" class="uf sc-bg ubt sc-border-tab nav-bg"></div>
+            </div>
+        </div>
+
+    </body>
+    <script src="build/js/appcan.js"></script>
+    <script src="build/js/appcan.control.js"></script>
+    <script src="build/js/appcan.tab.js"></script>
+    <script src="common/comm.js" type="text/javascript" charset="utf-8"></script>
+    <script src="common/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        // 1.是否有更新
+        // 2.系统版本如何
+        // 3.跳转网页更新活app内部install
+        // 4.原生推送？|| 极光推送 推送可以自定义的json格式数据
+
+        appcan.ready(function() {
+
+            // 获取app版本号
+            // LayoutIndex.appendButton();
+        });
+
+        var LayoutIndex = {
+            options : function() {
+                var y = this,
+                    options = {};
+                y.options.homeBtns = document.getElementById('footer');
+                y.options.body = document.body;
+
+                return y;
+            },
+            init : function() {
+                var y = this;
+                document.body.appendChild(this.getLayoutScript());
+
+                this.options();
+            },
+            bind : function() {
+
+            },
+            appendButton : function() {
+                // var y = this;
+                // var button = document.createElement('button');
+                // button.innerText = "点击";
+                // // button.setAttribute('onclick', "getAppVersion()")
+                // y.options.homeBtns.appendChild(button);
+                // button.onclick = getAppVersion;
+                // button.onclick();
+                // button.onclick();
+            },
+            getLayoutScript : function() {
+                var u = navigator.userAgent,
+                    script = document.createElement('script'),
+                    device = "";
+                //当前设备信息
+                if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {//安卓手机
+                    device = "Android";
+                    script.src = "build/compatible/Android.js";
+
+                } else if (u.indexOf('iPhone') > -1) {//苹果手机
+                    device = "iPhone";
+                    script.src = "build/compatible/Ios.js"
+
+                } else if (u.indexOf('Windows Phone') > -1) {//winphone手机
+                    device = "WindowsPhone";
+                } else {
+                    script.src = "build/compatible/Android.js";
+                }
+                return script;
+            }
+        }
+
+        LayoutIndex.init();
+
+    </script>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/ordermgmt.css">
+</head>
+
+<body class="um-vp " ontouchstart>
+    <div id="page_0" class="up ub ub-ver bc-bg white-bg" tabindex="0">
+        <!--header开始-->
+        <div class="uh bc-text-head ub bc-head" id="header">
+            <div class="nav-btn" id="nav-left">
+                <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">待出库</h1>
+            <div class="nav-btn" id="nav-right"></div>
+        </div>
+        <!--header结束-->
+
+
+        <!--content开始-->
+        <div id="content " class="ub-f1 tx-l umar-t acontent-info">
+            <div id="detail" class="detail bc-border">
+
+            </div>
+
+        </div>
+        <!--content结束-->
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+        appcan.window.subscribe('smsValid', function (data) {
+            if (data == "true") {
+                appcan.window.open("QRCode", "QRCode.html", 10);
+            }
+        });
+
+        var subId = appcan.locStorage.getVal("tobe_subID");
+        getSendBil(subId);
+    });
+
+    function getSendBil(subId) {
+        var url = URL + "/app/bill/getSendBil";
+        var paramJsonStr = "noticesubId=" + subId + "&stateAll=0";
+        var func = getSendBilCallBack;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+    function getSendBilCallBack(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+        }
+        var contentStr = [];
+        var sendList = data.sendList;
+        var htmlstr_to = "";
+        for (var i = 0; i < sendList.length; i++) {
+            var listInfo = sendList[i];
+            var sendId = listInfo.sendId;
+            var noticeCode = listInfo.noticeCode;
+            var oilInfoName = listInfo.oilInfoName;
+            var applyNum = listInfo.applyNum;
+            var sendDate = listInfo.sendDate;
+            var timeInterval = listInfo.timeInterval;
+            var timeString = "";
+            if (typeof (sendDate) == "undefined") {
+                timeString = "";
+            } else {
+                timeString = sendDate.substring(0, sendDate.indexOf(" ")) + "&nbsp;&nbsp;" + timeInterval;
+            }
+            var vehicleCode = listInfo.vehicleCode;
+            var driverMobile = listInfo.driverMobile;
+            var remark = listInfo.remark;
+            if (typeof (remark) == "undefined") {
+                remark = "";
+            }
+            var state = listInfo.state;
+            //0待处理   1 处理中
+            if (state = 1) {
+                htmlstr_to +=
+                    '<div class="list-content white-bg"><div class="ub ub-ac ub-pj umar-l umar-r m-row"><div class="ub ub-ae"><span class="gray-font umar-l">付油通知单号：</span><span>' +
+                    noticeCode + '</span><span class="s-state delivery">处理中</span></div><div id="' + sendId +
+                    '" class="y-font" onclick="openValid(id)">二维码</div></div><div><div class="ub ub-ac umar-a m-row3"><div id="" class="ub ub-ac t-col1">' +
+                    oilInfoName +
+                    '</div><div class="ub ub-ac ub-pc"><span class="gray-font">提油数量&nbsp;&nbsp;</span><span class="umar-l mf-color">' +
+                    applyNum +
+                    '</span></div></div><div class="ub ub-ac umar-l umar-r m-row3"><div><span class="gray-font">提油时间&nbsp;&nbsp;</span><span>' +
+                    timeString +
+                    '</span></div></div><div class="ub ub-ac umar-l umar-r m-row3"><div><span class="gray-font">联系方式&nbsp;&nbsp;</span><span>' +
+                    driverMobile +
+                    '</span></div></div><div class="ub ub-ac umar-l umar-r m-row3"><div><span class="gray-font">车船号&nbsp;&nbsp;</span><span>' +
+                    vehicleCode +
+                    '</span></div></div><div class="ub ub-ac umar-l umar-r m-row4"><span class="gray-font"> 备注信息&nbsp;&nbsp;</span><span>' +
+                    remark + '</span></div></div></div>';
+            }
+
+            if (i < sendList.length - 1) {
+                htmlstr_to += "<div class='gap'></div>";
+            }
+        }
+        $("#detail")[0].innerHTML = htmlstr_to;
+    }
+
+    appcan.button("#nav-left", "ani-act", function () {
+        appcan.window.close(-1);
+    })
+
+    function openValid(code) {
+        appcan.locStorage.setVal("validCode", code);
+        openPopPage("validMsg");
+    }
+</script>
+
+</html>

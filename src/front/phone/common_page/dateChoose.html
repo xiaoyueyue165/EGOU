@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/common_page.css">
+</head>
+
+<body class="pop-body" ontouchstart>
+    <div class="pop-position content-width">
+        <div class=" ub ub-ac ub-pj">
+            <div id="listview0" class="ubt ubr bc-border sc-bg" style="width:50%"></div>
+            <div id="listview1" class="ubt ubr bc-border sc-bg" style="width:50%"></div>
+        </div>
+
+        <div id="btn" class="clo-btn">
+            <div class="ub btn bc-btn ub-ac ub-pc white-font">
+                确定
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../build/js/appcan.listview.js"></script>
+</body>
+<script>
+    var dateChoose = "";
+    var timeChoose = "";
+    appcan.ready(function () {
+        // appcan.initBounce();
+    })
+
+    appcan.button("#btn", "ani-act", function () {
+        appcan.locStorage.setVal("date", dateChoose + " " + timeChoose);
+        appcan.window.publish('dateChoose', dateChoose + " " + timeChoose);
+        closepop();
+    })
+
+    //关闭浮动窗口
+    function closepop() {
+        appcan.closePopover("dateChoose");
+    }
+
+    var lv_date = appcan.listview({
+        selector: "#listview0",
+        type: "thinLine",
+        hasAngle: false
+    });
+    lv_date.set([{
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(1) + "<span class=''></span></div>",
+            id: GetDateStr(1)
+        }, {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(2) + "<span class=''></span></div>",
+            id: GetDateStr(2)
+        }, {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(3) + "<span class=''></span></div>",
+            id: GetDateStr(3)
+        },
+        {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(4) + "<span class=''></span></div>",
+            id: GetDateStr(3)
+        },
+        {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(5) + "<span class=''></span></div>",
+            id: GetDateStr(3)
+        },
+        {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(6) + "<span class=''></span></div>",
+            id: GetDateStr(3)
+        }, {
+            title: "<div id='time' class='ub ub-pc'>" + GetDateStr(7) + "<span class=''></span></div>",
+            id: GetDateStr(3)
+        }
+    ])
+    lv_date.on("click", function (ele, obj, curEle) {
+        dateChoose = obj.id;
+        ele.find("span").addClass("fa fa-check");
+        $('#listview0 span').not(ele.find("span")).removeClass('fa fa-check');
+    })
+    var lv_time = appcan.listview({
+        selector: "#listview1",
+        type: "thinLine",
+        hasAngle: false
+    });
+    lv_time.set([{
+        title: "<div class='ub ub-pc'>上午<span class=''></span></div>",
+        id: "上午"
+    }, {
+        title: "<div class='ub ub-pc'>下午<span class=''></span></div>",
+        id: "下午"
+    }, {
+        title: "<div class='ub ub-pc'>全天<span class=''></span></div>",
+        id: "全天"
+    }])
+    lv_time.on("click", function (ele, obj, curEle) {
+        timeChoose = obj.id;　　
+        ele.find("span").addClass("fa fa-check");
+        $('#listview1 span').not(ele.find("span")).removeClass('fa fa-check');
+    })
+
+
+    function GetDateStr(AddDayCount) {
+        var dd = new Date();
+        dd.setTime(dd.getTime() + AddDayCount * 24 * 60 * 60 * 1000); //获取AddDayCount天后的日期
+        var y = dd.getFullYear();
+        var m = dd.getMonth() + 1; //获取当前月份的日期 
+        var d = dd.getDate();
+        return y + "-" + m + "-" + d;
+    }
+</script>
+
+</html>

@@ -1,0 +1,8 @@
+.avatar{
+    width: 3em;
+    height: 3em;
+    border-radius: 2em;
+    border: 0.08em solid #ee4748;
+    background-image: url('myImg/avatar3.jpg');
+    background-position: center;
+}

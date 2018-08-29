@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../../build/css/ui-box.css">
+        <link rel="stylesheet" href="../../build/css/ui-base.css">
+        <link rel="stylesheet" href="../../build/css/ui-color.css">
+        <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg mf-size1" ontouchstart>
+        <div class="sc-bg padding-a" id="advice0">
+            <div class="ub ub-ac ub-pj" id="">
+                <div id="" class="ub ub-ac m-row4 ub-pc">
+                   <img src="../intentionList/css/myImg/agreement.jpg" style="width: 100%"></img>
+                </div>
+            </div>
+        </div>
+
+        <script src="../../build/js/appcan.js"></script>
+        <script src="../../build/js/appcan.control.js"></script>
+        <script src="../../common/comm.js"></script>
+    </body>
+    <script>
+        var ifopen = [false,false,false];
+        var orderId  ="";
+        var orderCode = "";
+        var TEXTAREA = "有问题请反馈给我们，我们会为您提供更好的服务";
+        
+        appcan.ready(function() {
+        });
+        
+        
+    </script>
+</html>

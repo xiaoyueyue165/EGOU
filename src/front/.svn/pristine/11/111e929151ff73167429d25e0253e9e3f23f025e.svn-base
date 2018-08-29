@@ -1,0 +1,517 @@
+// 外网
+var URL = "http://106.38.74.245:9009/SHXSKH";
+var PICURL = "http://106.38.74.245:9009";
+
+// var URL = "http://10.88.113.96:8080/SHXSKH";
+// var PICURL = "http://10.88.113.96:8080";
+
+//本机
+// var URL = "http://127.0.0.1:8080/SHXSKH";
+// var PICURL = "http://127.0.0.1:8080";
+
+//岩
+// var URL = "http://10.216.174.201:8080/SHXSKH";
+// var PICURL = "http://10.216.174.201:8080";
+
+//测试地址
+// var URL = "http://11.11.136.102:8080/SHXSKH";
+// var PICURL = "http://11.11.136.102:8080";
+
+//从第几条开始
+var offset = "1",
+
+    limit = "15",
+//每页显示行数
+
+    pageNo = "1",
+//从第几条开始
+    pageSize = "10";
+//每页显示行数
+
+// 错误监控
+window.onerror = function(errMsg, scriptURI, lineNumber, columnNumber, errorObj) {
+    setTimeout(function() {
+        var rst = {
+            "错误信息：" : errMsg,
+            "出错文件：" : scriptURI,
+            "出错行号：" : lineNumber,
+            "出错列号：" : columnNumber,
+            "错误详情：" : errorObj
+        };
+
+        console.log(JSON.stringify(rst, null, 10));
+    });
+};
+function isLogin() {
+    var isLogin = appcan.locStorage.getVal("isLogin");
+    if (isLogin) {
+        alert('登录成功')
+    } else {
+        alert("登录失效，请重新登录")
+        lsrmItems(["sid", "cusId", "password", "userId", "username", "userType", "tag", "QRCode"]);
+        appcan.locStorage.setVal("status", "out");
+
+        appcan.window.publish("logout", "logout");
+        appcan.window.open("index", "../index.html", 0);
+    }
+
+}
+
+function ajaxPostQuery(url, paramJsonStr, func, dataType) {
+
+    var dataType = dataType || "json";
+    var url = url || queryUrl;
+    var sid = appcan.locStorage.getVal("sid");
+    var username = appcan.locStorage.getVal("username");
+
+    // if (username) {
+        // // 确定用户已经登录再设置失效时间
+        // clearTimeout(timer);
+//
+        // var timer = setTimeout(function() {
+            // appcan.locStorage.remove("isLogin");
+            // isLogin();
+//
+        // }, 10000)
+    // }
+
+    $.ajax({
+        type : "POST",
+        url : url,
+        data : paramJsonStr + "&sid=" + sid,
+        headers : {
+            accept : "*/*"
+        },
+        //contentType:"application/x-www-form-urlencoded",
+        dataType : dataType,
+        timeout : 0,
+        error : function(XMLHttpRequest, textStatus, errorThrown) {
+            appcan.window.alert("提示", "网络暂时不可用", "确定");
+        },
+        success : function(data) {
+
+            var errorData;
+            if ( typeof data == "string") {
+                try {
+                    errorData = eval("(" + data + ")");
+
+                    if (errorData.error == "-1") {
+                        //alert(url);
+                        relogin(url);
+                    } else {
+
+                        func(data);
+                    }
+                } catch (e) {
+                    func(data);
+                }
+            }
+        }
+    });
+}
+
+/**
+ * @param  {setting}
+ */
+function ajax(setting) {
+    //设置参数的初始值
+    var opts = {
+        method : (setting.method || "POST").toUpperCase(), //请求方式
+        url : setting.url || "", // 请求地址
+        async : setting.async || true, // 是否异步
+        dataType : setting.dataType || "json", // 解析方式
+        data : setting.data || "", // 参数
+        success : setting.success ||
+        function() {
+        }, // 请求成功回调
+        error : setting.error ||
+        function() {
+        } // 请求失败回调
+
+    }
+
+    // 参数格式化
+    function params_format(obj) {
+        var str = ''
+        for (var i in obj) {
+            str += i + '=' + obj[i] + '&'
+        }
+        return str.split('').slice(0, -1).join('')
+    }
+
+    // 创建ajax对象
+    var xhr = new XMLHttpRequest();
+
+    // 连接服务器open(方法GET/POST，请求地址， 异步传输)
+    if (opts.method == 'GET') {
+        xhr.open(opts.method, opts.url + "?" + params_format(opts.data), opts.async);
+        xhr.send();
+    } else {
+        xhr.open(opts.method, opts.url, opts.async);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(opts.data);
+    }
+
+    /*
+     ** 每当readyState改变时，就会触发onreadystatechange事件
+     ** readyState属性存储有XMLHttpRequest的状态信息
+     ** 0 ：请求未初始化
+     ** 1 ：服务器连接已建立
+     ** 2 ：请求已接受
+     ** 3 : 请求处理中
+     ** 4 ：请求已完成，且相应就绪
+     */
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)) {
+            switch (opts.dataType) {
+            case "json":
+                var json = JSON.parse(xhr.responseText);
+                opts.success(json);
+                break;
+            case "xml":
+                opts.success(xhr.responseXML);
+                break;
+            default:
+                opts.success(xhr.responseText);
+                break;
+            }
+        }
+    }
+
+    xhr.onerror = function(err) {
+        opts.error(err);
+    }
+}
+
+Date.prototype.formate = function(format) {
+    var o = {
+        "M+" : this.getMonth() + 1, // month
+        "d+" : this.getDate(), // day
+        "h+" : this.getHours(), // hour
+        "m+" : this.getMinutes(), // minute
+        "s+" : this.getSeconds(), // second
+        "q+" : Math.floor((this.getMonth() + 3) / 3), // quarter
+        "S" : this.getMilliseconds()
+        // millisecond
+    }
+
+    if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(format)) {
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+        }
+    }
+    return format;
+}
+function openPopPage(pageName) {
+    var s = window.getComputedStyle($('#page_0')[0], null);
+    //var w = parseInt(s.width);
+    //var h = parseInt(s.height);
+    appcan.frame.open(pageName, "../common_page/" + pageName + ".html", 0);
+
+}
+
+function open2PopPage(pageName) {
+    var s = window.getComputedStyle($('#page_0')[0], null);
+    //var w = parseInt(s.width);
+    //var h = parseInt(s.height);
+    appcan.frame.open(pageName, "../../common_page/" + pageName + ".html", 0);
+
+}
+
+function addLoadEvent(func) {
+    var oldonload = window.onload;
+    if ( typeof window.onload != 'function') {
+        window.onload = func;
+    } else {
+        window.onload = function() {
+            oldonload();
+            func();
+        }
+    }
+}
+
+function isIncluded(element, array) {
+    for (var i = 0,
+        len = array.length; i < len; i++) {
+        if (array[i] == element) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//price = fmoney(price,2);
+function fmoney(s, n) {
+
+    n = n > 0 && n <= 20 ? n : 2;
+    s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+    var l = s.split(".")[0].split("").reverse(),
+        r = s.split(".")[1];
+    t = "";
+    for ( j = 0; j < l.length; j++) {
+        t += l[j] + ((j + 1) % 3 == 0 && (j + 1) != l.length ? "," : "");
+    }
+    return t.split("").reverse().join("") + "." + r;
+}
+
+function rmoney(s) {
+    return parseFloat(s.replace(/[^\d\.-]/g, ""));
+}
+
+function timestamp(url) {
+    //  var getTimestamp=Math.random();
+    var getTimestamp = new Date().getTime();
+    if (url.indexOf("?") > -1) {
+        url = url + "&timestamp=" + getTimestamp
+    } else {
+        url = url + "?timestamp=" + getTimestamp
+    }
+    return url;
+}
+
+/**
+ *
+ * @desc   对象序列化
+ * @param  {Object} obj
+ * @return {String}
+ */
+function stringfyQueryString(obj) {
+    if (!obj)
+        return;
+    ("");
+
+    var pairs = [];
+
+    for (var key in obj) {
+        var value = obj[key];
+
+        if ( value instanceof Array) {
+            for (var i = 0; i < value.length; ++i) {
+                pairs.push(encodeURIComponent(key + "[" + i + "]") + "=" + encodeURIComponent(value[i]));
+            }
+
+            continue;
+        }
+        pairs.push(encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]));
+    }
+
+    return pairs.join("&");
+}
+
+function nodata(id, text) {
+    var ele = document.getElementById(id);
+    ele.innerHTML = '';
+    var listhtml = "<div id='nodata' class='ub ub-pc' style='margin: 0.8em 0;'>" + "<span class='mf-size2 nodata'>" + text + "</span></div>";
+    ele.innerHTML = listhtml;
+}
+
+function ListenEnter(func) {
+    document.onkeydown = function(event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        if (e && e.keyCode == 13) {// enter 键
+
+            func();
+        }
+    };
+
+}
+
+function tap(ele, touchFn) {
+
+    var SupportsTouches = ("createTouch" in document), //判断是否支持触摸
+        StartEvent = SupportsTouches ? "touchstart" : "mousedown", //支持触摸式使用相应的事件替代
+        EndEvent = SupportsTouches ? "touchend" : "mouseup";
+
+    var startTime = null,
+        endTime = null;
+    ele.addEventListener(StartEvent, function(e) {
+
+        startTime = e.timeStamp
+
+    })
+    ele.addEventListener(EndEvent, function(e) {
+        var context = this;
+
+        endTime = e.timeStamp
+        // console.log(EndEvent+'间距='+(endTime-startTime))
+        if (endTime - startTime < 500) {
+            console.dir('context' + context)
+            touchFn();
+        }
+
+    })
+}
+
+function setStyle(e, a) {
+    var i;
+    for (i in a) {
+        e.style[i] = a[i]
+    }
+}
+
+function changeIcon(index) {
+    var home = document.getElementsByClassName('iconhome_act')[0],
+        server = document.getElementsByClassName('iconservice')[0],
+        user = document.getElementsByClassName('iconuser')[0];
+
+    switch (index) {
+    case 0:
+
+        setStyle(home, {
+            backgroundImage : "url('index/myImg/t_icon_home_active.png')"
+        })
+        setStyle(user, {
+            backgroundImage : "url('index/myImg/t_icon_user.png')"
+        });
+        // setStyle(server, {
+        // backgroundImage : "url('index/myImg/t_icon_service.png')"
+        // });
+
+        break;
+
+    case 1:
+        setStyle(home, {
+            backgroundImage : "url('index/myImg/t_icon_home.png')"
+        })
+        setStyle(user, {
+            backgroundImage : "url('index/myImg/t_icon_user_active.png')"
+        });
+        // setStyle(server, {
+        // backgroundImage : "url('index/myImg/t_icon_service.png')"
+        // });
+
+        break;
+
+    }
+
+}
+
+// case 1:
+// setStyle(home, {
+// backgroundImage : "url('index/myImg/t_icon_home.png')"
+// })
+// setStyle(user, {
+// backgroundImage : "url('index/myImg/t_icon_user.png')"
+// });
+// setStyle(server, {
+// backgroundImage : "url('index/myImg/t_icon_service_active.png')"
+// });
+//
+// break;
+
+function addEvent(a, b, c, d) {
+    a.addEventListener ? a.addEventListener(b, c, d) : a.attachEvent("on" + b, c)
+}
+
+// 获取对应月份的天数
+function mGetDate(year, month) {
+    var d = new Date(year, month, 0);
+    return d.getDate();
+}
+
+function lsSetItems(obj) {
+    for (var i in obj) {
+        appcan.locStorage.setVal(i, obj[i])
+    }
+
+}
+
+function lsrmItems(arr) {
+    arr.forEach(function(i) {
+        appcan.locStorage.remove(arr[i])
+    });
+
+}
+
+//打开页面时加载本地存储的用户信息
+function useInfoLoad() {
+    var username = appcan.locStorage.getVal("username");
+    var password = appcan.locStorage.getVal("password");
+    if (username != null && password != null) {
+        document.getElementById("username").value = username;
+        document.getElementById("password").value = password;
+    } else {
+        document.getElementById("username").value = null;
+        document.getElementById("password").value = null;
+    }
+}
+
+function getStyle(ele, attr) {
+    if (ele.currentStyle !== undefined) {
+        return ele.currentStyle[attr];
+    } else {
+        return window.getComputedStyle(ele, null)[attr] ? window.getComputedStyle(ele, null)[attr] : ele.getAttribute(attr);
+    }
+}
+
+function openBrower(url) {
+    var value = uexWidgetOne.platformName;
+    alert('浏览器类型为 ' + value)
+
+    if (value == "android") {
+        alert(value)
+        uexWidget.startApp("1", "android.intent.action.VIEW", '{"data":{"mimeType":"text/html","scheme":url}}');
+    } else {
+        uexWidget.loadApp(url, null, null);
+    }
+}
+
+// 需要点击事件才可获取
+function getAppVersion() {
+    uexWidgetOne.getCurrentWidgetInfo();
+    uexWidgetOne.cbGetCurrentWidgetInfo = function(opId, dataType, data) {
+        var info = JSON.parse(data);
+        // alert(JSON.stringify(info))
+        var softVer = info.version;
+        // alert('版本号为' + softVer)
+        appcan.locStorage.setVal('AppVersion', softVer);
+    }
+}
+
+function oneAlert(text, button) {
+    appcan.window.alert({
+        title : "提示",
+        content : text,
+        buttons : [button],
+        callback : function(err, data, dataType, optId) {
+            if (data == '0') {
+
+            }
+            if (data == '1') {
+
+            }
+            console.log(err, data, dataType, optId);
+        }
+    });
+}
+
+function twoAlert(text, button1, button2, func1, func2) {
+    appcan.window.alert({
+        title : "提示",
+        content : text,
+        buttons : [button1, button2],
+        callback : function(err, data, dataType, optId) {
+            if (data == '0') {
+                func1();
+            }
+            if (data == '1') {
+
+            }
+            console.log(err, data, dataType, optId);
+        }
+    });
+}
+
+function openToast(text) {
+    var text = text || "加载中...";
+    appcan.window.openToast(text, '0', '5', '1');
+    appcan.initBounce();
+}
+
+function closeToast() {
+    appcan.window.closeToast();
+}

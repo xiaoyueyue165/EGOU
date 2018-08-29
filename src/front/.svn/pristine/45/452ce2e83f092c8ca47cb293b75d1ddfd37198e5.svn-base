@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" href="css/ordermgmt.css">
+
+        <style type="text/css">
+            .m-border1 {
+                padding: 0 0.5em;
+                border-radius: 0.2em;
+                border: 0.1em solid #2931a1;
+                 font-size:1em !important;
+                color: #000;
+            }
+
+        </style>
+    </head>
+    <body class="um-vp bc-bg">
+        <div id="fuyou" class="ub-f1 tx-l content-info">
+            <div id="titlebar" class="ub title-bar gray-font uhide">
+                <div id="" class="ub ub-ac ub-pc col1">
+                    付油通知单号
+                </div>
+                <div id="" class="ub ub-ac ub-pc col2">
+                    油品品号
+                </div>
+                <div id="" class="ub ub-ac ub-pc col3">
+                    未出库
+                </div>
+                <div id="" class="ub ub-ac ub-pc col4">
+                    操作
+                </div>
+            </div>
+
+            <div id="carlist" class="listbox">
+                <div id="listdetail" class="detail ubb bc-border"></div>
+            </div>
+        </div>
+        <div class="" id="pullstatus"></div>
+
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+        <script type="text/javascript" src="../common/comm.js"></script>
+        <script src="../common/numeral.min.js"></script>
+    </body>
+    <script>
+        var totalRows = 0;
+        appcan.ready(function() {
+
+            appcan.window.subscribe('smsValid', function(data) {
+                if (data == "true") {
+                    appcan.window.open("QRCode", "QRCode.html", 10);
+                }
+            });
+
+            appcan.frame.setBounce(1, function(type) {
+                $("#pullstatus").html("");
+            }, function(type) {
+                $("#pullstatus").html("");
+            }, function(type) {
+                $("#pullstatus").html("");
+                appcan.frame.resetBounce(1);
+                var num = Number(pageNo) * limit;
+                $("#pullstatus" + type).html("");
+                if (Number(totalRows) <= num) {
+                    appcan.window.openToast({
+                        msg : '无更多信息',
+                        duration : 1000,
+                        position : 5,
+                        type : 0
+                    });
+                    return;
+                }
+                pageNo = Number(pageNo) + 1;
+                getAllNotice();
+            });
+
+            getAllNotice();
+        });
+        function getAllNotice() {
+            var url = URL + "/app/bill/getAllNotice";
+            var paramJsonStr = "pageSize=" + limit + "&pageNo=" + pageNo;
+            var func = getAllNoticeCallBack;
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('数据加载中...', '0', '5', '1');
+        }
+
+        function getAllNoticeCallBack(data) {
+            appcan.window.closeToast();
+            if ( typeof data == "string") {
+                data = eval("(" + data + ")");
+                console.log(data)
+            }
+            totalRows = data.totalRows;
+            var fyList = data.list;
+           if(fyList.length == '0'){
+                appcan.window.closeToast();
+               
+                var msg="<div id='time' class='ub ub-pc pc time-wrapper''>"+
+                                    "<span class='mf-size2 time'>暂无数据</span>"+
+                                "</div>";
+                
+                    $("body").append(msg);
+               
+               return;
+           }else {
+                $("#titlebar").className="ub title-bar gray-font";
+                 var listhtml = "";
+            for (var i = 0; i < fyList.length; i++) {
+                var noticeSub = fyList[i];
+                var noticeCode = noticeSub.noticeCode;
+                //付油通知单号
+
+                var noticeId = noticeSub.noticeId;
+                var noticesubId = noticeSub.noticesubId;
+                var oilinfoName = noticeSub.oilinfoName;
+                var num = Number(noticeSub.oilNumber) - Number(noticeSub.completeNum);
+                num = numeral(num).format('0[.][00]');
+                var state = noticeSub.state;
+                var extractType = noticeSub.extractType;
+
+                var actHtml = "";
+                if (state == 1) {
+                    actHtml = "<div class='ub ub-ac ub-pc col4'><span class='m-act act-binary'>已关闭</span></div>";
+                } else {
+                    if (extractType == 0) {
+                        actHtml = "<div class='ub ub-ac ub-pc col4' onclick=\"checkCode('" + noticeCode + "')\"><span class='inline-block m-border1'>配送</span><br><span>二维码</span></div>";
+                    } else {
+                        actHtml = "<div class='ub ub-ac ub-pc col4' onclick=\"checkCode('" + noticeCode + "')\"><span class='m-act act-binary'>自提</span><br><span>二维码</span></div>";
+                    }
+                }
+
+                var param = noticesubId + "@" + oilinfoName + "@" + noticeSub.oilNumber + "@" + noticeSub.completeNum + "@" + extractType;
+
+                listhtml += "<div id='list" + i + "' class='list-content white-bg'><div id='' class='ub ub-ac umar-l umar-r m-row item-row'><div id='' class='ub ub-ac ub-pc col1' onclick=\"openFYDetail('" + param + "')\"><span class='mf-color'>" + noticeCode + "</span></div><div id='' class='ub ub-ac ub-pc col2'>" + oilinfoName + "</div><div id='' class='ub ub-ac ub-pc col3'>" + num + "</div>" + actHtml + "</div></div>";
+            };
+            $("#listdetail").append(listhtml);
+           }
+          
+        }
+
+        function openFYDetail(param) {
+            // appcan.locStorage.setVal("noticeSubInfo", param);
+            // appcan.window.open("fydetail", "fydetail.html", 10);
+        }
+
+        function checkCode(code) {
+            //appcan.locStorage.setVal("tobe_subID", subID);
+            //appcan.window.open("fy_tobe", "fy_tobe.html", 10);
+            appcan.locStorage.setVal("validCode", code);
+            // appcan.window.publish('smsValid', "true");
+            // openPopPage("validMsg");
+            
+            appcan.window.open("qrcode", "QRCode.html", 10, 0);
+
+        }
+    </script>
+</html>

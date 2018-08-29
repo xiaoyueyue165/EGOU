@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+    </head>
+    <body class="um-vp white-bg" ontouchstart>
+        <div id="evaluate">
+            <div class="umar-a ">
+                <span class='gray-font'>销售订单号：</span>
+                <span id="orderCode"></span>
+            </div>
+            <div class="umar-a">
+                <span class="mf-size1">客户经理服务平均分:</span>
+                <span id="avgScore" class="block-label y-bg umar-r"></span>
+            </div>
+            <div class="ub ub-ver uba uc-a umar-a ">
+                <div class="umar-a" id="">
+                    <span class="mf-size2">服务态度：</span>
+                    <span id="srvAttitude" class="block-label y-bg umar-r"></span>
+                </div>
+                <div class="umar-a mf-size2 gray-font" id="">
+                    <span class="">建议：</span>
+                    <span id="attitudeRemark"></span>
+                </div>
+            </div>
+            <div class="ub ub-ver uba uc-a umar-a">
+                <div class="umar-a" id="">
+                    <span class="mf-size2">响应速度：</span>
+                    <span id="srvSpeed" class="block-label y-bg umar-r"></span>
+                </div>
+                <div class="umar-a mf-size2 gray-font" id="">
+                    <span class="">建议：</span>
+                    <span id="speedRemark"></span>
+                </div>
+            </div>
+            
+            <div class="ub ub-ver uba uc-a umar-a">
+                <div class="umar-a" id="">
+                    <span class="mf-size2">问题处理：</span>
+                    <span id="srvProb" class="block-label y-bg umar-r"></span>
+                </div>
+                <div class="umar-a mf-size2 gray-font" id="">
+                    <span class="">建议：</span>
+                    <span id="probRemark"></span>
+                </div>
+            </div>        
+        </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+    </body>
+    <script>
+        var orderId = "";
+        var orderCode = "";
+        appcan.ready(function() {
+            var evaluateId = appcan.locStorage.getVal("viewmanagerEvaluate_orderId");
+            orderId = evaluateId.split("@")[0];
+            orderCode = evaluateId.split("@")[1];
+            if(evaluateId!=null){
+                viewManagerEva(orderId);
+            }
+        });
+        
+        function viewManagerEva(orderId){
+            var url = URL + "/app/bill/getEvaluateByOrderId";
+            var paramJsonStr = "orderId="+orderId;
+            var func = getEvaluateByOrderIdCallback;
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('数据加载中...', '0', '5', '1');
+        }
+        function getEvaluateByOrderIdCallback(data){
+            appcan.window.closeToast();
+            
+            if ( typeof data == "string") {
+                data = eval("(" + data + ")");
+            }
+            var evaluate = data.pojoList;
+            for (var i=0; i < evaluate.length; i++) {
+               var avgScore = evaluate[i].avgScore;
+               var attitudeRemark = evaluate[i].attitudeRemark;
+               if(typeof(attitudeRemark)=="undefined"){
+                   attitudeRemark="";
+               }
+               var speedRemark = evaluate[i].speedRemark;
+               if(typeof(speedRemark)=="undefined"){
+                   speedRemark="";
+               }
+               var probRemark = evaluate[i].probRemark;
+               if(typeof(probRemark)=="undefined"){
+                   probRemark="";
+               }
+               var srvAttitude = evaluate[i].srvAttitude;
+               if(typeof(srvAttitude)=="undefined"){
+                   srvAttitude="";
+               }
+               var srvSpeed = evaluate[i].srvSpeed;
+               if(typeof(srvSpeed)=="undefined"){
+                   srvSpeed="";
+               }
+               var srvProb = evaluate[i].srvProb;
+               if(typeof(srvProb)=="undefined"){
+                   srvProb="";
+               }
+               
+               $("#avgScore")[0].innerHTML = avgScore+"分";
+               $("#orderCode")[0].innerHTML = orderCode;
+               $("#srvAttitude")[0].innerHTML = srvAttitude+"分";
+               $("#attitudeRemark")[0].innerHTML = attitudeRemark;
+               $("#srvSpeed")[0].innerHTML = srvSpeed+"分";
+               $("#speedRemark")[0].innerHTML = speedRemark;
+               $("#srvProb")[0].innerHTML = srvProb+"分";
+               $("#probRemark")[0].innerHTML = probRemark;
+            };
+        }
+
+    </script>
+</html>

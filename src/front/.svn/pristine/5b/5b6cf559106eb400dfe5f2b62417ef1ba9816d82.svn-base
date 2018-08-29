@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    <link rel="stylesheet" href="../msg_mgmt/css/msg_mgmt.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div id="listview" class="sc-bg msg-list"></div>
+
+</body>
+<script src="../../build/js/appcan.js"></script>
+<script src="../../build/js/appcan.control.js"></script>
+<script src="../../build/js/appcan.listview.js"></script>
+</body>
+<script>
+    appcan.ready(function () {});
+
+    var lv = appcan.listview({
+        selector: "#listview",
+        type: "thickLine",
+        multiLine: 1,
+        hasIcon: true,
+    });
+    lv.set([{
+        icon: "css/myImg/icon_gift.png",
+        title: "促销活动",
+        describe: "中石油积分兑换促销活动",
+        id: 0
+    }, {
+        icon: "css/myImg/icon_horn.png",
+        title: "通知提醒",
+        describe: "您还有一笔款未支付",
+        id: 1
+    }, {
+        icon: "css/myImg/icon_manager.png",
+        title: "我的客户经理",
+        describe: "客户服务助手在这里为您服务",
+        id: 2
+    }])
+    lv.on("click", function (ele, obj, curEle) {
+        switch (obj.id) {
+            case 0:
+                appcan.window.open("actipage", "../activityzone/actipage.html", 10);
+                break;
+            case 1:
+                appcan.window.open("notice", "../notice/notice.html", 10);
+                break;
+            case 2:
+                appcan.window.open("contact", "../contact/contact.html", 10);
+                break;
+        }
+    })
+</script>
+
+</html>

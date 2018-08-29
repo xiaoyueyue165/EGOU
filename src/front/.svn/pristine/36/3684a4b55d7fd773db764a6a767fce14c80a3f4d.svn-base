@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/accountManager.css" />
+    <script type="text/javascript" src="../common/comm.js"></script>
+    <style type="text/css">
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+            /*隐藏滚轮*/
+        }
+    </style>
+</head>
+
+<body class="um-vp bc-bg">
+    <div id="page_0" class="up ub ub-ver  white-bg" tabindex="0">
+        <!--header开始-->
+        <div class="fix uh bc-text-head ub bc-head" id="header">
+            <div class="nav-btn" id="nav-left">
+                <div class="fa fa-angle-left fa-2x">
+                </div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">客户经理通讯录</h1>
+            <div class="nav-btn nav-bt nav-txt-right" id="nav-right">
+            </div>
+        </div>
+
+        <div class="uh bc-text-head ub bc-head" id="header1">
+            <div class="nav-btn" id="nav-left">
+                <div class="fa fa-angle-left fa-2x">
+                </div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">客户经理通讯录</h1>
+            <div class="nav-btn nav-bt nav-txt-right" id="nav-right">
+            </div>
+        </div>
+
+        <!--header结束-->
+
+        <!--content开始-->
+        <div id="" class="ub ub-ver">
+            <div id="listview" class="ubt bc-border sc-bg"></div>
+
+        </div>
+        <!--content结束-->
+
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../build/js/appcan.listview.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+
+        //去除滚动条
+        uexWindow.setWindowScrollbarVisible('false');
+        appcan.window.disableBounce();
+        selectSalerList();
+        //  
+    })
+    appcan.button("#nav-left", "btn-act", function () {
+        appcan.window.close(-1);
+    })
+
+    function selectSalerList() {
+        var url = URL + "/comm/cus/selectSalerList"; //访问路径
+        var paramJsonStr = ""; //参数
+        var func = selectSalerListCallBack; //返回的方法
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('正在获取通讯录...', '0', '5', '1');
+    }
+
+    function selectSalerListCallBack(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+            console.log(data)
+        }
+
+        var listData = [];
+        var celldata = {};
+        var groupName = "";
+        for (var i = 0; i < data.length; i++) {
+            var ORG_NAME = data[i].ORG_NAME;
+            if (typeof (ORG_NAME) == "undefined") {
+                ORG_NAME = "";
+            }
+            var EMP_NAME = data[i].EMP_NAME;
+            if (typeof (EMP_NAME) == "undefined") {
+                EMP_NAME = "";
+            }
+            var EMP_POST = data[i].EMP_POST;
+            if (typeof (EMP_POST) == "undefined") {
+                EMP_POST = "";
+            }
+            var EMP_MOBILE = data[i].EMP_MOBILE;
+            if (typeof (EMP_MOBILE) == "undefined") {
+                EMP_MOBILE = "";
+            }
+
+            if (groupName != ORG_NAME) {
+                if (typeof (celldata.title) != "undefined") {
+                    listData.push(celldata);
+                }
+                groupName = ORG_NAME;
+                celldata = {};
+                celldata["title"] = "<div class='umar-a'><span class='mf-size2 mf-color'>" + groupName +
+                    "</span></div>";
+                celldata["items"] = [];
+            }
+
+            var cell = {
+                title: "<div class='ub ub-pj'><div>" + EMP_NAME + "</div><div id='" + EMP_MOBILE +
+                    "' class='y-font' onclick='makecall(id)'>" + EMP_MOBILE + "</div></div>",
+                describe: "<div class='gray-font umar-t'>" + EMP_POST + "</div>",
+            }
+            celldata["items"].push(cell);
+
+
+            if (i == (data.length - 1)) {
+                listData.push(celldata);
+
+            }
+
+        }
+
+        var lv = appcan.listview({
+            selector: "#listview",
+            type: "thickLine",
+            hasTouchEffect: false,
+            hasAngle: false,
+            hasSubTitle: true,
+            hasGroup: true,
+            multiLine: 1,
+        });
+        lv.set(listData);
+
+    }
+
+    function makecall(id) {
+        uexCall.dial(id);
+    }
+</script>
+
+</html>

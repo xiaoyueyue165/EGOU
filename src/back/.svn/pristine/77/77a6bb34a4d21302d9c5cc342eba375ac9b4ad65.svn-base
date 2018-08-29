@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div>
+            <!--列表开始-->
+            <div class="sc-bg3" id="treeview">
+
+            </div>
+            <!--列表结束-->
+        </div>
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+        <script src="../build/js/appcan.listview.js"></script>
+        <script src="../build/js/appcan.treeview.js"></script>
+        <script src="../common/common.js"></script>
+    </body>
+    <script>
+        var dataList = [];
+        appcan.ready(function() {
+            initDelivery();
+            appcan.initBounce();
+
+            name = uexWidgetOne.platformName;
+            if (name == "android") {
+                uexWindow.setSlidingWindowEnabled(0);
+                uexWindow.onSwipeRight = function() {
+                    /*
+                     uexWindow.windowBack(10,"");
+                     uexWindow.insertWindowAboveWindow("UIFW","index");
+                     uexWindow.setAnimitionCurve(3);*/
+                    uexWindow.evaluateScript("", "0", "close()");
+                    //在浮动窗口关闭主窗口
+                }
+            } else {
+                if (name == "iOS") {
+                    uexWindow.setSlidingWindowEnabled(1);
+                }
+            }
+            //uexWidget.onLoadByOtherApp = onLoadByOtherApp;
+        })
+        function initDelivery(){
+            var url = URL + "/app/backgrd/cusMng/queryCustomerBySaler";
+            var paramJsonStr = "pager.pageSize="+limit+"&pager.pageNo="+offset;
+            var func = selectBillDeliveryCallback;
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+        }
+
+        function selectBillDeliveryCallback(param) {
+            appcan.window.closeToast();
+            if ( typeof param == "string") {
+                param = eval("(" + param + ")");
+            }
+            var data = param.rows;
+            if(data.length==0){
+                appcan.window.openToast('暂无数据', '1000', '5', '0');
+            }
+            for (var i = 0; i < data.length; i++) {
+                var name = data[i].cusCompany;
+                var grade = data[i].cusGradeName;
+                var id = data[i].cusId;
+                dataList[i] = {
+                    "header" : name + " " +"<span class='inline-block m-border1'>" + grade + "</span>",
+                    "name" : id,
+                    "url" : "myCusInfo.html"
+                };
+            }
+            var tv = appcan.treeview({
+            selector : "#treeview",
+            defaultOpen : 1//默认打开第几项，必须包含数据
+        });
+        tv.set(dataList);
+
+        tv.on('listviewClick', function(ele, data, obj) {
+            if (data.name && data.url) {
+                appcan.locStorage.setVal("lv_index", ele.data("index"));
+                appcan.window.open(data.name, data.url, 10);
+            }
+        });
+        tv.on('click', function(ele, obj, subobj) {
+            if (obj.name && obj.url) {
+                appcan.locStorage.setVal("cusId",obj.name);
+                appcan.window.open(obj.name, obj.url, 10, 1024);
+            }
+        });
+        }
+    </script>
+</html>

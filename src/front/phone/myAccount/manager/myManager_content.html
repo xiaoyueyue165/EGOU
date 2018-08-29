@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../../build/css/ui-box.css">
+        <link rel="stylesheet" href="../../build/css/ui-base.css">
+        <link rel="stylesheet" href="../../build/css/ui-color.css">
+        <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../../build/css/appcan.control.css">
+        <link rel="stylesheet" href="../manager/css/my_manager.css"/>
+        <script type="text/javascript" src="../../common/comm.js"></script>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+
+        <div id="" class="sc-bg">
+            <div id="name" class="ub ub-ac umar-l umar-r ub-pj m-row3">
+                <div id="" class="ub ub-ac">
+                    <div class="ub-img avatar" id="img"></div>
+                    <div id="empName1" class="umar-l">
+                      
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tel" class="ub ub-ac ub-pj umar-l umar-r m-row3">
+                <div class="ub ub-ver ">
+                    <div id="empMobile1" class="m-lineheight">
+                        
+                    </div>
+                    <div class="m-lineheight gray-font mf-size2">
+                                                                     手机
+                    </div>
+                </div>
+                <div id="call" class="fa fa-phone y-font">
+
+                </div>
+            </div>
+            
+            <div id="email" class="ub ub-ac ub-pj umar-l umar-r m-row3">
+                <div class="ub ub-ver" >
+                    <div class="m-lineheight gray-font mf-size2">
+                                                                    电子邮件
+                    </div>
+                    <div id="empEmail1" class="m-lineheight">
+                        
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+
+            <div id="org" class="ub ub-ac ub-pj umar-l umar-r m-row3">
+                <div class="ub ub-ver">
+                    <div class="m-lineheight gray-font mf-size2">
+                        公司
+                    </div>
+                    <div id="orgName1" class="m-lineheight">
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div id="address" class="ub ub-ac ub-pj umar-l umar-r m-row3">
+                <div class="ub ub-ver">
+                    <div class="m-lineheight gray-font mf-size2">
+                        办公地址
+                    </div>
+                    <div id="orgAddress1" class="m-lineheight">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var cusId = appcan.locStorage.getVal("cusId");
+            
+            var url=URL+"/api/cus/queryCusInfo";//访问路径
+            var paramJsonStr="cusId=" + cusId;//参数
+            var func=showRetInfo;//返回的方法
+            var dataType="text";
+            ajaxPostQuery(url,paramJsonStr,func,dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+        });
+
+        function showRetInfo(data){
+            appcan.window.closeToast();
+            if(typeof data == "string"){
+                data=eval("("+data+")");
+            } 
+            var empName=data.empName;//姓名
+            var empMobile=data.empMobile;//手机号
+            var orgName=data.orgName;//分公司
+            var officePhone=data.officePhone;//固定电话
+            var empEmail=data.empEmail;//邮箱
+            var orgAddress=data.orgAddress;//地址
+            var empPhoto=data.empPhoto;//地址
+            
+            if (typeof(empPhoto) == "undefined") { 
+                empPhoto="";
+            }
+            if (typeof(empName) == "undefined") { 
+                empName="";
+            }
+            if (typeof(empMobile) == "undefined") { 
+                empMobile="";
+            }
+            if (typeof(orgName) == "undefined") { 
+                orgName="";
+            }
+            if (typeof(officePhone) == "undefined") { 
+                officePhone="";
+            }
+            if (typeof(empEmail) == "undefined") { 
+                empEmail="";
+            }
+            if (typeof(orgAddress) == "undefined") { 
+                orgAddress="";
+            }
+            
+            if(empMobile==""){
+                $("#call").addClass("uhide");
+            }else{
+                $("#call").removeClass("uhide");
+            }
+           
+           empName1.innerHTML=empName;
+           empMobile1.innerHTML=empMobile;
+           orgName1.innerHTML=orgName;
+          /*
+           var imgUrl=URL.substring(0,URL.length-7);
+                     alert(PICURL+URL);
+                     alert(imgUrl+empPhoto);*/
+          //alert(URL+empPhoto);
+           if(empPhoto!=""){
+               img.innerHTML='<img src="'+URL+empPhoto+'" style="width:100px;height:100px; border-radius:50%;"/>';
+           }else{
+                $('#img').addClass("avatar");
+           }
+           
+           //officePhone1.innerHTML=officePhone;
+           empEmail1.innerHTML=empEmail;
+           orgAddress1.innerHTML=orgAddress;
+        }
+        
+        appcan.button("#call", "btn-act", function(){
+            var phoneNum = empMobile1.innerHTML
+            uexCall.dial(phoneNum);
+        })
+    </script>
+</html>

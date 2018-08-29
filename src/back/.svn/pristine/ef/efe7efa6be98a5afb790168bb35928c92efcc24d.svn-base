@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/myCus.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+
+    <div class="sc-bg b-border">
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">ERP编码</span>
+            </div>
+            <div id="erp">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">登陆账号</span>
+            </div>
+            <div id="loginName">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">客户名称</span>
+            </div>
+            <div id="cusCompany" class="w-break">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">客户类型</span>
+            </div>
+            <div id="cusType">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">用油地</span>
+            </div>
+            <div id="oilPlace">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">单位地址</span>
+            </div>
+            <div id="address">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row " id="">
+            <div id="" class="l-width">
+                <span class="gray-font">联系人</span>
+            </div>
+            <div id="lxr">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row no-border-b" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">手机号</span>
+            </div>
+            <div id="cusMobile">
+            </div>
+        </div>
+    </div>
+    <!--footer-->
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../build/js/appcan.tab.js"></script>
+    <script src="../common/common.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+        var cusId = appcan.locStorage.getVal("cusId");
+        console.info(cusId);
+        initDelivery(cusId);
+    });
+
+    function initDelivery(cusId) {
+        var url = URL + "/app/backgrd/cusMng/queryCustomer";
+        var paramJsonStr = "cusId=" + cusId + "&pager.pageSize=" + limit + "&pager.pageNo=" + offset;
+        var func = selectBillDeliveryCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+    }
+
+    function selectBillDeliveryCallback(param) {
+        appcan.window.closeToast();
+        if (typeof param == "string") {
+            param = eval("(" + param + ")");
+        }
+        console.info(param);
+        var data = param.rows;
+        var cusOilPlace;
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].cusOilPlace == "0") {
+                cusOilPlace = "京内";
+            } else {
+                cusOilPlace = "京外";
+            }
+
+            $("#erp")[0].innerHTML = data[i].cusCode;
+            $("#loginName")[0].innerHTML = data[i].cusLoginName;
+            $("#cusCompany")[0].innerHTML = data[i].cusCompany + "<span class='inline-block m-border1'>" + data[i].cusGradeName +
+                "</span>";
+            $("#cusType")[0].innerHTML = data[i].custypeName + "_" + data[i].custypesubName;
+            $("#oilPlace")[0].innerHTML = cusOilPlace;
+            $("#address")[0].innerHTML = data[i].cusProvince + data[i].cusCity + data[i].cusArea + data[i].cusAddress;
+            $("#lxr")[0].innerHTML = data[i].cusLeader;
+            $("#cusMobile")[0].innerHTML = data[i].cusMobile;
+
+        }
+    }
+</script>
+
+</html>

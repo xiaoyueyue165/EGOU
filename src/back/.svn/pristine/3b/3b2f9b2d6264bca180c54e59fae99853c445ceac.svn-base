@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="./css/order.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+
+    <div id="" class="listbox">
+        <div id="listdetail" class="detail bc-border"></div>
+    </div>
+    <div class="" id="pullstatus"></div>
+    <div id="more"></div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/common.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+    <script src="../common/jquery.min.js"></script>
+</body>
+
+<script id="Allorder_list" type="text/html">
+
+    {{each list}}
+
+    <div id="list{{$index}}" class='list-content white-bg'>
+        <div id='orderlist" + i + "'>
+            <div id='' class='ub ub-ac umar-a m-row3'>
+
+                <span class="gray-font ulev0">
+                    订单日期
+                </span>
+                <span id="ordersaleCode">{{$value.updateDate}}</span>
+            </div>
+
+            <div id='' class='ub ub-ac umar-a m-row3'>
+
+                <span class="gray-font ulev0">
+                    付油通知单编号
+                </span>
+                <span id="ordersaleCode">{{$value.noticeCode}}</span>
+            </div>
+
+            <div id='' class='ub ub-ac umar-a m-row3'>
+
+                <div id='' class='ub ub-ac t-col1'>
+                    <!-- 油品名称 -->
+
+                    {{$value.oilinfoName}}
+
+                    <input type="hidden" name="orderId" class="orderId" value="{{$value.orderId}}" />
+
+                </div>
+                <div id='' class='ub ub-ac ub-pc t-col2'>
+                    <span class='umar-r mf-color umar-r'>
+                        <span class='mf-size2'>￥</span>
+                        <!-- 油品价格 -->
+
+                        {{$value.oilPrice}}
+
+                        <span class='gray-font mf-size2'>/吨</span>
+                    </span>
+                    <span class='umar-l'>
+                        <!-- 油品数量-->
+
+                        x {{if $value.oilNumber
+                        <0}} 0 {{else}} {{$value.oilNumber}} {{/if}} </span>
+                </div>
+            </div>
+
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                <div id='total' class=''>
+                    <span class='gray-font'>总金额&nbsp;&nbsp;
+
+                    </span>
+                    <span class='mf-color AllPrice'>
+
+                        {{if $value.oilAmot
+                        <0}} 0 {{else}} {{$value.oilAmot}} {{/if}} </span>
+                </div>
+
+            </div>
+
+            <div></div>
+            <div id="position{{$index}}">
+
+            </div>
+            <div class='gap' id='idx' +{{$index}}></div>
+
+        </div>
+    </div>
+
+    {{/each}}
+</script>
+<script>
+    var listData = {},
+        sumPrice = 0.00,
+        listNum = 0,
+        totalRows = 0,
+        APPLYNUM = 0,
+        SENDID = null,
+        NOTICECODE1 = "";
+    // 当所有组件准备好后执行内部回调方法
+    appcan.ready(function () {
+
+        uexWindow.setWindowScrollbarVisible('false');
+
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("松手了,产生事件了,开始更新数据！");
+            // 下拉事件发生
+            appcan.frame.resetBounce(1);
+            // 当前总条数
+            var num = Number(pageNo) * limit;
+
+
+            $("#pullstatus").html("");
+            // alert("totalRows=" + totalRows)
+
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '没有更多',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+
+            newPageNo = Number(pageNo) + 1;
+
+            alert('准备加载第' + newPageNo + '页')
+        });
+        Order.init();
+
+    });
+
+    var Order = {
+        init: function () {
+            var y = this;
+            y.queryOrderList();
+        },
+        queryOrderList: function (newPageNo) {
+            var y = this;
+            var fenpeiArr = JSON.parse(appcan.locStorage.getVal('fenpeiObj'));
+
+            var ysfs = fenpeiArr[4] === "公路" ? "traffic_type_0" : "traffic_type_1";
+            APPLYNUM = fenpeiArr[6];
+            SENDID = fenpeiArr[7];
+            NOTICECODE1 = fenpeiArr[8] || "";
+
+
+            var url = URL + "/backgrd/oil/order/queryOrderPointNoticeCode",
+                paramJsonStr = "&pager.pageNo=" + pageNo + "&pager.pageSize=" + pageSize + "&oilinfoId=" +
+                fenpeiArr[2] +
+                "&ysfs=" +
+                ysfs + "&extractType=" + fenpeiArr[3] + "&applyNum=" +
+                fenpeiArr[6],
+                func = y.getOrderListCallback.bind(this),
+                dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+        },
+        getOrderListCallback: function (data) {
+            appcan.window.closeToast();
+            if (typeof (data) === 'string' && data != "") {
+                var data = JSON.parse(data);
+            }
+            if (data == "") {
+                nodata('listdetail', '您没有符合条件的付油通知单')
+                return;
+            }
+
+            var listOrder = data.rows;
+            var totalCount = listOrder.length;
+
+            if (listOrder.length == 0) {
+                nodata('listdetail', '您没有符合条件的付油通知单')
+                return;
+            } else {
+                var html = template('Allorder_list', {
+                    list: listOrder
+                })
+
+                $('#listdetail').append(html);
+                for (var i = 0; i < listOrder.length; i++) {
+
+                    var orderId = listOrder[i].orderId;
+                    var appendHtml = "<div  class='ub ub-ac ub-pe m-row4'><span class='y-font umar-l' id='" +
+                        listOrder[i]["orderId"] +
+                        "'   onclick='confirmIntention(\"" +
+                        listOrder[i].orderId + "\",\"" +
+                        listOrder[i].noticeCode + "\",\"" + listOrder[i].cusId + "\")'>确认</span></div>";
+
+                    $("#position" + i)[0].innerHTML = appendHtml;
+
+                }
+                var length =  data["pager.totalRows"] || data.rows.length;
+
+                loadMore.init({
+                    ele: "more",
+                    data: listOrder,
+                    totalNum:length,
+                    limit: 15,
+                    clickFn: func2
+                });
+            }
+        }
+    }
+
+    function func2(current_page, max_page, totalNum) {
+        var y = this;
+        $('#loadMore').remove();
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+        var y = this;
+        Order.queryOrderList(current_page);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+    //确认选择付油通知单编码
+    function confirmIntention(id, noticeCode, cusId) {
+        //分公司确认
+        var url = URL + "/backgrd/oil/order/editOrderAddNoticeCode",
+
+            paramJsonStr = "&orderId=" + id + "&noticeCode=" + noticeCode + "&sendId=" + SENDID +
+            "&applyNum=" +
+            APPLYNUM + "&cusId=" + cusId + "&noticeCode1=" + NOTICECODE1,
+            func =
+            pushOrderCallback,
+            dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+
+    }
+
+    function pushOrderCallback(data) {
+        appcan.window.closeToast();
+        if (data == '修改成功') {
+            uexWindow.alert("提示", "配送申请提交成功", "确定");
+            uexWindow.evaluateScript("orderlist", 0, "closePage()");
+        } else {
+            uexWindow.alert("提示", "选择付油单号提交失败！", "确定");
+        }
+
+    }
+</script>
+
+</html>

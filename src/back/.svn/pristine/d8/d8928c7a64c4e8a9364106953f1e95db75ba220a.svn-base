@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+  <link rel="stylesheet" href="../build/css/ui-box.css">
+  <link rel="stylesheet" href="../build/css/ui-base.css">
+  <link rel="stylesheet" href="../build/css/ui-color.css">
+  <link rel="stylesheet" href="../build/css/appcan.icon.css">
+  <link rel="stylesheet" href="../build/css/appcan.control.css">
+  <link rel="stylesheet" href="../intention/css/intention.css" />
+  <style>
+    #cusName {
+      width: auto;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      font: 1.2em;
+      background-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="pop-body" ontouchstart>
+
+  <div class="pop-wrapper">
+    <div class="pop-content">
+      <div class="pop-info">
+        <label for="cusName">客户名称：</label>
+        <input type="text" id="cusName" class="mf-size0" placeholder="请输入客户名称">
+      </div>
+
+      <div id="btn" class="ub ub-ac">
+        <div id="confirmBtn" class="uinn5 ubt ubr bc-border ub ub-f1 ub-pc">
+          <span class="bc-color">查询</span>
+        </div>
+        <div id="cancelBtn" class="uinn5 ubt bc-border ub ub-f1 ub-pc">
+          <span class="bc-color">关闭</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../build/js/appcan.js"></script>
+  <script src="../build/js/appcan.control.js"></script>
+  <script src="../common/common.js"></script>
+  <script src="../common/jquery.min.js"></script>
+</body>
+<script>
+  appcan.ready(function () {
+    appcan.initBounce();
+  })
+  // 订单审核——分页参数传递
+  var toCheckout_pagerParam = {}
+  // 配送自提审核-分页参数传递
+  var toPSZT_pagerParam = {}
+
+  appcan.button("#confirmBtn", "act-ani", function () {
+    var type = appcan.locStorage.getVal("searchType");
+    var text = document.querySelector("#cusName").value;
+    var orgTypeText = getVal("companyType") === "总部" ? 'zongbu' : "";
+    var url, paramJsonStr, callback,
+      dataType = "text";
+
+
+    if (type == "toAudit") {
+
+      url = URL + "/app/oil/order/queryOrderList";
+      paramJsonStr = "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&orgId=" + getVal("orgId") +
+        "&orgtype=" + orgTypeText + "&state=0" + "&cusCompany=" + text;
+      callback = getAuditData;
+
+    } else if (type == "toPSZT") {
+      // select选择框记忆数据
+      var SelectParam = getVal("toPSZT_SelectData") || "&state=0";
+      var baseParam = SelectParam + "&pageSize=" + pageSize + "&orgId=" + getVal("orgId") +
+        "&cusCompany=" +
+        text;
+      url = URL + "/app/backgrd/billSend/getBilSendList";
+      paramJsonStr = baseParam + "&pageNo=" + pageNo;
+      callback = getPSZTData;
+      toPSZT_pagerParam["baseParam"] = baseParam;
+
+      toPSZT_pagerParam["pager.pageNo"] = 1;
+      toPSZT_pagerParam["url"] = url;
+
+    } else if (type == "fundingreview") {
+      url = URL + "/backgrd/cus/cusMng/queryCustomerFund";
+      paramJsonStr = "&pager.pageNo=" + pageNo + "&pager.pageSize=" + pageSize + "&cusCompany=" + text;
+      callback = getFundingreviewData;
+
+    } else if (type === "toCheckout") {
+      url = URL + "/app/oil/order/selectStatementByERP";
+      var SelectParam = getVal("toCheckout_SelectData") || null;
+      // 查询所有的
+      var baseParam = SelectParam + "&pageSize=" + pageSize + "&orgId=" + getVal("orgId") +
+        "&orgtype=" + orgTypeText + "&cusCompany=" +
+        text;
+      paramJsonStr = baseParam + "&pageNo=" + pageNo;
+      callback = getCheckoutData;
+
+      toCheckout_pagerParam["baseParam"] = baseParam;
+
+      toCheckout_pagerParam["pager.pageNo"] = 1;
+      toCheckout_pagerParam["url"] = url;
+
+    }
+
+    // 最钟请求
+    ajaxPostQuery(url, paramJsonStr, callback, dataType);
+    openToast();
+
+
+  })
+
+  function getAuditData(data) {
+    setTimeout(function () {
+      closeToast();
+      if (typeof data === "string" && data != '') {
+        var result = JSON.parse(data);
+        var rows = result.rows;
+        if (rows && rows.length > 0) {
+          var obj = {
+            "type": "toAudit",
+            "data": rows
+          }
+
+          appcan.locStorage.setVal("searchData", obj)
+
+        } else {
+          appcan.locStorage.setVal("searchData", 0);
+        }
+      } else {
+        appcan.locStorage.setVal("searchData", 0)
+      }
+      appcan.window.publish("search", "true");
+      closepop();
+    }, 1000);
+
+  }
+
+  function getPSZTData(data) {
+    setTimeout(function () {
+      closeToast();
+      if (typeof data === "string" && data != '') {
+        var result = JSON.parse(data);
+        var rows = result.rows;
+        if (rows && rows.length > 0) {
+          var obj = {
+            "type": "toPSZT",
+            "data": rows
+          }
+
+          appcan.locStorage.setVal("searchData", obj);
+          if (rows.length > pageNo) {
+            toPSZT_pagerParam["pager.totalRows"] = result["pager.totalRows"];
+            setVal("toPSZT_pagerParam", toPSZT_pagerParam);
+          } else {
+            appcan.locStorage.remove("toPSZT_pagerParam");
+          }
+
+        } else {
+          appcan.locStorage.setVal("searchData", 0);
+        }
+      } else {
+        appcan.locStorage.setVal("searchData", 0)
+      }
+      appcan.window.publish("search", "true");
+      closepop();
+    }, 1000);
+
+  }
+
+  function getFundingreviewData(data) {
+    setTimeout(function () {
+      closeToast();
+
+      if (typeof data === "string" && data != '') {
+        var result = JSON.parse(data);
+        var rows = result.rows;
+        if (rows && rows.length > 0) {
+          var obj = {
+            "type": "fundingreview",
+            "data": rows
+          }
+
+          appcan.locStorage.setVal("searchData", obj)
+
+        } else {
+          appcan.locStorage.setVal("searchData", 0);
+        }
+      } else {
+        appcan.locStorage.setVal("searchData", 0);
+      }
+      appcan.window.publish("search", "true");
+      closepop();
+    }, 1000);
+  }
+
+  function getCheckoutData(data) {
+    setTimeout(function () {
+      closeToast();
+
+      if (typeof data === "string" && data != '') {
+        var result = JSON.parse(data);
+        var rows = result.rows;
+        if (rows && rows.length > 0) {
+          var obj = {
+            "type": "toCheckout",
+            "data": rows
+          }
+
+          appcan.locStorage.setVal("searchData", obj);
+          if (rows.length > pageNo) {
+            toCheckout_pagerParam["pager.totalRows"] = result["pager.totalRows"];
+            setVal("toCheckout_pagerParam", toCheckout_pagerParam);
+          } else {
+            appcan.locStorage.remove("toCheckout_pagerParam");
+          }
+
+        } else {
+          appcan.locStorage.setVal("searchData", 0);
+        }
+      } else {
+        appcan.locStorage.setVal("searchData", 0);
+      }
+      appcan.window.publish("search", "true");
+      closepop();
+    }, 1000);
+  }
+
+  appcan.button("#cancelBtn", "act-ani", function () {
+    closepop();
+  })
+
+  //关闭浮动窗口
+  function closepop() {
+    appcan.closePopover("baseSearch");
+  }
+</script>
+
+</html>

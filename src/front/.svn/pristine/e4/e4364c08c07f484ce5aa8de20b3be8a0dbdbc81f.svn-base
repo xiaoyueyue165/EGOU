@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" href="css/faq.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div class="ub ub-ver margin-all m-lineheight mf-size1 " id="">
+            <div id="" class="b-border">
+                <span class="block-label green-bg umar-r">问</span>请问贵公司加油卡如何办理，在什么地方办理？
+            </div>
+            <div id="" class="umar-t">
+                <p><span class="block-label y-bg umar-r">答</span>北京地区中油加油卡由中国石油天然气股份有限公司授权办理。<br/>
+                    1、首先得准备身份证原件和复印件。<br/>
+                    2、然后填写加油卡申请单，这个有服务处提供，只需要我们根据需要填写相关内容，一般包括身份证号码、姓名、联系方式等。<br/>
+                3、提交材料后，服务人员会根据您提交的信息进行网络输入，把基本信息提交后，然后给您一张用于加油的ic卡片。<br/>
+                4、加油卡设置密码和充值。加油卡是一种消费类用卡，所以有必要设置使用密码，根据提示设置即可，一般都是6为数字。然后对办好的加油卡充值。<br/>
+                5、取卡，加油。办理好的加油卡，就可以去自助加油设备上进行加油了。</p>
+            </div>
+        </div>
+    </body>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+        });
+
+    </script>
+</html>

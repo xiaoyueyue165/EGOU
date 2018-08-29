@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/infomgmt.css">
+    <script src="../common/comm.js"></script>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../build/js/appcan.listview.js"></script>
+
+</body>
+<script>
+    var siteData = {};
+    appcan.ready(function () {
+        appcan.window.subscribe("siteOK", function (siteOK) {
+            if (siteOK == "0") {
+                // window.location.reload();
+                reload();
+            }
+        })
+
+        appcan.window.subscribe("deletealert", function (alert) {
+            if (alert == "true") {
+                delSite();
+            }
+        })
+        queryCusGasstation();
+    });
+
+    function reload() {
+
+        $("body").html("");
+        queryCusGasstation();
+    }
+
+    function queryCusGasstation() {
+        var url = URL + "/app/cus/cusGasstation/queryCusGasstation";
+        var paramJsonStr = "pager.pageNo=" + offset + "&pager.pageSize=" + limit;
+        var func = initSiteData;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+    function initSiteData(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+        }
+        var siteHtml = "";
+        if (data.rows) {
+            var rowArray = data.rows;
+            for (var i = 0; i < rowArray.length; i++) {
+                var gasstationId = rowArray[i].gasstationId;
+                var gasstationLeader = rowArray[i].gasstationLeader;
+                var mobile = rowArray[i].mobile;
+                var gasstationProvince = rowArray[i].gasstationProvince;
+                var gasstationCity = rowArray[i].gasstationCity;
+                var gasstationArea = rowArray[i].gasstationArea;
+                var gasstationAddress = rowArray[i].gasstationAddress;
+                var gasstationName = rowArray[i].gasstationName;
+                var area = gasstationProvince + ' ' + gasstationCity + ' ' + gasstationArea;
+                var beforeAreaStr = gasstationProvince + gasstationCity + gasstationArea + gasstationAddress;
+                var stateName = "";
+                if (rowArray[i].state != null) {
+                    if (rowArray[i].state == 0) {
+                        stateName = "启用";
+                    } else {
+                        stateName = "停用";
+                    }
+                }
+
+                var param = {
+                    gasstationLeader: gasstationLeader,
+                    mobile: mobile,
+                    area: area,
+                    beforeAreaStr: beforeAreaStr,
+                    address: gasstationAddress,
+                    gasstationName: gasstationName
+                }
+                siteData[gasstationId] = param;
+
+                siteHtml +=
+                    '<div class="ub ub-ver sc-bg"><div id="" class="padding-a2 b-dotted-border"><div class="umar-t umar-l">' +
+                    '<p id="name" class="umar-r umar-b">' + gasstationName + '</p><span id="name" class="umar-r">' +
+                    gasstationLeader + '</span><span id="tel">' + mobile +
+                    '</span></div><div id="parent" class="umar-b umar-t umar-l a-width"><span class="gray-font mf-size1">' +
+                    area + gasstationAddress + '</span><span id="stateName">' + stateName +
+                    '</span></div></div><div class="ub ub-pj umar-l padding-a1" id="act">' +
+                    '<div class="ub ub-ac" id="">' +
+                    '<div id="" class="umar-l"><span class="mf-size2"></span></div></div>' +
+                    '<div class="ub ub-ac umar-r" id="">' + '<div id="' + gasstationId +
+                    '" class="umar-r m-btn border-btn btn-edit" onclick="editSite(id)">编辑</div>' + '<div id="' +
+                    gasstationId +
+                    '" class="umar-l m-btn border-btn btn-delete" onclick="deleteSite(id)">删除</div></div></div></div>';
+                if (i < rowArray.length - 1) {
+                    siteHtml += '<div class="gap"></div>';
+                }
+            };
+        }
+        $("body").append(siteHtml);
+    }
+
+    //删除网点
+    function deleteSite(id) {
+        appcan.locStorage.setVal("deleId", id);
+        uexWindow.evaluateScript("siteMgmt", 0, "openalert()");
+    }
+
+    function delSite() {
+        var id = appcan.locStorage.getVal("deleId");
+        var url = URL + "/app/cus/cusGasstation/delCusGasstation";
+        var paramJsonStr = "gasstationId=" + id;
+        var func = delCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+    }
+
+    function delCallback(data) {
+        if (data == "0") {
+            //window.location.reload();
+            reload();
+        }
+    }
+
+    function editSite(id) {
+        var siteInfo = siteData[id];
+        appcan.locStorage.setVal("gasstationId", id);
+        appcan.locStorage.setVal("siteInfo", siteInfo);
+        appcan.locStorage.setVal("beforeSiteInfo", siteInfo);
+        appcan.locStorage.setVal("beforeSiteStr", siteInfo.beforeAreaStr);
+        appcan.window.open("siteAdd", "siteAdd.html", 10);
+    }
+</script>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    <link rel="stylesheet" href="./css/funds.css">
+
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="sc-bg b-border" style="height:100%" id="billsOne">
+
+    </div>
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    <script src="../../build/js/appcan.listview.js"></script>
+    <script src="../../common/comm.js"></script>
+    <script src="../../common/template-web.js"></script>
+
+</body>
+<script id="BillsOne_tmpl" type="text/html">
+        {{each list}}
+        <div class="ub ub-ac mf-size1 row1 ub-pj upadd" id="order">
+        <div id="" class="l-width">
+        <p class="gray-font">
+        出账金额
+        </p>
+
+        </div>
+        <div id="" class="money--big r-width">
+        {{if $value.OPE_TYPE == '0'}}
+        {{else}}
+        -
+        {{/if}}
+        {{$value.OPE_MONEY}}
+        </div>
+        </div>
+        <div id="order-list">
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <p class="gray-font">
+        类型
+        </p>
+        <!--  -->
+        </div>
+        <!--OPE_TYPE  0收入 1支出 2冻结-->
+        <div id="" class="r-width">
+        {{if $value.OPE_TYPE == '0'}}
+        <span style="color:#78C44F">
+        收入
+        </span>
+
+        {{else if $value.OPE_TYPE == '1'}}
+        <span id="">
+        支出
+        </span>
+        {{else if $value.OPE_TYPE == '2'}}
+        <span id="">
+        冻结
+        </span>
+
+        {{else if $value.OPE_TYPE == '3'}}
+        <span id="">
+        授信
+        </span>
+        {{else if $value.OPE_TYPE == '4'}}
+        <span id="">
+        解冻
+        </span>
+        {{else if $value.OPE_TYPE == '5'}}
+        <span id="">
+        退款
+        </span>
+        {{/if}}
+
+        </div>
+        </div>
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <span class="gray-font">时间</span>
+        </div>
+        <div id="custypesubName" class="r-width">
+        <p>
+        {{$value.UPDATE_DATE}}
+        </p>
+        </div>
+        </div>
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <span class="gray-font">交易单号</span>
+        </div>
+        <div id="custypesubName" class="r-width">
+        {{if $value.ORDERSALE_CODE}}
+          {{$value.ORDERSALE_CODE}}
+          {{else}}
+          ----
+        {{/if}}
+        </div>
+        </div>
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <span class="gray-font">可用余额</span>
+        </div>
+        <div id="custypesubName" class="r-width">
+        {{$value.TOTE_MONEY}}
+        </div>
+        </div>
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <span class="gray-font">审核状态</span>
+        </div>
+        <div id="custypesubName" class="r-width">
+        <!-- 0未审核  其他 审核 -->
+
+        {{if $value.REMARK ==='0'}}
+        未审核
+        {{else if $value.REMARK ==='1'}}
+        已审核
+        {{else if $value.REMARK === '2'}}
+        审核未通过
+        {{else}}
+        --
+        {{/if}}
+
+        </div>
+        </div>
+        <div class="ub ub-ac ub-pj upadd mf-size1 sm-row" id="">
+        <div id="" class="l-width">
+        <span class="gray-font">销售单位</span>
+        </div>
+        <div id="custypesubName" class="r-width">
+        {{$value.GYFGS}}
+        </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1" id="">
+
+        </div>
+
+        {{/each}}
+
+    </script>
+<script>
+    appcan.ready(function () {
+        uexWindow.setWindowScrollbarVisible('false');
+        queryBillsOne();
+    })
+    function queryBillsOne() {
+        var url = URL + "/app/cus/queryCusPayMoneyOne";
+        var FUNDSUB_ID = appcan.locStorage.getVal('FUNDSUB_ID');
+
+        var paramJsonStr = "fundsubId=" + FUNDSUB_ID;
+
+        var func = showBillsOneCallback;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('正在加载...', '0', '5', '1');
+
+    }
+
+    function showBillsOneCallback(data) {
+
+        appcan.window.closeToast();
+
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+        };
+
+        var html = template('BillsOne_tmpl', {
+            list: data
+        });
+        $('#billsOne').html(html);
+
+    }
+
+</script>
+
+</html>

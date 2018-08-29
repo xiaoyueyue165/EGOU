@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/infomgmt.css">
+    <script type="text/javascript" src="../common/comm.js"></script>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="sc-bg b-border">
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">登录账号</span>
+            </div>
+            <div id="loginName" class="r-width">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">单位名称</span>
+            </div>
+            <div id="cusCompany" class="r-width">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">承运商</span>
+            </div>
+            <div id="cysName1" class="r-width">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">单位属性</span>
+            </div>
+            <div id="orgAttributeName" class="r-width">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">单位地址</span>
+            </div>
+            <div id="address" class="r-width">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">邮政编码</span>
+            </div>
+            <div id="cusPostcode" class="r-width">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">联系人</span>
+            </div>
+            <div id="cusLeader" class="r-width">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">联系电话</span>
+            </div>
+            <div id="cusOfficephone" class="r-width">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">电子邮件</span>
+            </div>
+            <div id="cusEmail" class="r-width">
+            </div>
+        </div>
+
+        <div class="ub ub-ac umar-l mf-size1 m-row" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">手机号</span>
+            </div>
+            <div id="cusMobile" class="r-width">
+            </div>
+        </div>
+        <div class="ub ub-ac umar-l mf-size1 m-row no-border-b" id="">
+            <div id="" class="l-width">
+                <span class="gray-font">我的客户经理</span>
+            </div>
+            <div id="empName" class="r-width">
+            </div>
+        </div>
+    </div>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../build/js/appcan.listview.js"></script>
+
+</body>
+<script>
+    appcan.ready(function () {
+        queryMybasicInfo();
+    })
+
+    function queryMybasicInfo() {
+        var url = URL + "/api/cus/queryMybasicInfo"; //访问路径
+        var paramJsonStr = ""; //参数
+        var func = showMybasicInfo; //返回的方法
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+    function showMybasicInfo(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = JSON.parse(data)
+        }
+        document.getElementById('loginName').innerHTML = appcan.locStorage.getVal("username")
+        document.getElementById('cusCompany').innerHTML = data.cusCompany; //单位名称
+        document.getElementById('cysName1').innerHTML = data.cysName ? data.cysName : ''; // 承运商
+        document.getElementById('orgAttributeName').innerHTML = data.orgAttributeName ? data.orgAttributeName : ''; //单位属性
+
+        document.getElementById('address').innerHTML = data.address ? data.address : ''; //单位地址
+        document.getElementById('cusPostcode').innerHTML = data.cusPostcode ? data.cusPostcode : ''; //邮政编码
+        document.getElementById('cusLeader').innerHTML = data.cusLeader ? data.cusLeader : ''; //联系人
+        document.getElementById('cusOfficephone').innerHTML = data.cusOfficephone ? data.cusOfficephone : ''; //联系电话
+        document.getElementById('cusEmail').innerHTML = data.cusEmail ? data.cusEmail : ''; //电子邮件
+        document.getElementById('cusMobile').innerHTML = data.cusMobile ? data.cusMobile : ''; //手机号码
+        document.getElementById('empName').innerHTML = data.empName ? data.empName : ''; //我的客户经理
+
+
+
+    }
+</script>
+
+</html>

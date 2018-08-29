@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/common_page.css">
+</head>
+
+<body class="pop-body" ontouchstart>
+
+    <div class="pop-position content-width">
+        <div class="pay-pop">
+            <div id="" class="ub ub-ver">
+                <div class="uinn ub ubb bc-border ub-ac ub-pc h-type">
+                    全部
+                </div>
+                <div class="uinn ub ubb bc-border ub-ac ub-pc  h-type">
+                    正常
+                </div>
+                <div class="uinn ub ubb bc-border ub-ac ub-pc  h-type">
+                    已关闭
+                </div>
+            </div>
+
+            <div class="clo-btn">
+                <div class="ub btn bc-btn ub-ac ub-pc white-font" id="btn1">
+                    关闭
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+</body>
+<script>
+    appcan.ready(function () {
+        appcan.initBounce();
+    })
+
+    appcan.button(".btn", "ani-act", function () {
+        switch (this.id) {
+            case "btn1":
+                closepop();
+                appcan.window.open("", "", 10);
+                break;
+            case "Xbtn":
+                closepop();
+                break;
+
+        }
+    })
+    //关闭浮动窗口
+    function closepop() {
+        appcan.closePopover("newWin");
+    }
+</script>
+
+</html>

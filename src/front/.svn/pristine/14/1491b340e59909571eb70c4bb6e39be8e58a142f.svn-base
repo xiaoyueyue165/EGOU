@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" href="css/ordermgmt.css">
+    </head>
+    <body class="um-vp bc-bg mf-size1" ontouchstart>
+        <div id="NOinfo" class="ub sc-bg m-row1">
+            <div class="ub ub-ac">
+                <span class="gray-font">销售订单号：</span> 
+                <span id="NO"></span>
+            </div>
+        </div>
+
+        <div id="" class="ub ub-ac  title-bar">
+            <span class="gray-font umar-l">评价客户经理服务</span>
+        </div>
+        <div class="sc-bg padding-a" id="advice0">
+            <div class="ub ub-ac ub-pj" id="">
+                <div id="" class="ub ub-ac m-row4">
+                    <span class="">服务态度</span>
+                    <span class="mf-color">
+                        <output id="output0">
+                            5
+                        </output>分</span>
+                </div>
+                <div id="0" class="umar-r" onclick="insertAdvice(id)">
+                    <span class="y-font">填写建议</span><span id="angle0" class="fa fa-angle-down"></span>
+                </div>
+            </div>
+
+            <div class="ub ub-ac ub-pj m-row4 ">
+                <div id="0" class="pro-w1 umar-l" onclick="reduceScore(id)">
+                    <span class="b-btn">-</span>
+                </div>
+                <div class="pro-w2  mf-size1">
+                    <input id="score0" class="mf-size0" type="range" min="0" max="10" value="5" name="range" onChange="document.querySelector('#output0').textContent=this.value">
+                </div>
+
+                <div id="0" class="pro-w3 umar-r" onclick="addScore(id)">
+                    <span class="b-btn">+</span>
+                </div>
+            </div>
+        </div>
+        <div class="gap"></div>
+        <div class="sc-bg padding-a" id="advice1">
+            <div class="ub ub-ac ub-pj" id="">
+                <div id="" class="ub ub-ac m-row4">
+                    <span class="">响应速度</span>
+                    <span class="mf-color">
+                        <output id="output1">
+                            5
+                        </output>分</span>
+                </div>
+                <div id="1" class="umar-r" onclick="insertAdvice(id)">
+                    <span class="y-font">填写建议</span><span id="angle1" class="fa fa-angle-down"></span>
+                </div>
+            </div>
+
+            <div class="ub ub-ac ub-pj m-row4 ">
+                <div id="1" class="pro-w1 umar-l" onclick="reduceScore(id)">
+                    <span class="b-btn">-</span>
+                </div>
+                <div class="pro-w2  mf-size1">
+                    <input id="score1" class="mf-size0" type="range" min="0" max="10" value="5" name="range" onChange="document.querySelector('#output1').textContent=this.value">
+                </div>
+
+                <div id="1" class="pro-w3 umar-r" onclick="addScore(id)">
+                    <span class="b-btn">+</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="gap"></div>
+        <div class="sc-bg padding-a b-border" id="advice2">
+            <div class="ub ub-ac ub-pj" id="">
+                <div id="" class="ub ub-ac m-row4">
+                    <span class="">问题处理</span>
+                    <span class="mf-color">
+                        <output id="output2">
+                            5
+                        </output>分</span>
+                </div>
+                <div id="2" class="umar-r" onclick="insertAdvice(id)">
+                    <span class="y-font">填写建议</span><span id="angle2" class="fa fa-angle-down"></span>
+                </div>
+            </div>
+
+            <div class="ub ub-ac ub-pj m-row no-border-b">
+                <div id="2" class="pro-w1 umar-l" onclick="reduceScore(id)">
+                    <span class="b-btn">-</span>
+                </div>
+                <div class="pro-w2 mf-size1">
+                    <input id="score2" class="mf-size0" type="range" min="0" max="10" value="5" name="range" onChange="document.querySelector('#output2').textContent=this.value">
+                </div>
+
+                <div id="2" class="pro-w3 umar-r" onclick="addScore(id)">
+                    <span class="b-btn">+</span>
+                </div> 
+            </div>
+        </div>
+
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+        <script src="../common/comm.js"></script>
+    </body>
+    <script>
+        var ifopen = [false,false,false];
+        var orderId  ="";
+        var orderCode = "";
+        var TEXTAREA = "有问题请反馈给我们，我们会为您提供更好的服务";
+        
+        appcan.ready(function() {
+            var orderNo = appcan.locStorage.getVal("managerEvaluate_orderId");
+            orderId = orderNo.split("@")[0];
+            orderCode = orderNo.split("@")[1];
+            $("#NO")[0].innerHTML = orderCode;
+        });
+        
+        function  insertAdvice(id){
+            var html = '<div id="ad'+id+'" class="umar-l margin-t">'
+                +'<textarea id = "area'+id+'"class="m-textarea gray-font mf-size0">'+TEXTAREA+'</textarea>'
+                +'</div>';
+            if(ifopen[id]){
+                $("#angle"+id)[0].className = "fa fa-angle-down";
+                $("#ad"+id).remove();
+                ifopen[id] = false;
+            }else{
+                $("#angle"+id)[0].className = "fa fa-angle-up";
+                $("#advice"+id).append(html);
+                ifopen[id] = true;
+            }
+        }
+        
+        //增减分数
+        function reduceScore(id){
+            $("#score"+id)[0].value = parseInt($("#score"+id)[0].value) - 1;
+            document.querySelector('#output'+id).textContent = $("#score"+id)[0].value;
+            
+        }
+        function addScore(id){
+            $("#score"+id)[0].value = parseInt($("#score"+id)[0].value) + 1;
+            document.querySelector('#output'+id).textContent = $("#score"+id)[0].value;
+        }
+        
+        function manEvaluate(){
+            var SRV_ATTITUDE = document.querySelector('#output0').textContent; 
+            var ATTITUDE_REMARK="";
+            if($("#area0")[0]){
+                if($("#area0")[0].value==TEXTAREA || $("#area0")[0].value==""){
+                    ATTITUDE_REMARK="";
+                }else{
+                    ATTITUDE_REMARK=$("#area0")[0].value;
+                }
+            }else{
+                ATTITUDE_REMARK="";
+            }
+            
+            var SRV_SPEED = document.querySelector('#output1').textContent; 
+            var SPEED_REMARK=""; 
+            if($("#area1")[0]){
+                if($("#area1")[0].value==TEXTAREA || $("#area1")[0].value==""){
+                    SPEED_REMARK="";
+                }else{
+                    SPEED_REMARK=$("#area1")[0].value;
+                }
+            }else{
+                SPEED_REMARK="";
+            }
+            var SRV_PROB = document.querySelector('#output2').textContent; 
+            var PROB_REMARK="";
+            if($("#area2")[0]){
+                if($("#area2")[0].value==TEXTAREA || $("#area2")[0].value==""){
+                    PROB_REMARK="";
+                }else{
+                    PROB_REMARK=$("#area2")[0].value;
+                }
+            }else{
+                PROB_REMARK="";
+            }
+            var AVG_SCORE = ((parseInt(SRV_ATTITUDE)+parseInt(SRV_SPEED)+parseInt(SRV_PROB))/3).toFixed(2);
+            
+            var param = "orderId="+orderId+"&SRV_ATTITUDE="+SRV_ATTITUDE+"&ATTITUDE_REMARK="+ATTITUDE_REMARK+"&SRV_SPEED="+SRV_SPEED+"&SPEED_REMARK="+SPEED_REMARK+"&SRV_PROB="+SRV_PROB+"&PROB_REMARK="+PROB_REMARK+"&AVG_SCORE="+AVG_SCORE;
+            var url = URL + "/app/bill/addBilOrderEvaluate";
+            var paramJsonStr = param;
+            var func = addBilOrderEvaluateCallback;
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('提交评价...', '0', '5', '1');
+        }
+        function addBilOrderEvaluateCallback(data){
+            appcan.window.closeToast();
+            if(data == "0"){
+                uexWindow.evaluateScript("managerEvaluate", 0, "finishEvaluate()");
+            }
+        }
+        
+    </script>
+</html>

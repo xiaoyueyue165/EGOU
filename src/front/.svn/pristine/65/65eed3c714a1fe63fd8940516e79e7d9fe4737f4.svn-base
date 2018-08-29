@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="build/css/fonts/font-awesome.min.css">
+	<link rel="stylesheet" href="build/css/ui-box.css">
+	<link rel="stylesheet" href="build/css/ui-base.css">
+	<link rel="stylesheet" href="build/css/ui-color.css">
+	<link rel="stylesheet" href="build/css/appcan.icon.css">
+	<link rel="stylesheet" href="build/css/appcan.control.css">
+	<style type="text/css">
+		#lv_group_A,
+		#lv_group_B,
+		#lv_group_C {
+			font-weight: bold;
+			height: 2.8em !important;
+		}
+
+		::-webkit-scrollbar {
+			width: 0px;
+		}
+
+		::-webkit-scrollbar {
+			display: none;
+			/*隐藏滚轮*/
+		}
+
+		.lis {
+			min-height: 2.8em !important;
+			padding-left: 1em !important;
+			padding-right: 1em !important;
+		}
+
+		.umar-r {
+			margin-right: 1em;
+		}
+
+		.lis-icon-s {
+			margin-right: 0.8em;
+		}
+	</style>
+</head>
+
+<body class="um-vp " ontouchstart>
+	<div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+		<!--header开始-->
+		<div id="header" class="fix uh bc-text-head ub bc-head">
+			<div class="nav-btn" id="nav-left">
+				<div class="nav-btn"></div>
+			</div>
+			<h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">服务中心</h1>
+			<div class="nav-btn nav-bt" id="nav-right"></div>
+		</div>
+		<div id="header" class="uh bc-text-head ub bc-head">
+			<div class="nav-btn" id="nav-left">
+				<div class="nav-btn"></div>
+			</div>
+			<h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">服务中心</h1>
+			<div class="nav-btn nav-bt" id="nav-right"></div>
+		</div>
+
+		<!--content开始-->
+		<div id="content" class="ub-f1 tx-l">
+
+			<div id="listview" class="ubt bc-border sc-bg mf-size1"></div>
+		</div>
+		<!--content结束-->
+	</div>
+
+</body>
+<script src="build/js/appcan.js"></script>
+<script src="build/js/appcan.control.js"></script>
+<script src="build/js/appcan.listview.js"></script>
+<script src="build/js/appcan.slider.js"></script>
+<script>
+	appcan.ready(function () {
+		appcan.window.disableBounce();
+		//禁用页面弹动效果
+		uexWindow.setWindowScrollbarVisible('false');
+
+	});
+
+	var lv = appcan.listview({
+		selector: "#listview",
+		type: "thinLine",
+		hasGroup: true,
+		hasAngle: true,
+		hasSubTitle: true
+	});
+	lv.set([{
+		title: "购油指南",
+		style: 'fontSize:50px',
+		groupId: "B",
+		items: [{
+			title: "购油流程",
+			icon: "build/css/list_icons/l_icon_flow.png",
+			id: 6,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">点击查看</div>',
+		}, {
+			title: "支付方式",
+			icon: "build/css/list_icons/l_icon_card.png",
+			id: 7,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">点击查看</div>',
+		}, {
+			title: "常见问题",
+			icon: "build/css/list_icons/l_icon_question.png",
+			id: 8,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">点击查看</div>',
+		}]
+	}, {
+		title: "联系人",
+		style: 'fontSize:50px',
+		groupId: "A",
+		items: [{
+			title: "客户经理通讯录",
+			icon: "build/css/list_icons/l_icon_manager.png",
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">详细咨询</div>',
+			id: 11
+		}, {
+			title: "公司介绍",
+			icon: "build/css/list_icons/l_icon_manager.png",
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">关于我们</div>',
+			id: 14
+		}]
+	}, {
+		title: "用户反馈",
+		groupId: "B",
+		items: [{
+			title: "投诉建议",
+			icon: "build/css/list_icons/l_icon_suggestion.png",
+			id: 12,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">反馈建议</div>',
+		}, {
+			title: "在线留言",
+			icon: "build/css/list_icons/l_icon_suggestion.png",
+			id: 13,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">留言</div>',
+		}, {
+			title: "极光推送",
+			icon: "build/css/list_icons/l_icon_suggestion.png",
+			id: 15,
+			subTitle: '<div class="" style="color:#9c9c9c;font-size:1.1em">测试</div>'
+		}]
+	}]);
+
+	lv.on("click", function (ele, obj, curEle) {
+		appcan.locStorage.setVal("guideId", obj.id);
+
+		if (obj.id < 10) {
+			appcan.window.open("guide", "serviceCenter/guide/guide.html", 10);
+		} else if (obj.id == 11) {
+			appcan.window.open("accountManager", "serviceCenter/accountManager.html", 10);
+		} else if (obj.id == 12) {
+			appcan.window.open("complaint", "serviceCenter/complaint/complaint.html", 10);
+
+		} else if (obj.id == 13) {
+			appcan.window.open("cmessage", "serviceCenter/message.html", 10);
+
+		} else if (obj.id == 14) {
+			appcan.window.open("contactUs", "serviceCenter/contactus.html", 10);
+
+		} else if (obj.id == 15) {
+			appcan.window.open("contactUs", "test/uexJPush.html", 10);
+		}
+	})
+
+	function changePage() {
+
+		appcan.locStorage.setVal('Homepage', 1);
+	}
+</script>
+
+</html>

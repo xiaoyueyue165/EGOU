@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../../build/css/ui-box.css">
+        <link rel="stylesheet" href="../../build/css/ui-base.css">
+        <link rel="stylesheet" href="../../build/css/ui-color.css">
+        <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../../build/css/appcan.control.css">
+        <link rel="stylesheet" href="css/intentionList.css"/>
+        
+    </head>
+
+    <body class="um-vp " ontouchstart>
+        
+        
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div class="uh bc-text-head ub bc-head " id="header">
+                <div class="nav-btn" id="nav-left">
+                    <div id="" class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">我的订单</h1>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div id="edit" class="umar-r">编辑</div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div class="ub ub-ver">
+                <div id="tabview" class="us m-tabview b-border"></div>
+            </div>
+            
+            <div id="detail" class="tx-l ub-f4">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../../build/js/appcan.js"></script>
+        <script src="../../build/js/appcan.control.js"></script>
+        <script src="../../build/js/appcan.tab.js"></script>
+        <script src="../../common/comm.js"></script>
+    </body>
+    <script>
+        var index = 0;
+        if (appcan.locStorage.getVal("index")) {
+            index = 2;
+            appcan.locStorage.remove("index");
+        }
+        var tabview = appcan.tab({
+            selector : "#tabview",
+            hasIcon : false,
+            hasAnim : true,
+            hasLabel : true,
+            hasBadge : true,
+            index : 0,
+            data : [{
+                label : "待提交",
+                badge : 0
+            }, {
+                label : "处理中",
+                badge : 0
+            }, {
+                label : "已转付油通知单",
+                badge : 0
+            }, {
+                label : "已取消",
+                badge : 0
+            }]
+        });
+        //tab选择
+        tabview.on("click", function(obj, index) {
+            appcan.window.selectMultiPopover("detail",index);
+            if(index != 0){
+               document.getElementById("nav-right").className = "hide";
+            }else{
+                document.getElementById("edit").className = "umar-r";
+                document.getElementById('nav-right').className="nav-btn nav-bt";
+            }
+        })
+        
+        var ifEdit=false;
+        
+        appcan.button("#edit", "btn-act", function() {
+            var tag = "";
+            if(ifEdit==true){
+                $("#edit")[0].innerHTML = "编辑"
+                ifEdit=false;
+                tag = "false";
+            }else{
+                $("#edit")[0].innerHTML = "完成"
+                ifEdit=true;
+                tag = "true";
+
+                uexWindow.evaluateScript("intention0", 0, "test()");
+            }
+            appcan.window.publish("ifEdit", tag);
+        })
+        
+        appcan.ready(function() {
+            initorderlist(index);
+        });
+        
+        //tab选择后重新初始化订单列表
+        function initorderlist(index) {
+            var titHeight = $('#tabview').offset().height + $('#header').offset().height;
+            appcan.frame.open({
+                id : "detail",
+                url : [{
+                    "inPageName" : "intention0",
+                    "inUrl" : "intention0.html",
+                }, {
+                    "inPageName" : "intention1",
+                    "inUrl" : "intention1.html",
+                }, {
+                    "inPageName" : "intention2",
+                    "inUrl" : "intention2.html",
+                }, {
+                    "inPageName" : "intention3",
+                    "inUrl" : "intention3.html",
+                }],
+                top : titHeight,
+                left : 0,
+                index : index,
+                change:function(err,res){
+                    tabview.moveTo(res.multiPopSelectedIndex);
+                }
+            });
+        }
+        
+        function checkYXD(){
+            tabview.moveTo(1);
+        }
+        appcan.button("#nav-left", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        
+        appcan.button("#search", "btn-act", function() {
+            appcan.window.open("search", "order_search.html", 10);
+        })
+        
+        function opencancelReason(){
+            open2PopPage("cancelReason");
+
+        }
+        
+        function openpayPop(){
+            openPopPage("payPop");
+        }
+        
+        function openPayMenu(){
+            openPopPage("paymenu");
+        }
+
+    </script>
+</html>

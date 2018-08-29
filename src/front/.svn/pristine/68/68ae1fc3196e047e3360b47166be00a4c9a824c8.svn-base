@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" type="text/css" href="css/delivery.css"/>
+    </head>
+    <body class="um-vp white-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+           <!--header开始-->
+            <div class="uh bc-text-head ub bc-head" id="header">
+                 <div class="nav-btn" id="nav-left">
+                    <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">申请提交成功</h1>
+                <div class="nav-btn" id="nav-right">
+                </div>
+            </div>
+            <!--header结束-->
+            <!--content开始-->
+            <div class="uinnh5 umar-t mf-size1">
+                <div class="uinn5 m-lineheight">
+                    <div id="text1"></div>
+                    <div id="text2" class="margin-t">
+                                您可到 <span id="genzong" class="y-font">付油跟踪 </span>查询提油进度.
+                    </div>
+                </div> 
+                <div class="ub ub-pj margin-t action-group">
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn btn-submit umar-a mp-btn2"  id="btn-fyTrace">
+                        查看付油跟踪
+                    </div>
+                    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn btn-submit umar-a mp-btn"  id="btn-register-next">
+                        返回首页
+                    </div>
+            </div>
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+    </body>
+    <script>
+         appcan.ready(function() {
+            var type = appcan.locStorage.getVal("type");
+            if ( type == "peisong") {
+                $("#text1").append("已提交至您的购油管家。");
+            } else {
+                $("#text1").append("您已成功提交提油申请，请等待油库核实。");
+            }
+        })
+        
+        appcan.button("#genzong", "btn-act", function(){
+            appcan.window.open("fyTrace", "fyTrace.html", 10);
+        })
+        appcan.button(".nav-btn", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+        
+        appcan.button("#btn-fyTrace", "btn-act",function(){
+            appcan.window.open("fyTrace", "fyTrace.html", 10);
+        })
+
+    </script>
+</html>

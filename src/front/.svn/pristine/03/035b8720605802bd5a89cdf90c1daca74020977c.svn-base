@@ -1,0 +1,64 @@
+.c-blue-01 {
+    background-color: #111c92;
+}
+.c-blue-02 {
+    background-color: #133aaf;
+}
+.c-blue-03 {
+    background-color: #204bb1;
+}
+.c-blue-04 {
+    background-color: #2d62c2;
+}
+.c-blue-05 {
+    background-color: #2e84c1;
+}
+.c-blue-06 {
+    background-color: #44a5dc;
+}
+.uw-app1{
+    width:50%;
+    text-align: center;
+}
+.icon-index{
+   padding-top:4.25em;
+   background-repeat: no-repeat;
+   background-position: 50% 0em;
+   background-size: 4em 4em;
+}
+.icon-price{
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_price.png');
+}
+.icon_purchase{
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_purchase.png');
+}
+.icon_delivery{
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_delivery.png');
+}
+.icon_news{
+    
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_news.png');
+}
+.icon-location{
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_location.png');
+}
+.icon_search{
+    /*text-shadow:0.1em 0.1em 0.1em #60a7d1;*/
+    background-image: url('myImg/icon_search.png');
+}
+.float-bar-wrapper{
+    background: rgba(36,26,25,0.4);
+    color: #ffffff;
+    position: fixed;
+    top: 0;
+    z-index: 99;
+    width: 100%;
+}
+.float-bar{
+    padding:0.5em;
+}

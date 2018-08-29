@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/complaint.css">
+</head>
+
+<body class="um-vp white-bg" ontouchstart>
+    <div class="tx-c sc-bg-active" id="pullstatus0"></div>
+    <div id="listview" class="ubt bc-border sc-bg"></div>
+    <div class="tx-c" id="pullstatus1"></div>
+
+
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    <script src="../../common/comm.js"></script>
+    <script src="../../build/js/appcan.listview.js"></script>
+</body>
+<script>
+    var totalRows = 0;
+    var bounceType = 0;
+    appcan.ready(function () {
+
+        appcan.frame.setBounce([0, 1], function (type) {
+            $("#pullstatus" + type).html("");
+        }, function (type) {
+            $("#pullstatus" + type).html("");
+        }, function (type) {
+            appcan.frame.resetBounce(type);
+            if (type == 0) {
+                offset = 1;
+            } else {
+                if (Number(totalRows) < Number(offset) * 8 + 1) {
+                    $("#pullstatus" + type).html("无更多数据");
+                    return;
+                }
+                offset = Number(offset) + 1;
+            }
+
+            queryComplanitAdvice(type);
+        })
+
+        appcan.window.subscribe("caRefresh", function (para) {
+            if (para == "true") {
+                window.location.reload();
+
+            }
+        })
+
+        appcan.window.subscribe("evaluateFinish", function (finish) {
+            if (finish == "true") {
+                appcan.window.alert("提示", "评价提交成功！", "确定");
+                //window.location.reload();
+                queryComplanitAdvice(3);
+            }
+        })
+        var username = appcan.locStorage.getVal('username');
+        if (username) {
+            queryComplanitAdvice(3);
+        }
+
+    });
+
+    function queryComplanitAdvice(type) {
+
+        bounceType = type;
+        var url = URL + "/app/complanit/queryComplanitAdvice";
+        var paramJsonStr = "caId=&caTitle=&pager.pageNo=" + offset + "&pager.pageSize=" + limit;
+        var func = queryComplanitCallBack;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+    }
+
+    function queryComplanitCallBack(data) {
+        appcan.window.closeToast();
+        data = eval("(" + data + ")");
+
+        totalRows = data["pager.totalRows"];
+        var calist = data.rows;
+        var paraData = [];
+        for (var i = 0; i < calist.length; i++) {
+            var caTitle = calist[i].caTitle;
+            var caType = calist[i].caType;
+            var caState = calist[i].caState;
+            var createDate = calist[i].createDate;
+            var cusEvalue = calist[i].cusEvalue;
+            var caId = calist[i].caId;
+            if (caType == "0") {
+                caType = "投诉";
+            } else if (caType == "1") {
+                caType = "建议";
+            }
+
+            if (caState == "0") {
+                caState = "<span class='padding-a3 white-font mf-size1 a-radius r-bg'>待处理</span>";
+            } else if (caState == "1") {
+                caState = "<span class='padding-a3 white-font mf-size1 a-radius green-bg'>处理中</span>";
+            } else if (caState == "2") {
+                caState = "<span class='padding-a3 white-font mf-size1 a-radius gray-bg'>已关闭</span>";
+            }
+
+            var titleStr = "<div><span class='m-border1'>" + caType + "</span><span class='umar-l'>" + caTitle +
+                "</span></div>";
+
+            var param = {
+                title: "<div class='umar-t umar-b'>" + titleStr + "</div>",
+                describe: "<div class='umar-t umar-b mf-size1'><span class='gray-font'>" + createDate +
+                    "</span><span class='umar-l'>" + caState + "</span></div>",
+                id: caTitle + "&" + caId + "&" + cusEvalue
+            }
+            paraData.push(param);
+        }
+
+        if (bounceType == 0) {
+            lv.set(paraData);
+        } else {
+            lv.add(paraData, bounceType);
+        }
+
+    }
+
+    var lv = appcan.listview({
+        selector: "#listview",
+        type: "thickLine",
+        hasAngle: true,
+        hasSubTitle: true,
+        multiLine: 1,
+    });
+    lv.set();
+    lv.on("click", function (ele, obj, curEle) {
+        appcan.locStorage.setVal("caparam", obj.id);
+        appcan.window.open("complaintDetail", "complaintDetail.html", 10);
+    })
+</script>
+
+</html>

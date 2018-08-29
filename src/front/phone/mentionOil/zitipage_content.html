@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" type="text/css" href="css/delivery.css" />
+    <link rel="stylesheet" href="../build/mui-dtpicker/css/mui.css">
+    <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/mui.picker.min.css" />
+    <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/app.css" />
+</head>
+
+<body class="um-vp bc-bg mf-size1" ontouchstart>
+    <div id="noticeInfo" class="">
+        <div id="titlebar" class="bc-bg ub b-border padding-a">
+            <div class="umar-l gray-font mf-size1">
+                订单详情
+            </div>
+        </div>
+    </div>
+
+    <div id="titlebar" class="bc-bg ub b-border padding-a">
+        <div class="umar-l gray-font mf-size1">
+            自提信息
+        </div>
+    </div>
+
+    <div class="white-bg  ub ub-ac b-border">
+        <div class="m-row2 gray-font label-width">
+            每单数量
+        </div>
+        <div class="umar-r">
+            <input type="text" placeholder="请在此输入数量" class="no-border-input" id="count" />
+        </div>
+    </div>
+    <div class="white-bg  ub ub-ac b-border">
+        <div class="m-row2 gray-font label-width">
+            分单数
+        </div>
+        <div class="umar-r">
+            <input type="text" placeholder="请在此输入分单个数" class="no-border-input" value="1" id="listNum" />
+        </div>
+    </div>
+
+    <div class="white-bg  ub ub-ac b-border">
+        <div class="m-row2 gray-font label-width">
+            提油车辆
+        </div>
+        <div class="ub ub-pe ub-f1">
+            <div id="carlist" class="info-list"></div>
+        </div>
+    </div>
+    <div class="white-bg  ub ub-ac b-border">
+        <div class="m-row2 gray-font label-width">
+            提油司机
+        </div>
+        <div class="ub ub-pe ub-f1">
+            <div id="driverlist" class="info-list"></div>
+        </div>
+    </div>
+
+    <div class="white-bg  ub ub-ac b-border">
+        <div class="m-row2 gray-font label-width">
+            押运员
+        </div>
+        <div class="ub ub-pe ub-f1">
+            <div id="yayunlist" class="info-list"></div>
+        </div>
+    </div>
+
+    <div id="titlebar" class="bc-bg ub b-border padding-a">
+        <div class="umar-l gray-font mf-size1">
+            <span>预约提油</span>
+            <span>（可选项）</span>
+        </div>
+    </div>
+
+    <div id="" class="white-bg  ub ub-ac b-border">
+        <div id="" class="m-row2 gray-font label-width">
+            配送时间
+        </div>
+        <div id="timeBtn" class="ub ub-pj ub-f1">
+            <div id="result" class="ub ub-ac"></div>
+            <div class="umar-r fa fa-angle-right gray-font fa-2x"></div>
+        </div>
+    </div>
+
+    <div class="white-bg b-border m-row4">
+        <div class="gray-font">
+            备注
+        </div>
+        <div class="umar-t">
+            <textarea class="m-textarea"></textarea>
+        </div>
+    </div>
+
+</body>
+<script src="../build/js/appcan.js"></script>
+<script src="../build/js/appcan.control.js"></script>
+<script src="../common/comm.js"></script>
+<script src="../build/js/appcan.listview.js"></script>
+<script src="../build/mui-dtpicker/js/mui.min.js"></script>
+<script src="../build/mui-dtpicker/js/mui.picker.all.js"></script>
+<script src="../common/date.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var carId = "";
+    var driverId = "";
+    var day = "-1";
+    var yayunId = "1"
+    var depotId = "-1";
+    var carList = [];
+    var depotList = [];
+    var driverList = [];
+    //押运
+    var supercargoList = [];
+    var NOTICESUBINFO = null;
+    var isOnce = true;
+
+    var parma = "";
+    var num = 0;
+    // 分提油数据
+    var pagerParam = {};
+
+    appcan.ready(function () {
+
+        appcan.window.subscribe("carlistParam", function (carlistParam) {
+            carlistParam = JSON.parse(carlistParam)
+            carId = carlistParam.id;
+            lv_carlist.set([{
+                title: carlistParam.title
+            }]);
+        });
+
+        //司机
+        appcan.window.subscribe("driverParam", function (driverParam) {
+            driverParam = JSON.parse(driverParam);
+            driverId = driverParam.id;
+            lv_driverlist.set([{
+                title: driverParam.title,
+            }]);
+        });
+        //押运员
+        appcan.window.subscribe("yayunParam", function (yayunParam) {
+            yayunParam = JSON.parse(yayunParam);
+            yayunId = yayunParam.id;
+            lv_yayunlist.set([{
+                title: yayunParam.title,
+            }]);
+        });
+
+        var noticeSubId = appcan.locStorage.getVal("yuyuenoticeId");
+        //各个数据
+        addBilGetInit(noticeSubId);
+        //押运员
+    })
+
+    function addBilGetInit(noticeSubId) {
+        var url = URL + "/app/bill/addBilGetInit";
+        var paramJsonStr = "noticesubId=" + noticeSubId;
+        var func = addBilGetInitCallBack;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+
+    function addBilGetInitCallBack(data) {
+        appcan.window.closeToast();
+        if (typeof data == "string") {
+            data = eval("(" + data + ")");
+        }
+        var noticeSub = data.notincesubInfo;
+        NOTICESUBINFO = noticeSub[0];
+        carList = data.carList;
+        depotList = data.depotList;
+        driverList = data.driverList;
+        supercargoList = data.supercargoList;
+        //supercargoList
+
+        var infoStr = "";
+
+        for (var i = 0; i < noticeSub.length; i++) {
+            parma += noticeSub[i].noticesubId + "★" + noticeSub[i].oilinfoId + "★" + noticeSub[i].oilinfoSpec + "★" +
+                noticeSub[i].oilNumber + "★" + noticeSub[i].extractType + "★" + noticeSub[i].oilinfoName;
+            var noticeCode = noticeSub[i].noticeCode;
+            var oilinfoName = noticeSub[i].oilinfoName;
+            var oilNum = (noticeSub[i].oilNumber).toFixed(2);
+            num = (noticeSub[i].oilNumber - noticeSub[i].expectNum).toFixed(2);
+
+            infoStr +=
+                '<div class="white-bg  ub ub-ac b-border"><div class="m-row2 gray-font label-width">付油通知单号</div><div class="umar-r" id="noticeCode">' +
+                noticeCode + '</div></div>' +
+                '<div class="white-bg  ub ub-ac b-border"><div class="m-row2 gray-font label-width">名称规格</div><div class="umar-r">' +
+                oilinfoName + '</div></div>' +
+                '<div class="white-bg  ub ub-ac b-border"><div class="m-row2 gray-font label-width">通知单量</div><div id=""><span>' +
+                oilNum + '</span>&nbsp;<span class="gray-font mf-size2 umar-l">吨</span></div></div>' +
+                '<div class="white-bg  ub ub-ac b-border"><div class="m-row2 gray-font label-width">可用量</div><div id=""><span class="mf-color" id="num">' +
+                num + '</span>&nbsp;<span class="gray-font mf-size2 umar-l">吨</span></div></div>';
+
+            if (i < noticeSub.length - 1) {
+                infoStr += "<div class='gap'></div>";
+            }
+        };
+        $("#noticeInfo").append(infoStr);
+
+        document.getElementById("result").innerText = defaultDate;
+    }
+
+    function queryCusYayun() {
+        var url = URL + "/app/cus/driver/queryCusDriver";
+        var paramJsonStr = "pager.pageNo=" + offset + "&pager.pageSize=" + limit + "&temp=0";
+        var func = initDriverData;
+        var dataType = "text";
+        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+    }
+
+    var lv_carlist = appcan.listview({
+        selector: "#carlist",
+        type: "thinLine",
+        hasAngle: true
+    });
+    lv_carlist.set([{
+        title: "请选择",
+    }])
+    lv_carlist.on("click", function (ele, obj, curEle) {
+        appcan.locStorage.setVal("carList", carList);
+        appcan.window.open("carlist", "carlist.html", 10);
+    })
+    var lv_driverlist = appcan.listview({
+        selector: "#driverlist",
+        type: "thinLine",
+        hasAngle: true
+    });
+    lv_driverlist.set([{
+        title: "请选择",
+    }])
+    lv_driverlist.on("click", function (ele, obj, curEle) {
+        appcan.locStorage.setVal("driverList", driverList);
+        appcan.window.open("driverlist", "driverlist.html", 10);
+    })
+    //押运员
+    var lv_yayunlist = appcan.listview({
+        selector: "#yayunlist",
+        type: "thinLine",
+        hasAngle: true
+    });
+    lv_yayunlist.set([{
+        title: "请选择",
+    }])
+    lv_yayunlist.on("click", function (ele, obj, curEle) {
+        appcan.locStorage.setVal("yayunlist", supercargoList);
+        appcan.window.open("supercargoList", "yayun.html", 10);
+    })
+
+    function subZTInfo() {
+        // 付油通知单号
+        var noticeCode = document.getElementById('noticeCode').innerText;
+        // 预约数量
+        var yuyue = rmoney(document.getElementById('num').innerText);
+        // 每单数量
+        var count = parseInt(document.getElementById('count').value);
+        // 分页个数
+        var pager = parseInt(document.getElementById('listNum').value);
+        //  全局变量 defaultDate 当前时间后一天
+        var chooseDate = appcan.locStorage.getVal("chooseDate") || defaultDate.split(" ")[0];
+        var chooseTime = appcan.locStorage.getVal("chooseTime") || defaultDate.split(" ")[1];
+        if (isNaN(count)) {
+            appcan.window.alert("提示", "提油数量请输入数字！", "确定");
+            return;
+        }
+        var typeString = toString.call(count);
+        if (typeString !== "[object Number]") {
+            appcan.window.alert("提示", "提油数量请输入数字！", "确定");
+            return;
+        }
+
+        if (count == "") {
+            appcan.window.alert("提示", "请输入提油数量！", "确定");
+            return;
+        }
+
+        if (Number(num) < Number(count)) {
+            appcan.window.alert("提示", "计划数量不可大于可用量！", "确定");
+            return;
+        }
+        if (Number(count) <= 0) {
+            appcan.window.alert("提示", "计划数量不得为0或负数！", "确定");
+
+            return;
+        }
+        if (count != "" && count * pager > yuyue) {
+            var alertWord = $("#oilname")[0].innerText + ',每单数量*单数，不能大于可预约数量！';
+            oneAlert(alertWord, "确定");
+
+            return;
+        }
+        if (carId == "" || carId == null) {
+            appcan.window.alert("提示", "请选择提油车辆！", "确定");
+            return;
+        }
+        if (chooseDate === "" || chooseDate === null || chooseTime === "" || chooseTime === null) {
+            appcan.window.alert("提示", "请选择完整配送日期！", "确定");
+            return;
+        }
+
+        if (driverId == "" || driverId == null) {
+            appcan.window.alert("提示", "请选择提油司机！", "确定");
+            return;
+        }
+        //油库与时间可以为空
+        var remark = $("textarea")[0].value;
+        var arrData = [],
+            obj = {};
+        //数量，地点，车辆，时间
+        // noticeSubid,oilId,count,通知单量，配送自提，油品名字，分单数量,siteId
+
+
+        // 模拟分提数据
+        obj.noticesubId = NOTICESUBINFO.noticesubId;
+        obj.oilinfoId = NOTICESUBINFO.oilinfoId;
+        obj.oilinfoName = NOTICESUBINFO.oilinfoName;
+        obj.noticeCode = noticeCode;
+        obj.count = count;
+        arrData.push(obj);
+
+        // 在分提单那边使用这个作为基础参数拼接
+        var daichuli = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
+            NOTICESUBINFO.extractType +
+            "★" + NOTICESUBINFO.oilinfoName + "★" + count;
+        var daichuliParam = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
+            NOTICESUBINFO.extractType +
+            "★" + NOTICESUBINFO.oilinfoName + "★" + count;
+        var Param = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
+            NOTICESUBINFO.extractType +
+            "★" + NOTICESUBINFO.oilinfoName + "★" + count + "★" + carId + "★" + driverId + "★" + yayunId + "★" +
+            chooseDate + "★" + chooseTime +
+            "★" + remark;
+        var newParam = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
+            NOTICESUBINFO.extractType +
+            "★" + NOTICESUBINFO.oilinfoName + "★" + count + "★" + carId + "★" + driverId + "★" + yayunId + "★" +
+            chooseDate + "★" + chooseTime +
+            "★" + remark;
+
+        if (pager > 1) {
+            for (var i = 1; i < pager; i++) {
+                newParam += ',' + Param;
+                daichuliParam += ',' + daichuli;
+
+                arrData.push(obj);
+            }
+        }
+
+
+        var url = URL + "/app/bill/addBillSend";
+        var paramJsonStr = "oils=" + newParam;
+        // 有分提的必要
+        if (isOnce) {
+            if (pager > 1) {
+                // 分提油数据保存
+                appcan.locStorage.setVal("zitiParam", newParam);
+                pagerParam["baseParam"] = newParam;
+                pagerParam["daichuliParam"] = daichuliParam;
+                pagerParam["length"] = pager;
+                pagerParam["showData"] = arrData;
+
+                pagerParam["url"] = url;
+                pagerParam["count"] = count;
+                pagerParam["type"] = "自提";
+                appcan.locStorage.setVal("fentiData", pagerParam);
+                twoAlert("是否自定义单个分提单的数据？", "是", "否,直接提交！", function () {
+                    // alert('我要自定义分提单的数据呀!');
+                    appcan.window.open("fendan", "fendan.html", 0);
+                }, function () {
+
+                    // alert("我真的不需要自定义，请让我过去吧!")
+                    var func = addBillSendCallback;
+                    var dataType = "text";
+                    ajaxPostQuery(url, paramJsonStr, func, dataType);
+                    appcan.window.openToast('正在提交提油申请...', '0', '5', '1');
+                });
+                // 直接提交
+            } else {
+                var func = addBillSendCallback;
+                var dataType = "text";
+                ajaxPostQuery(url, paramJsonStr, func, dataType);
+                appcan.window.openToast('正在提交提油申请...', '0', '5', '1');
+            }
+
+            isOnce = false;
+        }
+    }
+
+    function addBillSendCallback(data) {
+        appcan.window.closeToast();
+        if (data != "") {
+            appcan.window.alert({
+                title: "提示",
+                content: "自提申请提交成功",
+                buttons: ['确定'],
+                callback: function (err, data, dataType, optId) {
+
+                    appcan.locStorage.setVal("Refresh", "true")
+                    appcan.window.publish("zitiRefresh", "true");
+
+                    appcan.window.open("mentionOil", "mentionOil.html", 10);
+                    // uexWindow.evaluateScript("mentionOil", 0, "getNewAllNotice()");
+                }
+            });
+        } else {
+            uexWindow.alert("提示", "自提申请提交失败，请重试", "确定");
+        }
+    }
+</script>
+
+</html>

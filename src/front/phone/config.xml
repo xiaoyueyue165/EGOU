@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<widget appId="11671957" channelCode="0000" height="480" pid="" sreensize="4.5" version="00.00.0012" viewmode="application" widgetId="" width="320">
+    <name>EGOU</name>
+    <description/>
+    <author email="1656800216@qq.com">xiaoyueyue</author>
+    <icon src="icon.png"/>
+    <license href=""/>
+    <content encoding="utf-8" src="index.html"/>
+    <updateurl/>
+    <logserverip>10.88.113.71</logserverip>
+    <showmyspace>false</showmyspace>
+    <obfuscation>true</obfuscation>
+    <bgcolor>#fefefe</bgcolor>
+    <orientation>1</orientation>
+    <debug>true</debug>
+    <error src=""/>
+    <removeloading>false</removeloading>
+    <debug/>
+    <partobfuscation>false</partobfuscation>
+    <webapp>false</webapp>
+	
+  <config desc="uexJPush" type="KEY">
+    <param platform="Android" name="$UEXJPUSH_PACKAGE$" value="egou.xiaoyueyue165"/>
+    <param platform="Android" name="$UEXJPUSH_APPKEY$" value="e342ENTITLEMENTS29c1cc9fc419d0f6e0f2"/>
+ </config>
+
+
+<config desc="" type="AUTHORITY">
+   
+</config>
+
+</widget>
+
+

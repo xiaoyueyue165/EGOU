@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/intentionList.css">
+    <link rel="stylesheet" type="text/css" href="./css/search.css" />
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <!--header开始-->
+    <div id="header" class="fix uh bc-text-head ub bc-head">
+        <div class="nav-btn" id="nav-left">
+            <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+        </div>
+        <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">未出库</h1>
+        <div class="nav-btn nav-bt" id="nav-right"></div>
+    </div>
+    <div id="header1" class="uh bc-text-head ub bc-head">
+        <div class="nav-btn" id="nav-left">
+            <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+        </div>
+        <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">隐藏</h1>
+        <div class="nav-btn nav-bt" id="nav-right"></div>
+    </div>
+    <!-- <button id="loadMore">加载更多</button> -->
+    <div id="content">
+
+    </div>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+    <script src="../common/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+    <script id="test" type="text/html">
+
+            {{each list}}
+            <div id='list{{$index}}' class='list-content white-bg'><div id='orderlist" + i + "'>
+
+            <div id='' class='ub ub-ac umar-a m-row3'><span class='gray-font'>付邮通知单号&nbsp;&nbsp;</span><span>
+            {{$value.noticeCode}}
+            </span></div>
+            <div id='' class='ub ub-ac umar-a m-row3'><div id='' class='ub ub-ac t-col1'>
+            <!-- 油品名称 -->
+
+            {{$value.oilinfoName}}
+
+            </div><div id='' class='ub ub-ac ub-pc t-col2'><span class='umar-r mf-color umar-r'><span class='mf-size2'></span>
+            <!-- 油品价格 -->
+
+            {{$value.deportName}}
+
+            <!-- 油品数量-->
+
+            </span></div><div id='type' class='ub ub-ac  ub-pc t-col4'><span class='s-state delivery'>
+            <!-- 配送方式 -->
+
+            {{if $value.extractType=='0'}}
+            配送                {{else if $value.extractType == '1'}}
+            自提
+            {{/if}}
+
+            </span></div></div>
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'><div id='' class='col-left'><span class='gray-font'>单价&nbsp;&nbsp;</span><span>
+            {{$value.oilPrice | getPrice}}
+            <span class='gray-font mf-size2'>元</span>
+            </span></div><div id='total' class='col-right'><span class='gray-font'>数量&nbsp;&nbsp; <span style="color:#000">
+            {{$value.oilNumber | oneDecimal}}
+            <span class='gray-font mf-size2'>吨</span></span><span class='mf-color AllPrice'>
+
+            </span></div></div>
+
+            <div id='pay' class='ub ub-ac umar-l umar-r m-row3'><div id='' class='col-left'><span class='gray-font'>总价&nbsp;&nbsp;</span><span>
+            {{$value.oilAmot | getPrice}}
+            <span class='gray-font mf-size2'>元</span>
+            </span></div></div>
+
+            <!-- 所属公司 -->
+            <div id='' class='ub ub-ac umar-l umar-r m-row3'><div><span class='gray-font'>销售单位&nbsp;&nbsp;</span><span>
+            {{$value.gyfgs}}
+
+            </span></div></div>
+
+            </div></div>
+            <div class='gap'></div>
+            {{/each}}
+        </script>
+</body>
+<script type="text/javascript" charset="utf-8">
+    var OEDER_ARR = null;
+    template.defaults.imports.getPrice = function (value) {
+
+        return fmoney(value, 2);
+    };
+    template.defaults.imports.oneDecimal = function (number) {
+        return number.toFixed(1);
+    }
+    appcan.button(".nav-btn", "btn-act", function () {
+        appcan.window.close(-1);
+    })
+
+    appcan.ready(function () {
+        uexWindow.setWindowScrollbarVisible('false');
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+            appcan.frame.resetBounce(1);
+            var num = Number(pageNo) * limit;
+            $("#pullstatus" + type).html("");
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '无更多信息',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+            pageNo = Number(pageNo) + 1;
+            Order.addOrderData();
+        });
+
+        Order.init();
+    })
+
+    // $('#loadMore').click(function(){
+    //     Order.addOrderData();
+    // })
+
+
+    function loadMoreOrder() {
+        var newPageNo = Number(pageNo) + 1;
+        var islatest = false;
+
+
+        $('#loadMore').remove();
+        if (OEDER_ARR.length > 15) {
+            var NewOrderData = OEDER_ARR.splice(0, 15);
+        } else if (OEDER_ARR.length < 15) {
+            alert("正在加载最后一页")
+            var NewOrderData = OEDER_ARR.splice(0, 15);
+            islatest = true;
+        }
+
+        var html = template('test', {
+            list: NewOrderData
+        })
+        $('#content').append(html)
+
+        if (islatest) {
+            alert('这下没有数据了...')
+            return;
+        }
+        loadMore.init({
+            ele: "content"
+        })
+        $("#btn-load-more").click(function () {
+            pageNo++;
+            return loadMoreOrder();
+        })
+
+    }
+
+
+
+    var Order = {
+        init: function () {
+            var y = this;
+            y.getOrderList();
+        },
+        getOrderList: function () {
+            var y = this;
+            var url = URL + "/app/bill/getAllNotice?outstate=no";
+
+            var paramJsonStr = "";
+            var func = y.getOrderListCallback.bind(y);
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+            appcan.initBounce();
+        },
+        getOrderListCallback: function (data) {
+            appcan.window.closeToast();
+            var data = JSON.parse(data);
+            var listOrder = data.list;
+            if (listOrder.length == 0) {
+                nodata('content', '您没有符合条件的付油通知单')
+                return;
+            } else if (listOrder.length > 15) {
+                OEDER_ARR = listOrder;
+                listOrder = OEDER_ARR.splice(0, 15);
+            }
+
+            var html = template('test', {
+                list: listOrder
+            })
+
+            $('#content').append(html)
+            loadMore.init({
+                ele: "content"
+            })
+
+            $("#btn-load-more").click(function () {
+                loadMoreOrder();
+            })
+        }
+
+    }
+
+
+
+
+</script>
+
+</html>

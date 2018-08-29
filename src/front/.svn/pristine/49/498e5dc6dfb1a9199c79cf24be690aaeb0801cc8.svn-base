@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css"/>
+        <link rel="stylesheet" href="../build/css/ui-box.css"/>
+        <link rel="stylesheet" href="../build/css/ui-base.css"/>
+        <link rel="stylesheet" href="../build/css/ui-color.css"/>
+        <link rel="stylesheet" href="../build/css/appcan.icon.css"/>
+        <link rel="stylesheet" href="../build/css/appcan.control.css"/>
+        <link rel="stylesheet" type="text/css" href="css/register.css"/>
+        <script type="text/javascript" src="../common/comm.js"></script>
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <!--header开始-->
+        <div class="uh bc-text-head ub bc-head" id="header">
+             <div class="nav-btn" id="nav-left">
+                <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">选择单位类型</h1>
+            <div class="nav-btn" id="nav-right">
+            </div>
+        </div>
+        <!--header结束-->
+
+        <!--content开始-->
+        <div id="content" class="ub-f1 tx-l ">
+            <div class="sc-bg" id="treeview"></div>
+
+        </div>
+        <!--content结束-->
+    </body>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/listview_new.js"></script>
+    <script src="../common/treeview_new.js"></script>
+    
+    </body>
+    <script>
+        var sh_html="<div class='ub ub-ver mf-size1'><div class='ub ub-ac margin-t'>";
+        var zd_html="<div class='ub ub-ver mf-size1'><div class='ub ub-ac margin-t'>";
+        var tx_html="<div class='ub ub-ver mf-size1'><div class='ub ub-ac margin-t'>";
+        var jy_html="<div class='ub ub-ver mf-size1'><div class='ub ub-ac margin-t'>";
+        
+        var keyValue="";
+        window.onload=function(){
+            //alert(URL);
+            $.ajax({  
+                type: "POST", //用POST方式传输  
+                dataType: "text",
+                url: URL+'/comm/user/queryCList',
+                data: "1=1",
+                headers:{accept:"*/*"},
+                error: function (XMLHttpRequest, textStatus, errorThrown) { },  
+                success: function (data){ 
+                    if(typeof data == "string"){
+                        data=eval("("+data+")");
+                    }
+                    if(data.length>0){
+                        for (var i=0; i < data.length; i++) {
+                          var value=data[i].custypesubName;
+                          var key=data[i].custypesubCode;
+                          //alert(data[i].custypesubCode);
+                          if(data[i].custypeId=="001"){
+                              zd_html += "<span id='"+key+"' onclick='getTypeId(\""+key+"\",\""+value+"\")' class='zd-w'>"+value+"</span>";
+                              //alert(zd_html);
+                          }
+                          if(data[i].custypeId=="002"){
+                              tx_html += "<span id='"+key+"' onclick='getTypeId(\""+key+"\",\""+value+"\")' class='zd-w'>"+value+"</span>";
+                          }
+                          if(data[i].custypeId=="003"){
+                              jy_html += "<span id='"+key+"' onclick='getTypeId(\""+key+"\",\""+value+"\")' class='zd-w'>"+value+"</span>";
+                          }
+                          if(data[i].custypeId=="004"){
+                              sh_html += "<span id='"+key+"' onclick='getTypeId(\""+key+"\",\""+value+"\")' class='zd-w'>"+value+"</span>";
+                          }
+                        }
+                    }
+                    zd_html+="</div></div>";
+                    tx_html+="</div></div>";
+                    jy_html+="</div></div>";
+                    sh_html+="</div></div>"; 
+                     
+                    var tv = appcan.treeview({
+                        selector : "#treeview",
+                        defaultOpen : 1//默认打开第几项，必须包含数据
+                    });
+                    tv.set([{
+                        header : "终端用户",//001
+                        content : [{
+                            title : zd_html,
+                        }]
+                    }, {
+                        header : "社会加油站",//004
+                        content : [{
+                            title : sh_html,
+                        }]
+                    }, {
+                        header : "特许加油站",//002
+                        content : [{
+                            title : tx_html,
+            
+                        }]
+                    }, {
+                        header : "社会经营单位",//003
+                        content : [{
+                            title : jy_html,
+            
+                        }]
+                    }]);
+                    
+                    tv.on('listviewClick', function(ele, data, obj) {
+                                             //alert(ele.id);
+                                             //alert(data.id);
+                                             //alert(obj.id);
+                                        });
+                    
+                    tv.on('click', function(ele, obj, subobj) {
+                        //alert(ele);
+                    });  
+                }  
+            }); 
+        
+            
+           
+            appcan.ready(function() {
+                appcan.initBounce();
+            })
+    
+            appcan.button("#nav-left", "btn-act", function() {
+                appcan.window.publish('putKeyValue',keyValue);    
+                appcan.window.close(-1);
+            })
+        
+        }
+        
+        function getTypeId(id,name){
+            $("#"+id).addClass("zd-w-active");
+            $('#treeview span').not($("#"+id)).removeClass('zd-w-active');
+            keyValue = id+","+name;
+        }
+    </script>
+</html>

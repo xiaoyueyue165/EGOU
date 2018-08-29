@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../../build/css/ui-box.css">
+    <link rel="stylesheet" href="../../build/css/ui-base.css">
+    <link rel="stylesheet" href="../../build/css/ui-color.css">
+    <link rel="stylesheet" href="../../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/complaint.css">
+    <style type="text/css">
+        .bg-green {
+            background-color: #78C44F
+        }
+    </style>
+</head>
+
+<body class="um-vp " ontouchstart>
+    <div id="page_0" class="up ub ub-ver white-bg" tabindex="0">
+        <!--header开始-->
+        <div class="uh bc-text-head ub bc-head" id="header">
+            <div class="nav-btn" id="nav-left">
+                <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">内容类型</h1>
+            <div class="nav-btn nav-bt" id="nav-right"></div>
+        </div>
+        <!--header结束-->
+        <!--content开始-->
+        <div id="content" class="ub-f1 tx-l">
+            <div id="listview" class="ubt bc-border sc-bg"></div>
+
+        </div>
+        <!--content结束-->
+
+    </div>
+    <script src="../../build/js/appcan.js"></script>
+    <script src="../../build/js/appcan.control.js"></script>
+    <script src="../../build/js/appcan.listview.js"></script>
+</body>
+<script>
+    var typeParam = "";
+    appcan.ready(function () {});
+    appcan.button("#nav-left", "btn-act", function () {
+        appcan.window.publish("typeParam", typeParam);
+        appcan.window.close(-1);
+    })
+    var lv = appcan.listview({
+        selector: "#listview",
+        type: "thinLine",
+        hasAngle: false,
+        hasRadiobox: true,
+        hasSubTitle: true,
+        align: "right",
+    });
+    lv.set([{
+        title: "油品质量",
+        id: "001_001",
+
+    }, {
+        title: "客户经理",
+        id: "001_002",
+
+    }, {
+        title: "油库服务",
+        id: "001_003",
+
+    }, {
+        title: "配送服务",
+        id: "001_004",
+
+    }, {
+        title: "提油速度",
+        id: "001_005",
+
+    }, {
+        title: "其他",
+        id: "001_006",
+
+    }])
+    lv.on("click", function (ele, obj, curEle) {
+
+        typeParam = obj.id + "&" + obj.title;
+        appcan.locStorage.setVal("typeParam", typeParam);
+
+    })
+    //单选事件
+    lv.on("radio:change", function (obj, data) {
+        typeParam = data.id + "&" + data.title;
+        appcan.locStorage.setVal("typeParam", typeParam);
+
+    })
+</script>
+
+</html>

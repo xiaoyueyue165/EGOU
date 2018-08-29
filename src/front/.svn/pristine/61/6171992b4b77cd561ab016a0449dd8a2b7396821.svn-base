@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <title></title>
+        <style type="text/css">
+            .box {
+                height: 6em;
+                text-align: center;
+                vertical-align: center;
+                position: relative;
+            }
+            .box button {
+                position: absolute;
+                top: 1.8em;
+            }
+        </style>
+    </head>
+
+    <body class="um-vp white-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver white-bg" tabindex="0">
+            <div id="content">
+                <h2>打开浏览器下载页面</h2>
+                <div class="box ub">
+                    <button class="btn" id="download" onclick="goToDownloadPage()">
+                        安卓版本下载,在浏览器内部
+                    </button>
+                </div>
+
+                <hr>
+                <h2>检查更新</h2>
+                <div class="box ub">
+                    <button class="btn" id="download" onclick="checkUpdate()">
+                        检查更新
+                    </button>
+                </div>
+                <hr>
+
+                <h2>检查更新并下载</h2>
+                <div class="box ub">
+                    <button class="btn" id="checkWidgetUpdate" onclick="checkWidgetUpdate()">
+                        检查更新并下载
+                    </button>
+                </div>
+
+                <hr>
+                <h2>获取当前app的版本号</h2>
+                <div class="box ub">
+                    <button class="btn" id="get" onclick="getAppVersion()">
+                        获取app的版本
+                    </button>
+                </div>
+                <hr>
+                <h2>本地下载</h2>
+                <div class="box ub">
+                    <button class="btn" id="get" onclick="localDownLoad()">
+                        本地下载
+                    </button>
+                </div>
+
+                <hr>
+                <h2>浏览器打开网页</h2>
+                <div class="box ub">
+                    <button class="btn" id="get" onclick="openBrower()">
+                        浏览器打开网页
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </body>
+
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/template-web.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../common/comm.js"></script>
+
+    </body>
+    <script>
+        appcan.ready(function() {
+            var value = uexWidgetOne.platformName;
+
+        })
+        function goToDownloadPage() {
+
+            appcan.window.alert({
+                title : "提示",
+                content : "这是文字内容",
+                buttons : ["更新","取消"],
+                callback : function(err, data, dataType, optId) {
+                    if (data == '0') {
+                        appcan.window.open({
+                            name : 'demo',
+                            dataType : 0,
+                            data : 'https://xiaoyueyue165.github.io/download/app.apk'
+                        });
+
+                        window.open(msg.downloadUrl)
+                    }
+                    if (data == '1') {
+
+                    }
+                    console.log(err, data, dataType, optId);
+                }
+            });
+
+        }
+
+        function checkUpdate() {
+
+            uexWidget.checkUpdate(function(error, data) {
+                if (!error) {
+                    alert(JSON.stringify(data))
+                    var AAAAAA = data.result;
+                    alert('data.result' + AAAAAA);
+                }
+            });
+
+            uexWidget.cbCheckUpdate = function(opId, dataType, data) {
+                alert('opid:' + opId + ',dataType:' + dataType + ',data:' + data);
+            }
+        }
+
+        var savePath = "wgt://data/app.apk";
+        function checkWidgetUpdate(version) {
+            uexDownloaderMgr.onStatus = function(opId, fileSize, percent, status) {
+                if (status == 0) {
+                    var str = '下载进度：' + percent + '%';
+                    if (fileSize == -1)
+                        str = '下载中，请稍候...';
+                    uexWindow.toast('1', '5', str, '');
+                } else if (status == 1) {
+                    uexWindow.closeToast();
+                    uexDownloaderMgr.closeDownloader(1);
+                    uexWidget.installApp(savePath);
+                } else {
+                    uexWindow.closeToast();
+                    uexWindow.toast('0', '5', '下载失败', '2000');
+                    uexDownloaderMgr.closeDownloader(1);
+                }
+            }
+        }
+
+        function getAppVersion() {
+
+            uexWidgetOne.getCurrentWidgetInfo();
+            uexWidgetOne.cbGetCurrentWidgetInfo = function(opId, dataType, data) {
+                var info = JSON.parse(data);
+                alert(JSON.stringify(info))
+                var softVer = info.version;
+                alert('版本号为' + softVer)
+            }
+        }
+
+        function localDownLoad() {
+            var savePath = "wgt://data/app.apk";
+            uexWidget.installApp(savePath);
+        }
+
+        function openBrower() {
+            var value = uexWidgetOne.platformName;
+            alert('浏览器类型为 '+value)
+
+            if (value == "android") {
+                alert(value)
+                uexWidget.startApp("1", "android.intent.action.VIEW", '{"data":{"mimeType":"text/html","scheme":"https://github.com/xiaoyueyue165"}}');
+            } else {
+                uexWidget.loadApp("https://github.com/xiaoyueyue165", null, null);
+            }
+        }
+
+    </script>
+
+</html>

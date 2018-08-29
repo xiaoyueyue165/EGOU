@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="../build/css/ui-box.css">
+    <link rel="stylesheet" href="../build/css/ui-base.css">
+    <link rel="stylesheet" href="../build/css/ui-color.css">
+    <link rel="stylesheet" href="../build/css/appcan.icon.css">
+    <link rel="stylesheet" href="../build/css/appcan.control.css">
+    <link rel="stylesheet" href="css/intentionList.css">
+    <link rel="stylesheet" type="text/css" href="./css/search.css" />
+
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <!--header开始-->
+    <div id="header" class="fix uh bc-text-head ub bc-head">
+        <div class="nav-btn" id="nav-left">
+            <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+        </div>
+        <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">已出库</h1>
+        <div class="nav-btn nav-bt" id="nav-right"></div>
+    </div>
+    <div id="header1" class="uh bc-text-head ub bc-head">
+        <div class="nav-btn" id="nav-left">
+            <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+        </div>
+        <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">隐藏</h1>
+        <div class="nav-btn nav-bt" id="nav-right"></div>
+    </div>
+    <div id="content">
+
+    </div>
+    <div id="more"></div>
+
+    <script id="test" type="text/html">
+
+        {{each list}}
+        <div id='list" + i + "' class='list-content white-bg'>
+            <div id='orderlist" + i + "'>
+
+                <div id='' class='ub ub-ac umar-a m-row3'>
+                    <span class='gray-font'>付邮通知单号&nbsp;&nbsp;</span>
+                    <span>
+                        {{$value.noticeCode}}
+                    </span>
+                </div>
+                <div id='' class='ub ub-ac umar-a m-row3'>
+                    <div id='' class='ub ub-ac t-col1'>
+                        <!-- 油品名称 -->
+
+                        {{$value.oilinfoName}}
+
+                    </div>
+                    <div id='' class='ub ub-ac ub-pc t-col2'>
+                        <span class='umar-r mf-color umar-r'>
+                            <span class='mf-size2'></span>
+                            <!-- 油品价格 -->
+
+                            {{$value.deportName}}
+
+                            <!-- 油品数量-->
+
+                        </span>
+                    </div>
+                    <div id='type' class='ub ub-ac  ub-pc t-col4'>
+                        <span class='s-state delivery'>
+                            <!-- 配送方式 -->
+
+                            {{if $value.extractType=='0'}} 配送 {{else if $value.extractType == '1'}} 自提 {{/if}}
+
+                        </span>
+                    </div>
+                </div>
+                <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                    <div id='' class='col-left'>
+                        <span class='gray-font'>单价&nbsp;&nbsp;</span>
+                        <span>
+                            {{$value.oilPrice | getPrice}}
+                            <span class='gray-font mf-size2'>元</span>
+                        </span>
+                    </div>
+                    <div id='total' class='col-right'>
+                        <span class='gray-font'>数量&nbsp;&nbsp;
+                            <span style="color:#000">
+                                {{$value.oilNumber | oneDecimal}}
+                                <span class='gray-font mf-size2'>吨</span>
+                            </span>
+                            <span class='mf-color AllPrice'>
+
+                            </span>
+                    </div>
+                </div>
+
+                <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
+                    <div id='' class='col-left'>
+                        <span class='gray-font'>总价&nbsp;&nbsp;</span>
+                        <span>
+                            {{$value.oilAmot | getPrice}}
+                            <span class='gray-font mf-size2'>元</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 所属公司 -->
+                <div id='' class='ub ub-ac umar-l umar-r m-row3'>
+                    <div>
+                        <span class='gray-font'>销售单位&nbsp;&nbsp;</span>
+                        <span>
+                            {{$value.gyfgs}}
+
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class='gap'></div>
+        {{/each}}
+    </script>
+    <script src="../build/js/appcan.js"></script>
+    <script src="../build/js/appcan.control.js"></script>
+    <script src="../common/comm.js"></script>
+    <script src="../common/jquery.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+</body>
+<script type="text/javascript" charset="utf-8">
+    var PAGENO = pageNo || 1;
+
+    template.defaults.imports.getPrice = function (value) {
+
+        return fmoney(value, 2);
+    };
+    template.defaults.imports.oneDecimal = function (number) {
+        return number.toFixed(1);
+    }
+    appcan.button(".nav-btn", "btn-act", function () {
+        appcan.window.close(-1);
+    })
+
+    var OEDER_ARR = null;
+
+    appcan.ready(function () {
+        uexWindow.setWindowScrollbarVisible('false');
+        appcan.frame.setBounce(1, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+        }, function (type) {
+            $("#pullstatus").html("");
+            appcan.frame.resetBounce(1);
+            var num = Number(pageNo) * limit;
+            $("#pullstatus" + type).html("");
+            if (Number(totalRows) <= num) {
+                appcan.window.openToast({
+                    msg: '无更多信息',
+                    duration: 1000,
+                    position: 5,
+                    type: 0
+                });
+                return;
+            }
+            pageNo = Number(pageNo) + 1;
+            Order.addOrderData();
+        });
+
+        Order.init();
+    })
+
+    var Order = {
+        init: function () {
+            var y = this;
+            y.queryOrderList();
+
+        },
+        queryOrderList: function (newPageNo) {
+            var pageNo = newPageNo || PAGENO;
+            var y = this;
+            var url = URL + "/app/bill/getAllNotice?outstate=yes";
+            var paramJsonStr = "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+            var func = y.getOrderListCallback.bind(this);
+            var dataType = "text";
+            ajaxPostQuery(url, paramJsonStr, func, dataType);
+            appcan.window.openToast('加载中...', '0', '5', '1');
+            appcan.initBounce();
+        },
+        getOrderListCallback: function (data) {
+            var y = this;
+            appcan.window.closeToast();
+            var data = JSON.parse(data);
+            var listOrder = data.list;
+            if (listOrder.length == 0) {
+                nodata('content', '您没有符合条件的付油通知单')
+                return;
+            } else {
+                var html = template('test', {
+                    list: listOrder
+                })
+
+                $('#content').append(html);
+
+                loadMore.init({
+                    ele: "more",
+                    data: listOrder,
+                    totalNum: data.totalRows,
+                    limit: 15,
+                    clickFn: func2
+                });
+            }
+
+        }
+    }
+
+
+    function func2(current_page, max_page, totalNum) {
+        console.log(arguments)
+        var y = this;
+        console.log(this);
+        $('#loadMore').remove();
+        alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
+        var y = this;
+        Order.queryOrderList(current_page);
+        appcan.window.openToast('数据加载中...', '0', '5', '1');
+    }
+</script>
+
+</html>

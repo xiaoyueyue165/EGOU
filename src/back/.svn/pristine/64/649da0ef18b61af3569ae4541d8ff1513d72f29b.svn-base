@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+  <link rel="stylesheet" href="../build/css/ui-box.css">
+  <link rel="stylesheet" href="../build/css/ui-base.css">
+  <link rel="stylesheet" href="../build/css/ui-color.css">
+  <link rel="stylesheet" href="../build/css/appcan.icon.css">
+  <link rel="stylesheet" href="../build/css/appcan.control.css">
+  <link rel="stylesheet" href="../intention/css/intention.css" />
+  <style>
+    #cusName {
+      width: auto;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      font: 1.2em;
+      background-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="pop-body" ontouchstart>
+
+  <div class="pop-wrapper">
+    <div class="pop-content">
+      <div class="pop-info">
+        <label for="cusName">提货方式：</label>
+        <select id="extractType" name="extractType">
+          <option value="">请选择</option>
+          <option value="0">配送</option>
+          <option value="1">自提</option>
+        </select>
+
+      </div>
+      <div class="pop-info">
+        <label for="cusName">运输方式：</label>
+        <select id="ysfs" name="ysfs"></select>
+
+      </div>
+      <div class="pop-info">
+        <label for="cusName">油品名称：</label>
+        <input type="text" id="" placeholder="请输入订单编号">
+      </div>
+      <div class="pop-info">
+        <label for="cusName">油库地点：</label>
+        <input type="text" id="cusName" placeholder="请输入订单编号">
+      </div>
+
+      <div id="btn" class="ub ub-ac">
+        <div id="confirmBtn" class="uinn5 ubt ubr bc-border ub ub-f1 ub-pc">
+          <span class="bc-color">查询</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="../build/js/appcan.js"></script>
+<script src="../build/js/appcan.control.js"></script>
+<script src="../common/common.js"></script>
+<script src="../common/jquery.min.js"></script>
+<script>
+  appcan.ready(function () {
+    appcan.initBounce();
+    getYSFS();
+    getYP();
+    getYL();
+
+  })
+
+  function reasonChange() {
+    var reason = $("textarea")[0].value;
+  }
+
+  appcan.button("#confirmBtn", "act-ani", function () {
+
+  })
+
+  function getYSFS() {
+    var func = YSFS;
+    ajaxPostQuery(URL + "/backgrd/bilInstorePlan/queryYsfsList", null, func, null);
+  }
+  function getYP() {
+    var func = YSFS;
+    ajaxPostQuery(URL + "/backgrd/oil/admin/queryOilList", null, func, null);
+  }
+  function getYL() {
+    var func = YSFS;
+    ajaxPostQuery(URL + "/backgrd/bilInstorePlan/queryOilDepotInfoList", null, func, null);
+  }
+
+  function YSFS(data) {
+    console.log(data);
+
+
+  }
+
+  appcan.button("#cancelBtn", "act-ani", function () {
+    closepop();
+  })
+
+  //关闭浮动窗口
+  function closepop() {
+    appcan.closePopover("cancelReason");
+  }
+</script>
+
+</html>

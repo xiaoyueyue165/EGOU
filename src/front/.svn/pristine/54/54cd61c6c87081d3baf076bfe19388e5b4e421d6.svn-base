@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+         <link rel="stylesheet" href="../build/css/project/new.css">
+        <link rel="stylesheet" href="../build/css/project/main.css">
+        <style>
+            .stopic {
+                font-size: 0.6em;
+                background-color: #CC3333;
+                color: white;
+                padding: 1px 3px
+            }
+            .exclusive{
+                font-size: 0.6em;
+                background-color: #33cc33;
+                color: white;
+                padding: 1px 3px
+            } 
+        </style>
+    </head>
+    <body class="um-vp c-wh" ontouchstart>
+
+        <div id="listview"  class="ubt bc-border   c-wh  uinn-a8">
+
+        </div>
+
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+        <script src="../build/js/appcan.listview.js"></script>
+    </body>
+    <script>
+       
+</html>

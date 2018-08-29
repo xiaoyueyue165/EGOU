@@ -1,0 +1,69 @@
+.m-btn{
+    font-size: 0.8em;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: 1.8em;
+    padding-right: 0.8em;
+    border-radius: 0.2em;
+}
+.border-btn{
+    border: 0.08em solid #cccccc;
+    color:#999999;
+    background-size: 1em 1em;
+    background-repeat: no-repeat;
+    background-position: 0.6em center;
+}
+.btn-edit{
+    background-image: url('../../build/imgs/icon_edit.png');
+}
+.btn-delete{
+    background-image: url('../../build/imgs/icon_delete.png');
+}
+
+.l-width{
+    width: 30%;
+}
+.r-width{
+    width: 80%;
+}
+.l-width1{
+    width: 6.5em;
+}
+input[type="text"]:focus{
+    outline: none;
+}
+
+
+.vehicle-list .lis{
+    padding-left: 0 !important;
+}
+.vehicle-list{
+    width: 100%;
+}
+.orgAddress-list{
+    width: 100%;
+    border: none;
+}
+
+.btn-vcode{
+    font-size: 0.8em;
+    margin-top: 0.7em;
+    height: 2.4em;
+    padding: 0 0.6em;
+    color:#ffffff;
+    border: none !important;
+}
+.a-width{
+    width: 98%;
+}
+#stateName {
+    position: absolute;
+    right: 0.4em;
+    bottom:-0.4em;
+    background-color: #78C44F;
+    padding:0.1em 0.2em;
+    border-radius: 0.3em;
+}
+#parent {
+   position: relative;
+}

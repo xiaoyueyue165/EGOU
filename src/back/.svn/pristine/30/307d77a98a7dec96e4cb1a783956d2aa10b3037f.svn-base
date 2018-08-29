@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="build/css/ui-box.css">
+        <link rel="stylesheet" href="build/css/ui-base.css">
+        <link rel="stylesheet" href="build/css/ui-color.css">
+        <link rel="stylesheet" href="build/css/appcan.icon.css">
+        <link rel="stylesheet" href="build/css/appcan.control.css">
+
+    </head>
+    <!-- 1 待付款 2转付邮 4 -->
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver white-bg" tabindex="0">
+            <!--header开始-->
+            <div class="uh bc-text-head ub bc-head" id="header">
+                <div class="nav-btn" id="nav-left">
+                    <div id="" class=""></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">登录</h1>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div id="appset" class="myicon icon-setting"></div>
+                </div>
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="content" class="ub-f1 tx-l ">
+
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="build/js/appcan.js"></script>
+        <script src="build/js/appcan.control.js"></script>
+    </body>
+    <script>
+		appcan.ready(function() {
+			var titHeight = $('#header').offset().height;
+			appcan.frame.open("content", "index_content.html", 0, titHeight + 6);
+			window.onorientationchange = window.onresize = function() {
+				appcan.frame.resize("content", 0, titHeight);
+			}
+
+			appcan.window.subscribe('afterLogin', function(empIdStr) {
+				//appcan.logs("empIdStr："+empIdStr);
+				uexWidget.setPushNotifyCallback("setPushFun");
+				//当有推送消息来的时候，打开这个页面时会调用setPushFun方法
+				uexWidget.setPushState(1);
+				uexWidget.setPushInfo(empIdStr, "empIdStr");
+				//绑定推送用户
+			})
+
+			uexWidget.cbGetPushInfo = function(opId, dataType, data) {
+				//推送消息格式为：
+				uexWindow.alert(opId + "," + dataType + "," + data);
+				//{"aps":{"alert":"你收到推送.","badge":1,"sound":"sound.wav","userInfo”:"接到的参数”}}
+				if ( typeof data == "string") {
+					data = eval("(" + data + ")");
+				}
+				uexWindow.alert("提示", data.msg, "确定");
+
+			}
+
+			uexWidget.onResume = onResume;
+
+			uexWidget.onSuspend = onSuspend;
+
+		});
+
+		function onResume() {
+			uexWidget.setPushState(1);
+			uexWidget.getPushState();
+		}
+
+		function onSuspend() {
+			uexWidget.setPushState(1);
+			uexWidget.getPushState();
+		}
+
+		function setPushFun() {
+
+			uexWidget.getPushInfo();
+		}
+
+
+		appcan.button("#appset", "act-ani", function() {
+			appcan.window.open("news_set", "common_page/appSet/news_set.html", 10);
+		})
+    </script>
+</html>
