@@ -1,7 +1,0 @@
- // 模板引擎补充
- template.defaults.imports.Balance = function (number) {
-  return number.toFixed(2);
-}
-template.defaults.imports.changeMoney = function (value) {
-  return fmoney(value)
-}
