@@ -93,7 +93,73 @@
     <div class="gap" style="position: relative;top: -1px"></div>
 
     <div class="ub ub-ver sc-bg" id="">
-        <div id="searchOrders"></div>
+        <div id="searchOrders">
+            <div id="listview" class="sc-bg m-list">
+                <ul>
+                    <li class="ub bc-border bc-text ub-ac lis" id="1" data-index="0">
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            <div class="ub ub-ac padding-a mf-size2">业务查询</div>
+                        </div>
+                        <div class="tx-r sc-text ulev-1 umar-r lv_subTitle">查询单据</div>
+                        <div class="fa fa-angle-right ulev2 sc-text"></div>
+                    </li>
+                </ul>
+            </div>
+            <div is="search1" class="ub ubt  bc-border ub-ac padding-a1">
+                <div id="search0" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        订单查询
+                    </div>
+                </div>
+                <div id="search1" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        结算查询
+                    </div>
+                </div>
+                <div id="search3" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        付油通知单
+                    </div>
+                </div>
+                <div id="search4" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        客存查询
+                    </div>
+                </div>
+
+            </div>
+            <div class="ub ubt  bc-border ub-ac padding-a1">
+
+                <div id="search7" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        提货单查询
+                    </div>
+                </div>
+                <div id="search8" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-search"></div>
+                    <div class="mf-size2 pt02">
+                        出库单查询
+                    </div>
+                </div>
+                <div id="search5" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-table"></div>
+                    <div class="mf-size2 pt02">
+                        订单报表
+                    </div>
+                </div>
+                <div id="search6" class="w25" onclick="search(id)">
+                    <div class="ui-s-state state-table"></div>
+                    <div class="mf-size2 pt02">
+                        结算报表
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
     <div class="gap" id=""></div>
@@ -121,269 +187,84 @@
     <script src="../build/js/appcan.control.js"></script>
     <script src="../build/js/appcan.listview.js"></script>
     <script src="../common/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../common/template-web.js" type="text/javascript" charset="utf-8"></script>
-    <script id="html" type="text/html">
-        {{each list}} {{if $value.type=='总部'}}
-        <div id="listview" class="sc-bg m-list">
-            <ul>
-                <li class="ub bc-border bc-text ub-ac lis" id="1" data-index="0">
-                    <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
-                        <div class="ub ub-ac padding-a mf-size2">业务查询</div>
-                    </div>
-                    <div class="tx-r sc-text ulev-1 umar-r lv_subTitle">查询单据</div>
-                    <div class="fa fa-angle-right ulev2 sc-text"></div>
-                </li>
-            </ul>
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search0" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    订单查询
-                </div>
-            </div>
-            <div id="search1" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    结算查询
-                </div>
-            </div>
-
-            <div id="search4" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    客存查询
-                </div>
-            </div>
-
-            <div id="search5" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-table"></div>
-                <div class="mf-size2 pt02">
-                    订单报表
-                </div>
-            </div>
-
-
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search6" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-table"></div>
-                <div class="mf-size2 pt02">
-                    结算报表
-                </div>
-            </div>
-            <div id="search7" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    提货单查询
-                </div>
-            </div>
-            <div id="search8" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    出库单查询
-                </div>
-            </div>
-            <div id="search3" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    付油通知单
-                </div>
-            </div>
-        </div>
-
-        {{else if $value.type=='全资'}}
-
-        <div id="listview" class="sc-bg m-list">
-            <ul>
-                <li class="ub bc-border bc-text ub-ac lis" id="1" data-index="0">
-                    <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
-                        <div class="ub ub-ac padding-a mf-size2">业务查询</div>
-                    </div>
-                    <div class="tx-r sc-text ulev-1 umar-r lv_subTitle">查询单据</div>
-                    <div class="fa fa-angle-right ulev2 sc-text"></div>
-                </li>
-            </ul>
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search0" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-delivery"></div>
-                <div class="mf-size2 pt02">
-                    订单查询
-                </div>
-
-            </div>
-            <div id="search1" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    结算查询
-                </div>
-            </div>
-
-            <div id="search3" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    付油通知单
-                </div>
-            </div>
-            <div id="search4" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    客存查询
-                </div>
-            </div>
-
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search7" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    提货单查询
-                </div>
-            </div>
-            <div id="search8" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    出库单查询
-                </div>
-            </div>
-        </div>
-
-        {{else}}
-        <div id="listview" class="sc-bg m-list">
-            <ul>
-                <li class="ub bc-border bc-text ub-ac lis" id="1" data-index="0">
-                    <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
-                        <div class="ub ub-ac padding-a mf-size2">业务查询</div>
-                    </div>
-                    <div class="tx-r sc-text ulev-1 umar-r lv_subTitle">查询单据</div>
-                    <div class="fa fa-angle-right ulev2 sc-text"></div>
-                </li>
-            </ul>
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search0" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    订单查询
-                </div>
-            </div>
-            <div id="search1" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    结算查询
-                </div>
-            </div>
-
-            <div id="search4" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    客存查询
-                </div>
-            </div>
-            <div id="search7" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    提货单查询
-                </div>
-            </div>
-
-        </div>
-        <div class="ub ubt  bc-border ub-ac padding-a1">
-            <div id="search8" class="w25" onclick="search(id)">
-                <div class="ui-s-state state-search"></div>
-                <div class="mf-size2 pt02">
-                    出库单查询
-                </div>
-            </div>
-        </div>
-        {{/if}} {{/each}}
-    </script>
 </body>
 <script>
-    var isSearch = true; // 判断业务查询，开放订单查询，结算单查询
-    var isYaoZhen = false; // 姚桢
-
     var box = document.getElementById("searchOrders");
-    var companyType = appcan.locStorage.getVal("companyType");
-    var username = appcan.locStorage.getVal("username");
-    var userList = appcan.locStorage.getVal("userList");
+    var companyType = getVal("companyType");
+    var username = getVal("username");
+    var userList = getVal("userList");
     var userListArr = JSON.parse(this.userList);
     var obj = {};
 
     var pipei = function (val) {
         var re = new RegExp("." + val, "g");
         var isYao = /姚桢/;
+        var isYSC = /营销处销售业务/;
         for (var i = 0; i < userListArr.length; i++) {
             var item = userListArr[i].roleName;
-            if (re.test(item) || isYao.test(item)) {
+            if (re.test(item) || isYao.test(item) || isYSC.test(item)) {
                 return true;
             }
         }
         return false;
-
     }
-    obj.isA = pipei("订单审核") || pipei("销售业务");
-    obj.isB = pipei("订单结算") || pipei("销售业务");
-    obj.isC = pipei("配送自提审核") || pipei("销售业务");
+
+    // 订单审核
+    obj.isA = pipei("订单审核");
+    // 订单结算
+    obj.isB = pipei("合资公司订单结算");
+    // 配送自提审核 总部不显示
+    obj.isC = pipei("配送自提审核");
+    // 资金管理
     obj.isD = pipei("资金管理");
-    isSearch = pipei("业务查询");
+    // 订单查询，结算单查询，客存查询，提货单查询，出库单查询，付油通知单查询
+    obj.isSearch = pipei("业务查询");
+    // 订单报表，结算报表
+    obj.isStats = pipei("小越越");
     console.log(obj);
 
 
-    var noneArr = Array.prototype.slice.call(document.querySelectorAll('.none'));
-    for (var i = 0; i < noneArr.length; i++) {
-        var item = noneArr[i];
-        if (item.id == "audit0" && obj.isA) {
-            item.classList.remove('none');
-        }
-        // 订单结算权限 受到权限状态控制 同时此功能全资公司不需要，只有合资公司需要；
-        if (item.id == "audit1" && obj.isB && companyType !== "全资") {
-            item.classList.remove('none');
-        }
-        if (item.id == "audit2" && obj.isC) {
-            item.classList.remove('none');
-        }
-        if (item.id == "audit3" && obj.isD) {
-            item.classList.remove('none');
-        }
-
-    }
-
-    if (companyType == '合资' || companyType == "总部" || companyType == "全资" || username == "zhouguodong0") {
-
-        // 合资  查询，销售结算  配送自提
-        var obj = {
-            companyType: {
-                type: companyType
+    var noneArr = $$('.none');
+    if (obj.isA || obj.isB || obj.isC || obj.isD) {
+        for (var i = 0; i < noneArr.length; i++) {
+            var item = noneArr[i];
+            if (item.id == "audit0" && obj.isA) {
+                item.classList.remove('none');
             }
-        };
-        console.log(obj)
-        var html = template('html', {
-            list: obj
-        })
-        box.innerHTML = html;
+            // 订单结算权限 受到权限状态控制 同时此功能全资公司不需要，只有合资公司需要；
+            if (item.id == "audit1" && obj.isB) {
+                item.classList.remove('none');
+            }
+            if (item.id == "audit2" && obj.isC) {
+                item.classList.remove('none');
+            }
+            if (item.id == "audit3" && obj.isD) {
+                item.classList.remove('none');
+            }
+        }
+    } else {
+        hide($$('.item-height-intention')[0]);
+        $$('.gap')[0].remove();
     }
-    if (!isSearch) {
-        document.getElementById("search0").classList.add('none');
-        document.getElementById("search1").classList.add('none');
+
+    if (!obj.isSearch && !obj.isStats) {
+        hide(getId('searchOrders'));
+        $$('.gap')[1].remove();
+    } else {
+        if (!obj.isSearch) {
+            getId("search1").remove();
+            getId("search7").classList.add('none');
+            getId("search8").classList.add('none');
+        }
+        if (!obj.isStats) {
+            getId("search5").classList.add('none');
+            getId("search6").classList.add('none');
+        }
     }
     // 总部用户非姚桢不可以看订单结算
-    if (companyType === "总部" && !isYaoZhen) {
-        document.getElementById("audit1").classList.add('none');
+    if (companyType === "总部") {
+        getId("audit1").classList.add('none');
     }
-
-
-    var empName = "";
-    var orgName = "";
-    appcan.ready(function () {
-        var orgInfo = appcan.locStorage.getVal("orgInfo");
-        orgInfo = JSON.parse(orgInfo);
-        empName = orgInfo.empName;
-        orgName = orgInfo.orgName;
-        $("#empName")[0].innerHTML = empName;
-        $("#orgName")[0].innerHTML = orgName;
-    });
 
     var lv_yx = appcan.listview({
         selector: "#listview",
@@ -422,6 +303,16 @@
         // appcan.window.open("intention", "../intention/intention.html", 10);
     });
 
+    var empName = "";
+    var orgName = "";
+    appcan.ready(function () {
+        var orgInfo = getVal("orgInfo");
+        orgInfo = JSON.parse(orgInfo);
+        empName = orgInfo.empName;
+        orgName = orgInfo.orgName;
+        getId("empName").innerHTML = empName;
+        getId("orgName").innerHTML = orgName;
+    });
     // 业务操作
     function viewDD(id) {
         switch (id) {
@@ -490,7 +381,6 @@
 
         switch (id) {
             case "other0":
-
                 //------------------ 修改密码
                 appcan.window.open("search", "changePwd.html", 10);
                 break;

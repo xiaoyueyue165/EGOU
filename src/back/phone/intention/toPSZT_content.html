@@ -115,7 +115,7 @@
 
                     {{$value.oilinfoName}}
 
-                    <input type="hidden" name="orderId" class="orderId" data-sendId={{$value.sendId}} data-snoticeCode="{{$value.noticeCode}}"
+                    <input type="hidden" name="orderId" class="orderId" data-sendId={{$value.sendId}} data-state={{$value.state}} data-snoticeCode="{{$value.noticeCode}}"
                         data-noticeCode="{{$value.noticeCode1}}" data-applyNum={{$value.applyNum}} data-noticesubId={{$value.noticesubId}}
                     />
 
@@ -317,7 +317,7 @@
         init: function () {
             var y = this;
             y.queryOrderList();
-            document.getElementById("searchType").onchange = function () {
+            getId("searchType").onchange = function () {
                 getNewOrderList();
             }
         },
@@ -358,7 +358,7 @@
             var url = URL + "/app/backgrd/billSend/getBilSendList";
             var orgTypeText = getVal("companyType") === "总部" ? 'zongbu' : "";
             // 查询方式 状态
-            var selectTypeParam = serialize(document.getElementById("formData"));
+            var selectTypeParam = serialize(getId("formData"));
             var paramJsonStr = selectTypeParam + "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&orgId=" +
                 getVal("orgId");
             var func = y.getOrderListCallback.bind(y);
@@ -378,14 +378,14 @@
 
             var totalCount = data.rows;
             listData = totalCount;
-            listNum = totalCount.length;
+            listNum += totalCount.length;
             dataLength = listNum;
 
             if (totalCount.length == 0) {
                 nodata('listdetail', '您没有需要配送自提审核的订单！')
                 return;
             } else {
-                show(document.getElementById("formData"));
+                show(getId("formData"));
                 var html = template('Allorder_list', {
                     list: data.rows
                 })
@@ -394,15 +394,12 @@
 
                 // 分页器bug修改
                 if (ISPAGE) {
-                    var checkArr = Array.prototype.slice.call(document.querySelectorAll('.checkBox'));
+                    var checkArr = $$('.checkBox');
+                    var myCheckArr = $$('.singleSelection');
                     dataLength = checkArr.length;
                     checkArr.forEach(function (v, i) {
-                        v.dataset.num = i
-                    })
-
-                    var myCheckArr = Array.prototype.slice.call(document.querySelectorAll('.singleSelection'));
-                    myCheckArr.forEach(function (v, i) {
-                        v.id = i
+                        v.dataset.num = i;
+                        myCheckArr[i].id=i;
                     })
 
                     if ($("#checkall")[0].className === "m-check m-check-active") {
@@ -411,7 +408,10 @@
                     }
 
                 }
-                // document.querySelector("#listdetail .gap:last-child").remove();
+                if (totalCount.length<pageSize || (dataLength <15 &&!getId("btn-load-more"))) {
+                    document.querySelector(" .list-content:last-child .gap").style.height = "5em";
+                }
+             
 
                 loadMore.init({
                     ele: "more",
@@ -518,16 +518,16 @@
             noticeCodes = [];
         for (var i = 0; i < listNum; i++) {
 
-            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
+            if (getId(i).className == "m-check singleSelection m-check-active") {
+                var currentData =$$('.orderId')[i].dataset;
 
-                if ($("#" + i)[0].dataset.state != "0") {
+                if (currentData.state != "0") {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
                 }
-                var element = $("#list" + i).find($('.orderId'))[0].dataset;
 
-                orderIdArr.push(element.sendid);
-                noticeCodes.push(element.snoticecode);
+                orderIdArr.push(currentData.sendid);
+                noticeCodes.push(currentData.snoticecode);
             }
         }
 
@@ -562,13 +562,13 @@
             noticesubIds = "";
         for (var i = 0; i < listNum; i++) {
 
-            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
-                var element = $("#list" + i).find($('.orderId'))[0];
-                if ($("#" + i)[0].dataset.state != "0") {
+           if (getId(i).className == "m-check singleSelection m-check-active") {
+                var element = $$('.orderId')[i];
+                var itemData = element.dataset;
+                if (itemData.state != 0) {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
                 }
-                var itemData = element.dataset;
                 orderIdArr.push(itemData.sendid);
                 ids += itemData.sendid + ",";
                 var str = itemData.noticecode || undefined;
@@ -618,11 +618,11 @@
     }
 
     function getNewOrderList() {;
-        document.getElementById('listdetail').innerHTML = "";
-        if (document.getElementById('more')) {
-            document.getElementById('more').innerHTML = "";
+        getId('listdetail').innerHTML = "";
+        if (getId('more')) {
+            getId('more').innerHTML = "";
         }
-        var selectData = serialize(document.getElementById("formData"));
+        var selectData = serialize(getId("formData"));
         setVal("toPSZT_SelectData", selectData)
         Order.queryOrderList();
     }

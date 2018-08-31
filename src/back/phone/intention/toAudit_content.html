@@ -16,6 +16,9 @@
         .area-price {
             width: 20%;
         }
+        .bc-bg {
+            background-color: #fff;
+        }
     </style>
 </head>
 
@@ -88,7 +91,7 @@
 
                     {{$value.oilinfoName}}
 
-                    <input type="hidden" name="orderId" class="orderId" data-orderId={{$value.orderId}} data-cusId={{$value.cusId}} data-oilAmot={{$value.oilAmot}}
+                    <input type="hidden" name="orderId" class="orderId" data-state={{$value.state}} data-orderId={{$value.orderId}} data-cusId={{$value.cusId}} data-oilAmot={{$value.oilAmot}}
                         data-gyfgs={{$value.gyfgs}} data-youhui={{$value.youhui}} data-orgType1={{$value.orgType1}} />
 
                 </div>
@@ -143,7 +146,8 @@
             </div>
 
             <div id='total' class='col-right'>
-
+                <span class='gray-font'>按出库量结算&nbsp;&nbsp;</span>
+                <span>{{$value.chukuliang}}</span>
             </div>
         </div>
         <div id='pay' class='ub ub-ac umar-l umar-r m-row3'>
@@ -282,7 +286,7 @@
                 var data = JSON.parse(data);
             }
             var totalCount = data.rows;
-            listNum = totalCount.length;
+            listNum += totalCount.length;
             listData = data.rows;
             dataLength = listNum;
 
@@ -300,15 +304,14 @@
 
                 // 分页器bug修改
                 if (ISPAGE) {
-                    var checkArr = Array.prototype.slice.call(document.querySelectorAll('.checkBox'));
+                    var checkArr =$$('.checkBox');
+                    var myCheckArr =$$('.singleSelection');
                     dataLength = checkArr.length;
                     checkArr.forEach(function (v, i) {
-                        v.dataset.num = i
-                    })
+                        v.dataset.num = i;
+                        myCheckArr[i].id=i;
 
-                    var myCheckArr = Array.prototype.slice.call(document.querySelectorAll('.singleSelection'));
-                    myCheckArr.forEach(function (v, i) {
-                        v.id = i
+
                     })
 
                     if ($("#checkall")[0].className === "m-check m-check-active") {
@@ -317,7 +320,9 @@
                     }
 
                 }
-                // document.querySelector("#listdetail .gap:last-child").remove();
+                if (totalCount.length<pageSize || (dataLength <15 &&!getId("btn-load-more"))) {
+                    document.querySelector(" .list-content:last-child .gap").style.height = "5em";
+                }
 
                 loadMore.init({
                     ele: "more",
@@ -367,13 +372,13 @@
 
         for (var i = 0; i < listNum; i++) {
 
-            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
-                var element = $("#list" + i).find($('.orderId'))[0];
-                if (listData[i].orderId && listData[i].state != 0) {
+            if (getId(i).className == "m-check singleSelection m-check-active") {
+                var element = $$('.orderId')[i];
+                var itemData = element.dataset;
+                if (itemData.orderid && itemData.state != 0) {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
                 }
-                var itemData = element.dataset;
                 orderIdArr.push(itemData.orderid);
                 cusIds.push(itemData.cusid);
                 b2s.push(itemData.oilamot);
@@ -417,14 +422,16 @@
 
         for (var i = 0; i < listNum; i++) {
 
-            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
-                var element = $("#list" + i).find($('.orderId'))[0];
-                if (listData[i].orderId && listData[i].state != 0) {
+            if (getId(i)[0].className == "m-check singleSelection m-check-active") {
+                var element = $$('.orderId')[i];
+                var itemData = element.dataset;
+                var orderID = itemData.orderid;
+                if (orderID && itemData.state != 0) {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
                 }
-                var itemData = element.dataset;
-                orderIdArr.push(itemData.orderid);
+               
+                orderIdArr.push(orderID);
             }
         }
 
@@ -440,7 +447,7 @@
 
         var url = URL + "/app/oil/order/updateBatchOrder";
         var paramJsonStr = "orderIds=" + orderIdArr.join(",") + "&state" + "=2";
-        var func = okOrderCallback;
+        var func = failedOrderCallback;
         var dataType = "text";
         ajaxPostQuery(url, paramJsonStr, func, dataType);
         appcan.window.openToast('加载中...', '0', '5', '1');
@@ -465,11 +472,11 @@
 
         appcan.window.closeToast();
         if (data === "1") {
-            oneAlert("订单全部审核通过!")
+            oneAlert("订单全部审核不通过!")
         } else if (data === "0") {
-            oneAlert("部分订单审核未通过，账户余额不足!")
+            oneAlert("部分订单审核失败!")
         } else if (data === "3") {
-            oneAlert("已审核通过!")
+            oneAlert("订单已在别处审核不通过!")
         }
         uexWindow.reload();
     }

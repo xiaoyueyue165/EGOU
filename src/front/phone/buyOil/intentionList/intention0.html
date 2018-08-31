@@ -45,6 +45,12 @@
         .um3 {
             margin-left: 3em;
         }
+        .bw1 {
+            width:43%;
+        }
+        .bw3 {
+            width:28%;
+        }
     </style>
 </head>
 
@@ -110,7 +116,13 @@
                     <span class="umar-l m-border1" id="pz{{$index}}">
                         {{if $value.extractType==0}} 配送 {{else}} 自提 {{/if}}
                     </span>
+                  
                 </div>
+            </div>
+            <div class="ub ub-ac ub-pc">
+                <span class="umar-l m-border1" id="pz{{$index}}">
+                    {{$value.chukuliang}}
+                </span>
             </div>
             <div id="account{{$index}}" class="bw2 ub ub-ac ub-pc fs08">x{{$value.oilNumber}}</div>
             <div id="priceA{{$index}}" class="ub ub-ac bw3 ub-pc mf-color">

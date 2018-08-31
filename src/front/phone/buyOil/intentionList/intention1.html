@@ -97,7 +97,17 @@
 
             {{each $value.orderSub}}
             <div id="orderlist{{$index}}">
+                <div class="ub ub-ac umar-l umar-r m-row3">
+                    <div class="">
 
+                        <span class="gray-font">订单编号&nbsp;&nbsp;</span>
+                        <span class="code"></span>
+
+                    </div>
+                    <div class="col-right">
+
+                    </div>
+                </div>
                 <div class="ub ub-ac umar-a m-row3">
                     <div class="ub ub-ac t-col1">{{$value.oilinfoName}}</div>
                     <div class="ub ub-ac ub-pc t-col2">
@@ -117,17 +127,7 @@
                         <span class="s-state delivery">{{if $value.extractType =="0"}}配送{{else}}自提{{/if}}</span>
                     </div>
                 </div>
-                <div class="ub ub-ac umar-l umar-r m-row3">
-                    <div class="">
-
-                        <span class="gray-font">订单编号&nbsp;&nbsp;</span>
-                        <span class="code"></span>
-
-                    </div>
-                    <div class="col-right">
-
-                    </div>
-                </div>
+               
                 <div class="ub ub-ac umar-l umar-r m-row3">
                     <div class="col-left">
 

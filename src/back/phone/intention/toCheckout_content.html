@@ -108,8 +108,8 @@
                     <!-- 油品名称 -->
 
                     {{$value.oilinfoName}}
-                    <input type="hidden" name="orderId" class="orderId" data-orderId={{$value.orderId}} data-cusId={{$value.cusId}} data-oilAmot={{$value.oilAmot}}
-                        data-gyfgs={{$value.gyfgs}} data-oilNumber={{$value.oilNumber}} data-chukuliang={{$value.chukuliang}}
+                    <input type="hidden" name="orderId" class="orderId" data-orderId={{$value.orderId}} data-state={{$value.state}} data-cusId={{$value.cusId}} data-oilAmot={{$value.oilAmot}} data-erpstatementCode="{{$value.erpStatementCode}}" data-noticeCode="{{$value.noticeCode}}"
+    data-gyfgs={{$value.gyfgs}} data-oilNumber={{$value.oilNumber}} data-chukuliang={{$value.chukuliang}}
                     />
 
                 </div>
@@ -300,7 +300,8 @@
             }
 
             var totalCount = data.rows;
-            dataLength = listNum = totalCount.length;
+            dataLength  += totalCount.length;
+            listNum = dataLength;
             listData = data.rows;
 
             if (totalCount.length == 0) {
@@ -316,15 +317,12 @@
 
                 // 分页器bug修改
                 if (ISPAGE) {
-                    var checkArr = Array.prototype.slice.call(document.querySelectorAll('.checkBox'));
+                    var checkArr = $$('.checkBox');
+                    var myCheckArr = $$('.singleSelection');
                     dataLength = checkArr.length;
                     checkArr.forEach(function (v, i) {
-                        v.dataset.num = i
-                    })
-
-                    var myCheckArr = Array.prototype.slice.call(document.querySelectorAll('.singleSelection'));
-                    myCheckArr.forEach(function (v, i) {
-                        v.id = i
+                        v.dataset.num = i;
+                        myCheckArr[i].id=i;
                     })
 
                     if ($("#checkall")[0].className === "m-check m-check-active") {
@@ -333,8 +331,6 @@
                     }
 
                 }
-                // document.querySelector("#listdetail .gap:last-child").remove();
-
                 loadMore.init({
                     ele: "more",
                     data: listData,
@@ -343,9 +339,15 @@
                     clickFn: func2
                 });
 
-            }
+                if (totalCount.length<pageSize || (dataLength <15 &&!getId("btn-load-more"))) {
+                    document.querySelector(" .list-content:last-child .gap").style.height = "5em";
+                }
 
-            // document.querySelector(" .list-content:last-child .gap").style.height = "5em" 
+              
+               
+
+            }
+           
         },
         loadMoreOrder: function () {
             var y = this;
@@ -378,23 +380,23 @@
             oilNumber = [];
 
         for (var i = 0; i < listNum; i++) {
+            if (getId(i).className == "m-check singleSelection m-check-active") {
+                var element = $$('.orderId')[i];
+                var itemData = element.dataset;
 
-            if ($("#" + i)[0].className == "m-check singleSelection m-check-active") {
-                if (listData[i].orderId && listData[i].state != 3) {
+                if (itemData.orderId && itemData.state != 3) {
                     uexWindow.alert("提示", "只能确认总公司审核通过的，请重新选择！", "确定");
                     return;
                 }
 
-                if (typeof (listData[i].erpStatementCode) != "undefined") {
+                if (itemData.erpstatementcode != "") {
                     uexWindow.alert("提示", "包含确认通过的结算单，请重新选择！", "确定");
                     return;
                 }
-                if (typeof (listData[i].noticeCode) != "undefined") {
+                if (itemData.noticecode != "") {
                     uexWindow.alert("提示", "该操作仅允许操作一次，请重新选择！", "确定");
                     return;
                 }
-                var element = $("#list" + i).find($('.orderId'))[0];
-                var itemData = element.dataset;
 
                 orderIdArr.push(itemData.orderid);
                 cusIds.push(itemData.cusid);

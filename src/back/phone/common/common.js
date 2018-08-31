@@ -33,13 +33,19 @@ var pageSize = 15;
 
 var defaultDate = getDate(0, "obj");
 
+function getId(str) {
+	return document.getElementById(str);
+}
 
 function $$(selector, el) {
 	if (!el) {
 		el = document;
 	}
+
 	return Array.prototype.slice.call(el.querySelectorAll(selector));
 }
+
+
 //扩展对象
 var _extend = function (option, opt) {
 	if (typeof (opt) != 'object' || !opt) {
@@ -235,22 +241,10 @@ function ajaxPostQueryDNnotVerifySid(url, paramJsonStr, func, dataType) {
 		},
 		success: function (data) {
 
-			var response;
-			if (typeof data == "string") {
-				try {
-					response = JSON.parse(data);
-
-					if (typeof func === 'function') {
-						func(response);
-					} else {
-						throw new Error('func 需要传入一个函数作为参数');
-					}
-				} catch (e) {
-					if (typeof func === 'function') {
-						response = eval("(" + data + ")");
-						func(response);
-					}
-				}
+			if (typeof func === 'function') {
+				func(data);
+			} else {
+				throw new Error('func 需要传入一个函数作为参数');
 			}
 		}
 	});
@@ -455,22 +449,6 @@ function cellbtnClick(id) {
 	}
 }
 
-function $(selector, el) {
-	if (!el) {
-		el = document;
-	}
-	return el.querySelector(selector);
-}
-
-function $$(selector, el) {
-	if (!el) {
-		el = document;
-	}
-	return el.querySelectorAll(selector);
-	// Note: the returned object is a NodeList.
-	// If you'd like to convert it to a Array for convenience, use this instead:
-	// return Array.prototype.slice.call(el.querySelectorAll(selector));
-}
 
 // 将NodeList转为数组
 function convertToArray(nodeList) {

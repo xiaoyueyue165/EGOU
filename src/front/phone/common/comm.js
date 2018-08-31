@@ -277,23 +277,10 @@ function ajaxPostQueryDNnotVerifySid(url, paramJsonStr, func, dataType) {
             appcan.window.alert("提示", "网络暂时不可用", "确定");
         },
         success: function (data) {
-
-            var response;
-            if (typeof data == "string") {
-                try {
-                    response = JSON.parse(data);
-
-                    if (typeof func === 'function') {
-                        func(response);
-                    } else {
-                        throw new Error('func 需要传入一个函数作为参数');
-                    }
-                } catch (e) {
-                    if (typeof func === 'function') {
-                        response = eval("(" + data + ")");
-                        func(response);
-                    }
-                }
+            if (typeof func === 'function') {
+                func(data);
+            } else {
+                throw new Error('func 需要传入一个函数作为参数');
             }
         }
     });
