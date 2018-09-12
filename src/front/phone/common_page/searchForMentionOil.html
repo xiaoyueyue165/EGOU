@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+  <link rel="stylesheet" href="../build/css/ui-box.css">
+  <link rel="stylesheet" href="../build/css/ui-base.css">
+  <link rel="stylesheet" href="../build/css/ui-color.css">
+  <link rel="stylesheet" href="../build/css/appcan.icon.css">
+  <link rel="stylesheet" href="../build/css/appcan.control.css">
+  <link rel="stylesheet" href="./css/intention.css" />
+  <style>
+    #cusCompany {
+      width: 6.65em;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      font: 1.2em;
+      background-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="pop-body" ontouchstart>
+
+  <div class="pop-wrapper">
+    <div class="pop-content">
+      <form id="formData">
+        <!-- <input type="hidden" id="detailFlag" name="detailFlag" value="detailFlag" /> -->
+        <div class="pop-info">
+          <label for="cusName">未出库量：</label>
+          <select id="searchType" name="queryAll" class="mySelect" style="font-size:1em;">
+            <option value selected>大于零</option>
+            <option value="queryAll">查看所有</option>
+          </select>
+        </div>
+        <div class="pop-info">
+          <label for="oilinfoName">油品品号：</label>
+          <select id="oilinfoName" name="oilinfoName" class="mySelect" style="font-size:1em;">
+            <option value="" selected>请选择油品品号</option>
+          </select>
+
+        </div>
+        <div class="pop-info">
+          <label for="cusName">油库地点：</label>
+          <select id="ykdd" name="ykdd" class="mySelect" style="font-size:1em;">
+            <option value="" selected>请选择油库地点</option>
+          </select>
+        </div>
+        <div class="pop-info">
+          <label for="ysfs">运输方式：</label>
+          <select id="ysfs" name="ysfs" class="mySelect" style="font-size:1em;">
+            <option value="" selected>请选择运输方式</option>
+          </select>
+
+        </div>
+
+        <div class="pop-info">
+          <label for="cusName">配送方式：</label>
+          <select id="extractType" name="extractType" class="mySelect" style="font-size:1em;">
+            <option value="">请选择配送方式</option>
+            <option value="0">配送</option>
+            <option value="1">自提</option>
+          </select>
+
+        </div>
+      </form>
+
+      <div id="btn" class="ub ub-ac">
+        <div id="confirmBtn" class="uinn5 ubt ubr bc-border ub ub-f1 ub-pc">
+          <span class="bc-color">查询</span>
+        </div>
+        <div id="cancelBtn" class="uinn5 ubt bc-border ub ub-f1 ub-pc">
+          <span class="bc-color">关闭</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="../build/js/appcan.js"></script>
+<script src="../build/js/appcan.control.js"></script>
+<script src="../common/comm.js"></script>
+<script src="../common/jquery.min.js"></script>
+
+
+<script>
+  $.ajax({
+    url: URL + '/front/bill/queryOilList',
+    type: "post",
+    cache: false,
+    error: function () {},
+    success: function (data) {
+      var modelList = JSON.parse(data);
+      if (modelList && modelList.length != 0) {
+        for (var i = 0; i < modelList.length; i++) {
+          var option = "";
+
+          option = "<option value=\"" + modelList[i].OILINFO_ID + "\"";
+          option += ">" + modelList[i].OILINFO_NAME + "</option>"; //动态添加数据
+
+          $("#oilinfoName").append(option);
+        }
+      }
+    }
+  });
+  $.ajax({
+    url: URL + '/front/bill/queryYsfsList',
+    type: "post",
+    data: {},
+    cache: false,
+    error: function () {},
+    success: function (data) {
+      var modelList = JSON.parse(data);
+      if (modelList && modelList.length != 0) {
+        for (var i = 0; i < modelList.length; i++) {
+          var option = "";
+          option = "<option value=\"" + modelList[i].dicId + "\"";
+          option += ">" + modelList[i].dicName + "</option>"; //动态添加数据
+          $("#ysfs").append(option);
+        }
+      }
+    }
+  });
+  $.ajax({
+    url: URL + '/front/bill/queryYkddList',
+    type: "post",
+    cache: false,
+    error: function () {},
+    success: function (data) {
+      //alert(hykdd);
+      var modelList = JSON.parse(data);
+      if (modelList && modelList.length != 0) {
+        for (var i = 0; i < modelList.length; i++) {
+          var option = "";
+          option = "<option value=\"" + modelList[i].oildepotId + "\"";
+          option += ">" + modelList[i].depotName + "</option>"; //动态添加数据
+          $("#ykdd").append(option);
+        }
+      }
+    }
+  });
+
+
+  appcan.button("#confirmBtn", "act-ani", function () {
+
+    var paramJsonStr = serialize(document.getElementById("formData"));;
+    var func = showOrderCallback;
+
+    ajaxPostQuery(URL + "/app/bill/getOilExtraction", paramJsonStr, func, "text");
+    appcan.window.openToast('加载中...', '0', '5', '1');
+  })
+
+  function showOrderCallback(data) {
+    setTimeout(function () {
+      closeToast();
+      if (typeof data === "string" && data != '') {
+        var result = JSON.parse(data);
+        var obj = {
+          "type": "mentionOil",
+          "data": result
+        }
+
+        appcan.locStorage.setVal("searchData", JSON.stringify(obj));
+
+      } else {
+        appcan.locStorage.setVal("searchData", 0)
+      }
+      appcan.window.publish("search", "true");
+      closepop();
+    }, 200);
+  }
+
+
+
+
+
+  appcan.button("#cancelBtn", "act-ani", function () {
+    closepop();
+  })
+
+  //关闭浮动窗口
+  function closepop() {
+    appcan.closePopover("searchForMentionOil");
+  }
+</script>
+
+</html>

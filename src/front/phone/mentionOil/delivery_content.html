@@ -91,6 +91,15 @@
                 <div class="umar-r fa fa-angle-right fa-2x gray-font"></div>
             </div>
         </div>
+        <div id="" class="white-bg  ub ub-ac b-border">
+            <div id="" class="m-row2 gray-font label-width">
+                承运商
+            </div>
+            <div class="ub ub-pj ub-f1" onclick="CarrierChoose()">
+                <div id="Carrierlist" class="ub ub-ac">请选择</div>
+                <div class="umar-r fa fa-angle-right fa-2x gray-font"></div>
+            </div>
+        </div>
 
         <div id="" class="white-bg  ub ub-ac b-border">
             <div id="" class="m-row2 gray-font label-width">
@@ -122,6 +131,8 @@
     var carId = "";
     var depotId = "-1";
     var siteId = "";
+    // 承运商id
+    var carrierId = "";
     var param = "";
     var num = 0;
     var sitelist = [];
@@ -151,7 +162,23 @@
             }
 
         })
+        appcan.window.subscribe("carrierParam", function (siteParam) {
+            var state = getVal("useThisSite");
+            if (state) {
+                siteParam = JSON.parse(siteParam);
+                var para = siteParam.id;
+                carrierId = para.split("@")[0];
+                var sitename = para.split("@")[1];
+                $("#Carrierlist")[0].innerHTML = sitename;
+
+                appcan.locStorage.remove("carrierParam");
+                appcan.locStorage.setVal("carrierParam", siteParam);
+                removeVal("useThisSite");
+            }
+
+        })
         showDeliveryName();
+        showCarrierName();
     });
 
     //订单详情
@@ -172,6 +199,7 @@
         var noticeSubInfo = data.notincesubInfo;
         NOTICESUBINFO = data.notincesubInfo[0];
         sitelist = data.stationList;
+        carrierList = data.carrierList;
 
         //付油通知单号id  noticeCode
         //名称规格 id  oilname
@@ -211,10 +239,33 @@
 
     }
 
+    function showCarrierName() {
+        var DeliveryName = appcan.locStorage.getVal('carrierStr');
+        if (!DeliveryName || !getVal("useThisSite")) {
+            return;
+        }
+        var siteParam = JSON.parse(DeliveryName);
+        var para = siteParam.id;
+        carrierId = para.split("@")[0];
+        var sitename = para.split("@")[1];
+
+        $("#Carrierlist")[0].innerHTML = sitename;
+
+        appcan.locStorage.remove("carrierParam");
+        appcan.locStorage.remove("carrierStr");
+        appcan.locStorage.setVal("carrierParam", siteParam)
+    }
+
     function siteChoose() {
         appcan.locStorage.setVal("sitelist", sitelist);
         appcan.window.open("sitelist", "sitelist.html", 10);
     }
+    // 承运商
+    function CarrierChoose() {
+        appcan.locStorage.setVal("carrierList", carrierList);
+        appcan.window.open("carrierList", "carrierList.html", 10);
+    }
+
 
     function subPSInfo() {
         // 付油通知单号
@@ -271,6 +322,10 @@
             appcan.window.alert("提示", "请选择送油网点！", "确定");
             return;
         }
+        if (carrierId == "" || carrierId == null) {
+            appcan.window.alert("提示", "请选择承运商！", "确定");
+            return;
+        }
 
         var remark = $("textarea")[0].value;
         //数量，地点，车辆，时间
@@ -297,11 +352,11 @@
         var Param = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
             NOTICESUBINFO.extractType +
             "★" + NOTICESUBINFO.oilinfoName + "★" + count + "★" + siteId + "★" + carId + chooseDate + "★" + chooseTime +
-            "★" + NOTICESUBINFO.cys + "★" + remark;
+            "★" + carrierId + "★" + remark;
         var newParam = NOTICESUBINFO.noticesubId + "★" + NOTICESUBINFO.oilinfoId + "★" + "吨" + "★" + yuyue + "★" +
             NOTICESUBINFO.extractType +
             "★" + NOTICESUBINFO.oilinfoName + "★" + count + "★" + siteId + "★" + carId + chooseDate + "★" + chooseTime +
-            "★" + NOTICESUBINFO.cys + "★" + remark;
+            "★" + carrierId + "★" + remark;
         if (pager > 1) {
             for (var i = 1; i < pager; i++) {
                 newParam += ',' + Param;

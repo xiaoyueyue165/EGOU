@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="../build/css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="../build/css/ui-box.css">
+        <link rel="stylesheet" href="../build/css/ui-base.css">
+        <link rel="stylesheet" href="../build/css/ui-color.css">
+        <link rel="stylesheet" href="../build/css/appcan.icon.css">
+        <link rel="stylesheet" href="../build/css/appcan.control.css">
+        <link rel="stylesheet" type="text/css" href="css/delivery.css"/>
+    </head>
+    <body class="um-vp white-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver" tabindex="0">
+            <!--header开始-->
+            <div class="uh bc-text-head ub bc-head" id="header">
+                <div class="nav-btn" id="nav-left">
+                    <div class="t-btn-a1 ub-img uwh-tBtn fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">承运商</h1>
+                <div class="nav-btn" id="nav-right"></div>
+            </div>
+            <!--header结束-->
+            <!--content开始-->
+            <div id="content" class="ub-f1 tx-l">
+                <div id="listview"  class="ubt bc-border sc-bg"></div>
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="../build/js/appcan.js"></script>
+        <script src="../build/js/appcan.control.js"></script>
+        <script src="../build/js/appcan.listview.js"></script>
+    </body>
+    <script>
+        var siteParam = {};
+        var lv = appcan.listview({
+            selector : "#listview",
+            type : "thickLine",
+            hasAngle : false,
+            hasSubTitle : true,
+            multiLine : 1,
+        });
+        lv.set();
+        lv.on("click", function(ele, obj, curEle) {
+            siteParam = {id:obj.id};
+            $("span").remove(".fa-check");
+            ele.append("<span class='fa fa-check y-font'></span>");
+            $('#listview span').not(ele.find("span")).removeClass('fa fa-check');
+            appcan.window.publish("carrierParam", siteParam);
+            appcan.locStorage.setVal('carrierStr',siteParam);
+            appcan.locStorage.setVal('useThisSite',"true");
+            appcan.window.close(-1);
+        })
+        appcan.ready(function() {
+            var sitelist = [];
+            var listInfo = appcan.locStorage.getVal("carrierList");
+            if ( typeof listInfo == "string") {
+                listInfo = eval("(" + listInfo + ")");
+            }
+
+            for (var i = 0; i < listInfo.length; i++) {
+                var name = listInfo[i].carrierNameAk;
+                if ( typeof (name) == "undefined") {
+                    name = "";
+                }
+                var province = listInfo[i].contact;
+                if ( typeof (province) == "undefined") {
+                    province = "";
+                }
+                var city = listInfo[i].gasstationCity;
+                if ( typeof (city) == "undefined") {
+                    city = "";
+                }
+               
+                var address = listInfo[i].address;
+                if ( typeof (address) == "undefined") {
+                    address = "";
+                }
+                var mobile = listInfo[i].phoneNum;
+                if ( typeof (mobile) == "undefined") {
+                    mobile = "";
+                }
+                var id = listInfo[i].carrierId;
+                var param = {
+                    title : "<div class='ub ub-ac'><div>"+name+"&nbsp;&nbsp;</div><div>"+mobile+"<div></div>",
+                    describe : "<div class='m-lineheight gray-font'>"+address+"</div>",
+                    id : id+"@"+name
+                }
+                sitelist.push(param);
+            };
+            lv.set(sitelist);
+        })
+
+        appcan.button("#nav-left", "btn-act", function() {
+            appcan.window.close(-1);
+        })
+
+    </script>
+</html>

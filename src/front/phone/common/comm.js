@@ -2,7 +2,7 @@
 var URL = "http://egou.cnpc.com.cn:8080/SHXSKH";
 var PICURL = "http://egou.cnpc.com.cn:8080";
 
-// 194 内
+// // 194 内
 // var URL = "http://11.11.153.194:8080/SHXSKH";
 // var PICURL = "http://11.11.153.194:8080";
 
@@ -38,6 +38,18 @@ if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
 
 } else if (u.indexOf('iPhone') > -1) { //苹果手机
     device = "iPhone";
+}
+
+function getId(str) {
+	return document.getElementById(str);
+}
+
+function $$(selector, el) {
+	if (!el) {
+		el = document;
+	}
+
+	return Array.prototype.slice.call(el.querySelectorAll(selector));
 }
 
 // 错误监控
@@ -169,8 +181,11 @@ function twoAlert(text, button1, button2, func1, func2) {
                 func1();
             }
             if (data == '1') {
-                func2();
+                if (func2 && typeof func2 === 'function') {
+                    func2();
+                }
             }
+
             console.log(err, data, dataType, optId);
         }
     });
@@ -284,6 +299,26 @@ function ajaxPostQueryDNnotVerifySid(url, paramJsonStr, func, dataType) {
             }
         }
     });
+}
+
+//AJAX sync POST
+function syncLoadData(url, param, Func) {
+	$.ajax({
+		url: url,
+		type: 'POST',
+		data: param,
+		dataType: 'text',
+		async: false,
+		// contentType: 'application/json; charset=UTF-8',
+		success: function (data) {
+			Func(data);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.error('ajax(' + url + ')[' + jqXHR.status + ']' + jqXHR.statusText);
+			console.error(jqXHR.responseText);
+			console.error('[' + textStatus + ']' + errorThrown);
+		}
+	});
 }
 
 /**

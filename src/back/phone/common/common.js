@@ -131,7 +131,7 @@ function setVal(param) {
 
 
 }
-/* 
+/*
 window.onerror = function (
   errMsg,
   scriptURI,
@@ -275,11 +275,11 @@ function twoAlert(text, button1, button2, func1, func2) {
 		content: text,
 		buttons: [button1, button2],
 		callback: function (err, data, dataType, optId) {
-			if (data == '0') {
+			if (data == '0' && typeof func1 ==='function') {
 				func1();
 			}
-			if (data == '1') {
-
+			if (data == '1' && typeof func2 ==='function') {
+				func2();
 			}
 			console.log(err, data, dataType, optId);
 		}

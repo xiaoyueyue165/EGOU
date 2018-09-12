@@ -51,14 +51,23 @@
             select: [0, 0, 0]
         };
         try {
-            uexWheelPickView.onConfirmClick = function (data) {
-                if (typeof (data) == "string") {
-                    var areaArr = (eval("(" + data + ")")).data;
+            uexWheelPickView.onConfirmClick = function (result) {
+                var isAndroid = (window.navigator.userAgent.indexOf('Android') >= 0) ? true : false;
+                // 安卓返回json字符串，ios返回json格式
+                if (isAndroid) {
+                    var areaArr = JSON.parse(result).data;
+                    area = areaArr[0] + " " + areaArr[1] + " " + areaArr[2];
+                    lv_area.set([{
+                        title: area
+                    }]);
+                } else {
+                    var areaArr = result.data;
+                    area = areaArr[0] + " " + areaArr[1] + " " + areaArr[2];
+                    lv_area.set([{
+                        title: area
+                    }]);
                 }
-                area = areaArr[0] + " " + areaArr[1] + " " + areaArr[2];
-                lv_area.set([{
-                    title: area
-                }]);
+
                 uexWheelPickView.close();
             }
             gasstationId = appcan.locStorage.getVal("gasstationId");

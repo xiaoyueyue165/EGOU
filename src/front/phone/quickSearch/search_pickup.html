@@ -11,8 +11,12 @@
   <link rel="stylesheet" href="../build/css/ui-color.css">
   <link rel="stylesheet" href="../build/css/appcan.icon.css">
   <link rel="stylesheet" href="../build/css/appcan.control.css">
-  <link rel="stylesheet" href="css/intentionList.css">
   <link rel="stylesheet" type="text/css" href="../common/css/yue.css" />
+  <link rel="stylesheet" href="../build/mui-dtpicker/css/mui.css">
+  <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/mui.picker.min.css" />
+  <link rel="stylesheet" type="text/css" href="../build/mui-dtpicker/css/app.css" />
+  <link rel="stylesheet" href="css/intentionList.css">
+
   <style type="text/css">
     ::-webkit-scrollbar {
       width: 0px;
@@ -22,6 +26,7 @@
       display: none;
       /*隐藏滚轮*/
     }
+
 
     table tr td:first-child {
       width: 42%;
@@ -76,6 +81,49 @@
       text-align: left;
       line-height: 2.8em;
     }
+
+    .dateInp {
+      border: 1px solid #999;
+      height: 1.8em !important;
+      width: 6em;
+      background-color: #fff;
+      padding-left: 0.2em;
+      font-size: 0.8em;
+    }
+
+    .line {
+      display: inline-block;
+      margin-left: 0.2em;
+    }
+
+    .mySelect {
+      background-color: #fff;
+      width: 6.625em;
+      box-sizing: border-box;
+      height: 1.5em;
+      ;
+      border: 0;
+      border: 1px solid #999;
+      border-radius: 0.2em;
+      /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+      border: solid 1px #000 !important;
+      /*很关键：将默认的select选择框样式清除*/
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      /*在选择框的最右侧中间显示小箭头图片*/
+      /* background: url("http://ourjs.github.io/static/2015/arrow.png") no-repeat scroll right center transparent;   */
+      background: url("../build/imgs/arrow.png") no-repeat scroll right center transparent;
+      background-size: 0.6em 0.4em;
+      /*为下拉小箭头留出一点位置，避免被文字覆盖*/
+      padding-right: 0.8em;
+      padding-left: 0.2em;
+    }
+
+    .btn {
+      height: 1.8em;
+      width: 4.8em;
+    }
   </style>
 </head>
 
@@ -96,7 +144,34 @@
     <div class="nav-btn nav-bt" id="nav-right"></div>
   </div>
 
-  <div id="content">
+  <form id="formData" style="display: none;">
+    <div class="top-show ub ub-ac ub-pc">
+      <label for="state">查看状态：</label>
+      <select id="state" name="state" class="mySelect" style="font-size:1em;">
+        <option value="">--请选择--</option>
+        <option value="0">未审核</option>
+        <option value="1">分公司审核通过</option>
+        <option value="2">分公司审核未通过</option>
+        <option value="3">总公司审核通过</option>
+        <option value="4">总公司审核未通过</option>
+        <option value="5">已出库</option>
+        <option value="6">调运处审核通过</option>
+        <option value="7">调运处审核不通过</option>
+        <option value="8">撤销</option>
+        <option value="9">过期</option>
+      </select>
+    </div>
+    <div class="top-show ub ub-ac ub-pc">
+      <label for="cusName">创建日期：</label>
+      <input type="text" data-options='{"type":"date"}' name="startTime" id="" class="dateInp"><span class="line">-</span>
+      <input type="text" name="endTime" id="" class="dateInp" data-options='{"type":"date"}'>
+    </div>
+    <div class="top-show ub ub-ac ub-pc">
+
+      <input type="button" class="btn ub ub-ac ub-pc" id="submit" value="提交">
+    </div>
+  </form>
+  <div id="content" style="font-size:0.9em">
 
   </div>
   <div id="more"></div>
@@ -108,6 +183,9 @@
 <script type="text/javascript" src="../common/comm.js"></script>
 <script src="../common/jquery.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
+<script type="text/javascript" charset="utf-8" src="../common/template-filter.js"></script>
+<script src="../build/mui-dtpicker/js/mui.min.js"></script>
+<script src="../build/mui-dtpicker/js/mui.picker.all.js"></script>
 
 <script type="text/html" id="lists">
   {{each list}}
@@ -144,6 +222,12 @@
         <span class='gray-font'>付邮通知单号&nbsp;&nbsp;</span>
         <span>
           {{$value.noticeCode}}
+        </span>
+      </div>
+      <div id='' class='ub ub-ac umar-a m-row3'>
+        <span class='gray-font'>计划编号&nbsp;&nbsp;</span>
+        <span>
+          {{$value.palnCode}}
         </span>
       </div>
 
@@ -223,17 +307,38 @@
             {{$value.depotName}}
           </span>
         </div>
+        <div id='total' class='col-right'>
+          <span class='gray-font'>卸油地址&nbsp;&nbsp;</span>
+          <span class='mf-color AllPrice'>
+            {{$value.xydz}}
+          </span>
+        </div>
         
       </div>
 
       <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
-        <div id='' class=''>
-          <span class='gray-font'>提货日期&nbsp;&nbsp;</span>
-          <span>
-            {{$value.sendDate}}
-          </span>
-        </div>
+          <div id='' class='col-left'>
+              <span class='gray-font'>出库时间&nbsp;&nbsp;</span>
+              <span>
+                {{$value.outstoreTime | getDate}}
+              </span>
+            </div>
+            <div id='total' class='col-right'>
+              <span class='gray-font'>提货日期&nbsp;&nbsp;</span>
+              <span class='mf-color AllPrice'>
+                {{$value.sendDate | getDate}}
+              </span>
+            </div>
       </div>
+      <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
+          <div id='' class=''>
+            <span class='gray-font'>创建时间&nbsp;&nbsp;</span>
+            <span>
+              {{$value.createDate | getDate}}
+            </span>
+          </div>
+        </div>
+      
       <div id='company' class='ub ub-ac umar-l umar-r m-row3'>
         <div id='' class=''>
           <span class='gray-font'>备注&nbsp;&nbsp;</span>
@@ -292,14 +397,25 @@
   var Order = {
     init: function () {
       var y = this;
+      getId("submit").onclick = function () {
+        if ($$(".dateInp")[0].value != '' && $$(".dateInp")[1].value == "") {
+          oneAlert("请选择两个完整的时间日期")
+        } else if ($$(".dateInp")[1].value != '' && $$(".dateInp")[0].value == "") {
+          oneAlert("请选择两个完整的时间日期")
+        } else {
+          getNewPickup();
+        }
+      };
+
       y.getOrderList();
+
     },
     getOrderList: function (newPageNo) {
       var y = this;
       var pageNo = newPageNo || 1;
       var url = URL + "/app/cus/userSendBill";
 
-      var paramJsonStr = "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+      var paramJsonStr = serialize(getId("formData")) + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
       var func = y.getOrderListCallback.bind(y);
       var dataType = "text";
       ajaxPostQuery(url, paramJsonStr, func, dataType);
@@ -322,6 +438,8 @@
           list: data
         })
 
+        show(getId('formData'));
+
         $('#content').append(html);
 
       } else {
@@ -330,6 +448,7 @@
         var html = template('pickup_list', {
           list: arr
         })
+        show(getId('formData'));
 
         $('#content').append(html);
 
@@ -360,6 +479,68 @@
   appcan.button(".nav-btn", "btn-act", function () {
     appcan.window.close(-1);
   })
+
+  function getNewPickup() {
+    document.getElementById('content').innerHTML = "";
+    // 暂时没有分页 不删除
+    if (document.getElementById('more')) {
+      document.getElementById('more').innerHTML = "";
+    }
+    Order.getOrderList();
+  }
+</script>
+<script>
+  (function ($) {
+    $.init();
+    var btns = $('.dateInp');
+    btns.each(function (i, btn) {
+      btn.addEventListener('tap', function () {
+        var _self = this;
+        if (_self.picker) {
+          _self.picker.show(function (rs) {
+            btn.value = rs.text;
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        } else {
+          var optionsJson = this.getAttribute('data-options') || '{}';
+          var options = JSON.parse(optionsJson);
+          var id = this.getAttribute('id');
+          /*
+           * 首次显示时实例化组件
+           * 示例为了简洁，将 options 放在了按钮的 dom 上
+           * 也可以直接通过代码声明 optinos 用于实例化 DtPicker
+           */
+          _self.picker = new $.DtPicker(options);
+          _self.picker.show(function (rs) {
+            /*
+             * rs.value 拼合后的 value
+             * rs.text 拼合后的 text
+             * rs.y 年，可以通过 rs.y.vaue 和 rs.y.text 获取值和文本
+             * rs.m 月，用法同年
+             * rs.d 日，用法同年
+             * rs.h 时，用法同年
+             * rs.i 分（minutes 的第二个字母），用法同年
+             */
+            btn.value = rs.text;
+            /* 
+             * 返回 false 可以阻止选择框的关闭
+             * return false;
+             */
+            /*
+             * 释放组件资源，释放后将将不能再操作组件
+             * 通常情况下，不需要示放组件，new DtPicker(options) 后，可以一直使用。
+             * 当前示例，因为内容较多，如不进行资原释放，在某些设备上会较慢。
+             * 所以每次用完便立即调用 dispose 进行释放，下次用时再创建新实例。
+             */
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        }
+
+      }, false);
+    });
+  })(mui);
 </script>
 
 </html>

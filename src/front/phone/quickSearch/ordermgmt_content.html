@@ -143,11 +143,11 @@
                     if (extractType === 0) {
                         actHtml =
                             "<div class='ub ub-ac ub-pc col4'><span class='isPeisong m-act bg-yellow' onclick='gotoDelivery(\"" +
-                            noticesubId + "\",\"" + extractType + "\")'>配送</span></div>";
+                            noticesubId + "\",\"" + extractType + "\",\"" + noticeCode + "\")'>配送</span></div>";
                     } else if (extractType === 1) {
                         actHtml =
                             "<div class='ub ub-ac ub-pc col4'><span class='isPeisong m-act bg-green' onclick='gotoDelivery(\"" +
-                            noticesubId + "\",\"" + extractType + "\")'>自提</span></div>";
+                            noticesubId + "\",\"" + extractType + "\",\"" + noticeCode + "\")'>自提</span></div>";
                     }
 
                     var param = noticesubId + "@" + oilinfoName + "@" + noticeSub.oilNumber + "@" + noticeSub.completeNum +
@@ -156,7 +156,8 @@
                     listhtml += "<div id='list" + i +
                         "' class='list-content white-bg'><div id='' class='ub ub-ac umar-l umar-r m-row item-row'><div id='' class='ub ub-ac ub-pc col1'><span class=''>" +
                         noticeCode + "</span></div><div id='' class='ub ub-ac ub-pc col2'>" + oilinfoName +
-                        "</div><div id='' class='ub ub-ac ub-pc col3'>" + noticeSub.oilNumber + "</div>" + actHtml +
+                        "</div><div id='' class='ub ub-ac ub-pc col3'>" + noticeSub.oilNumber + "</div>" +
+                        actHtml +
                         "</div></div>";
                 };
                 $("#listdetail").append(listhtml);
@@ -195,7 +196,12 @@
         openPopPage("validMsg");
     }
 
-    function gotoDelivery(id, num) {
+    function gotoDelivery(id, num, noticeCode) {
+        // 遗留： 没有 noticeCode无法分提
+        // if (noticeCode === "" || noticeCode === undefined) {
+        //     oneAlert("单据未生成付油单，不能申请分提计划！");
+        //     return;
+        // }
 
         appcan.locStorage.setVal("yuyuenoticeId", id);
 
