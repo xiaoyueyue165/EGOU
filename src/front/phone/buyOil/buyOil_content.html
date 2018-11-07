@@ -541,8 +541,8 @@
 				nowValue = myselect.options[nowIndex].value,
 				//弹出框油品价格
 				oilRealPrice = rmoney($('#oilPrice').val()),
-				//自提优惠
-				pickupDiscount = appcan.locStorage.getVal('pickupDiscount')
+				//自提价格
+				oilPriceOne = appcan.locStorage.getVal('oilPriceOne')
 			// 真实的物价文件价格
 			wjPrice = appcan.locStorage.getVal('wjPrice');
 
@@ -552,8 +552,7 @@
 				$('#oilPrice').val(fmoney(wjPrice));
 			} else {
 				fangshi = '1';
-				oilPrice = Number(oilRealPrice) - Number(pickupDiscount);
-				$('#oilPrice').val(fmoney(oilPrice));
+				$('#oilPrice').val(fmoney(oilPriceOne));
 			}
 
 		}
@@ -596,7 +595,8 @@
 				if (parseFloat(nowPrice) > parseFloat(shang) || parseFloat(nowPrice) < parseFloat(xia)) {
 					appcan.window.alert({
 						title: "提示",
-						content: "超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">",
+					//	content: "超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">",
+						content: "超过上下限价格控制范围，请重新输入!",
 						buttons: ['确定'],
 						callback: function (err, data, dataType, optId) {
 							console.log(err, data, dataType, optId);
@@ -786,7 +786,8 @@
 				nowPrice = rmoney(nowPrice);
 			}
 			if (parseFloat(nowPrice) > parseFloat(shang) || parseFloat(nowPrice) < parseFloat(xia)) {
-				alert("超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">");
+				alert("超过上下限价格控制范围，请重新输入!");
+				// alert("超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">");
 				document.getElementById("oilPrice").value = fmoney(yuanshiPrice);
 				return;
 			}

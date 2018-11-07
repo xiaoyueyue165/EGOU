@@ -2,6 +2,10 @@
 var URL = "http://egou.cnpc.com.cn:8080/SHXSKH";
 var PICURL = "http://egou.cnpc.com.cn:8080";
 
+//  本地调试
+// var URL = "http://127.0.0.1:8080/SHXSKH";
+// var PICURL = "http://127.0.0.1:8080";
+
 // // 194 内
 // var URL = "http://11.11.153.194:8080/SHXSKH";
 // var PICURL = "http://11.11.153.194:8080";

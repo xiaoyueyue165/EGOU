@@ -62,7 +62,7 @@
             <div id="stock" class="ub ub-ac order-info">
                 <div id="" class="ub-f1">
                     可申请量：
-                    <span class="mf-color mf-size">{{ if $value.orderNum-$value.outNum-$value.yikaiweiti
+                    <span class="mf-color mf-size" id="keshengqing">{{ if $value.orderNum-$value.outNum-$value.yikaiweiti
                         <0 }} 0 {{else}} {{$value.orderNum-$value.outNum-$value.yikaiweiti | TwoDecimal}} {{/if}}</span>
                             <span class="gray-font mf-size2 umar-l">吨</span>
                 </div>
@@ -327,11 +327,10 @@
         var text = arr[0];
         var noticeSubId = arr[1];
         var data = that.dataset.noticecode;
-        // 先注释
-        // if (data === "") {
-        //     oneAlert("单据未生成付油单，不能申请分提计划！");
-        //     return;
-        // }
+        if(that.value ==="0.00"){
+            oneAlert("单据中的数量申请完毕，不能再申请了！");
+            return;
+        }
         appcan.locStorage.setVal("yuyuenoticeId", noticeSubId);
 
         if (text === "配送") {

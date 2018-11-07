@@ -155,15 +155,15 @@
             }]);
         });
 
-        var noticeSubId = appcan.locStorage.getVal("yuyuenoticeId");
+        var noticeCode = appcan.locStorage.getVal("yuyuenoticeId");
         //各个数据
-        addBilGetInit(noticeSubId);
+        addBilGetInit(noticeCode);
         //押运员
     })
 
-    function addBilGetInit(noticeSubId) {
+    function addBilGetInit(noticeCode) {
         var url = URL + "/app/bill/addBilGetInit";
-        var paramJsonStr = "noticesubId=" + noticeSubId;
+        var paramJsonStr = "noticesubId=" + noticeCode;
         var func = addBilGetInitCallBack;
         var dataType = "text";
         ajaxPostQuery(url, paramJsonStr, func, dataType);
