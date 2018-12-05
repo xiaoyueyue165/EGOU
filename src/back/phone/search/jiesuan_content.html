@@ -173,10 +173,8 @@
             var func = yue.showOrderCallback.bind(yue);
             var url = null;
             var companyType = appcan.locStorage.getVal("companyType");
-            if (companyType == '全资' || companyType == '总部') {
+            if (companyType == '全资' || companyType == '总部' || companyType == '合资') {
                 url = "/app/oil/statementnotice/selectStatementByERP"
-            } else if (companyType == '合资') {
-                url = "/app/oil/send/selectSendList"
             } else {
                 oneAlert("客户类型并非全资，合资，总公司客户，请向维护人员反馈");
                 return;

@@ -173,7 +173,7 @@
                     修改密码
                 </div>
             </div>
-            <div id="other1" class="w25" onclick="othersFeatures(id)">
+            <div id="debug" class="w25" onclick="othersFeatures(id)">
                 <div class="ui-s-state1 state-order"></div>
                 <div class="mf-size2 pt02">
                     真机测试
@@ -384,6 +384,9 @@
                 //------------------ 修改密码
                 appcan.window.open("search", "changePwd.html", 10);
                 break;
+            case "debug":
+             //------------------ 测试调试
+             appcan.window.open("debug", "../test/test.html", 10);
         }
     }
 

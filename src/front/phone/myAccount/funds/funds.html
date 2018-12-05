@@ -129,11 +129,13 @@
                             可用余额
                             <span id="useAbleMoney1" class="ulev-1"> </span>
                             <span> 元</span>
+                            <span class="useAbleCurrency"></span>
                         </p>
                         <p>
                             授信余额
                             <span id="shouxinMoney" class="ulev-1"> </span>
                             <span> 元</span>
+                            <span class="useAbleCurrency"></span>
                         </p>
                         <p>
                             可用授信
@@ -192,7 +194,20 @@
                     </li>
                     <li>
                         <div class="ub ub-ac ubb umh5 bc-border uinput ub-f1 ">
-                            <input id="num" placeholder="请输入金额" type="text" class="ub-f1" />
+                            <input id="num" placeholder="请输入金额" oninput="changeInputAmount(this.value)" type="text" class="ub-f1" />
+                        </div>
+
+                    </li>
+                </ul>
+                <ul>
+
+                    <li>
+
+                        <a href="#" id="">大写金额</a>
+                    </li>
+                    <li>
+                        <div class="ub ub-ac umh5 bc-border uinput ub-f1 ">
+                            <input id="currency" readonly placeholder="显示大写金额" type="text" class="ub-f1" />
                         </div>
 
                     </li>
@@ -216,7 +231,6 @@
 <script id="Company_tmpl" type="text/html">
     {{each list}}
     <option linkId={{$value.linkId}} value={{$value.linkId+ '*'+$value.orgName}}>{{$value.orgName}}</option>
-
     {{/each}}
 </script>
 
@@ -341,7 +355,7 @@
         if (data === 0) {
             $('#funds').html('0.00');
             document.getElementById('useAbleMoney1').innerHTML = " 0.00";
-            document.getElementById('shouxinMoney').innerHTML = "&nbsp" + "0.00";
+            document.getElementById('shouxinMoney').innerHTML = "0.00";
             return;
         }
         // 账户余额
@@ -380,31 +394,35 @@
         if (TOTLE_MONEY != null) {
             if (TOTLE_MONEY < 0) {
                 if (SHOUXIN_MONEY != null) {
-                    $("#useableShouxin").html("&nbsp"+fmoney(SHOUXIN_MONEY + TOTLE_MONEY, 2));
+                    $("#useableShouxin").html("&nbsp" + fmoney(SHOUXIN_MONEY + TOTLE_MONEY, 2));
                     // 账户余额
                     $("#funds").html("0.00");
                 } else {
                     // 可用授信
-                    $("#useableShouxin").html( "&nbsp"+"0.00");
+                    $("#useableShouxin").html("&nbsp" + "0.00");
                     $("#funds").html(fmoney(TOTLE_MONEY, 2));
                 }
             } else {
                 $("#funds").html(fmoney(TOTLE_MONEY, 2));
                 if (SHOUXIN_MONEY != null) {
-                    $("#useableShouxin").html( "&nbsp"+fmoney(SHOUXIN_MONEY, 2));
+                    $("#useableShouxin").html("&nbsp" + fmoney(SHOUXIN_MONEY, 2));
                 } else {
-                    $("#useableShouxin").html("&nbsp"+"0.00");
+                    $("#useableShouxin").html("&nbsp" + "0.00");
                 }
             }
         } else {
             $("#funds").html("0.00");
             if (SHOUXIN_MONEY != null) {
-                $("#useableShouxin").html( "&nbsp"+fmoney(SHOUXIN_MONEY, 2));
+                $("#useableShouxin").html("&nbsp" + fmoney(SHOUXIN_MONEY, 2));
             } else {
-                $("#useableShouxin").html( "&nbsp"+"0.00");
+                $("#useableShouxin").html("&nbsp" + "0.00");
             }
         }
 
+    }
+
+    function changeInputAmount(string){
+        $("#currency").val(convertCurrency(string));
     }
 
 

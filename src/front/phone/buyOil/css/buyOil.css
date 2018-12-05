@@ -1,0 +1,62 @@
+table {
+  width: 100%;
+}
+td {
+  width: 50%;
+  padding: 0.2em;
+  text-align: center;
+}
+
+.border-transparent {
+  border: 0.1em solid transparent;
+}
+
+.pos {
+  position: absolute;
+  margin-left: 0.2em;
+}
+
+.pr {
+  position: relative;
+}
+
+.pop-body {
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  z-index: 8;
+  background: rgba(0, 0, 0, 0.5) !important
+}
+
+form {
+  padding: 1em 0.5em 0;
+}
+
+.Inp-text {
+  text-align: left;
+  padding-left: 0.4em !important;
+  border: 1px solid #ccc !important;
+  box-sizing: border-box;
+}
+
+.dun:after {
+  content: '吨';
+}
+
+.yuan:after {
+  content: '元';
+}
+
+.flex {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.box {
+  width: 8.25em !important;
+  border-radius: 0.2em;
+
+}

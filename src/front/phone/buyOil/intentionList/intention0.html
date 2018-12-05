@@ -92,17 +92,19 @@
         <div id="detailbox{{$index}}" class="detailbox ubb bc-border">
 
             <div id="intentionIds{{$index}}" style="display:none"></div>
-            <div id="intentionId{{$index}}" style="display:none">{{$value.intentionId}}</div>
+            <div id="intentionId{{$index}}" style="display:none">{{$value.intentionId}}★{{$value.oilinfoId}}★{{$value.oilinfoSpec}}★{{$value.pickUpPrice}}★{{$value.oilinfoName}}</div>
             <div id="oilinfoId{{$index}}" style="display:none">{{$value.oilinfoId}} </div>
             <div id="oilinfoName{{$index}}" style="display:none">{{$value.oilinfoName}}</div>
-            <div id="extractType{{$index}}" style="display:none">{{$value.extractType}}</div>
-            <div id="youhui{{$index}}" style="display:none"> {{if $value.youhui=="是"}} 是 {{else}} 否 {{/if}}
+            <div id="extractType{{$index}}" style="display:none">{{if $value.extractType =="0"}}0{{else}}1{{/if}}</div>
+            <div id="youhui{{$index}}" style="display:none"> {{$value.youhui}}</div>
+            <div id="hetong{{$index}}" style="display:none"> {{$value.hetong}}
             </div>
             <div id="ykdd{{$index}}" style="display:none">{{$value.ykdd}}</div>
             <div id="ysfs{{$index}}" style="display:none">{{$value.ysfs}}</div>
             <div id="chukuliang{{$index}}" style="display:none">{{$value.chukuliang}}</div>
             <div id="gyfgs{{$index}}" style="display:none">{{$value.gyfgs}}</div>
             <div id="pickupDiscount{{$index}}" style="display:none">{{$value.pickupDiscount}}</div>
+            <div id="bilOnsaleId{{$index}}" style="display:none">{{$value.onsaleId}}★{{$value.onsaleType}}</div>
 
             <div id="check{{$index}}" class="bw0 ub ub-ac " onclick="cellbtnClick(id)">
                 <div id={{$index}} class="m-check"></div>
@@ -333,26 +335,28 @@
         for (var i = 0; i < listNum; i++) {
             //intentionId+'★'+oilinfoId+'★'+oilinfoSpec+'★0★'+oilinfoName+'★'+oilPrice+'★'+oilNumber+'★'+extractType
             if (!$("#detailbox" + i).is(":hidden") && $("#" + i)[0].className == "m-check m-check-active") {
-                var intentionId = $("#intentionId" + i)[0].innerText,
-                    oilinfoId = $("#oilinfoId" + i)[0].innerText,
-                    oilinfoName = $("#oilinfoName" + i)[0].innerText,
+                var intentionId = $("#intentionId" + i)[0].innerText.trim(),
+                    oilinfoId = $("#oilinfoId" + i)[0].innerText.trim(),
+                    oilinfoName = $("#oilinfoName" + i)[0].innerText.trim(),
                     oilPrice = rmoney($("#oilPrices" + i)[0].innerText),
-
-                    oilNumber = $("#account" + i)[0].innerText,
+                    oilNumber = $("#account" + i)[0].innerText.trim(),
                     oilNumbers = oilNumber.substring(1, oilNumber.length),
-                    ykdd = $("#ykdd" + i)[0].innerText,
-                    ysfs = $("#ysfs" + i)[0].innerText,
-                    gyfgs = $("#gyfgs" + i)[0].innerText,
-                    extractType = $("#extractType" + i)[0].innerText,
+                    ykdd = $("#ykdd" + i)[0].innerText.trim(),
+                    ysfs = $("#ysfs" + i)[0].innerText.trim(),
+                    gyfgs = $("#gyfgs" + i)[0].innerText.trim(),
+                    extractType = $("#extractType" + i)[0].innerText.trim(),
+                    bilOnsaleId = $("#bilOnsaleId"+i)[0].innerText.trim(),
                     youhui = $("#youhui" + i)[0].innerText.trim(),
-                    // 出库量再此处
-                    chukuliang = $("#chukuliang" + i)[0].innerText;
+                    hetong = $("#hetong" + i)[0].innerText.trim(),
+                    chukuliang = $("#chukuliang" + i)[0].innerText.trim();
 
-                var intentionIds = intentionId + '★' + oilinfoId + '★null★0★' + oilinfoName + '★' + oilPrice +
-                    '★' + oilNumbers + '★' + gyfgs + '★' + extractType + '★' + ykdd + '★' + ysfs + '★' +
-                    chukuliang + '★' + '★0★★' + youhui;
-                //alert(intentionIds);
-
+                    if(hetong==""){
+						hetong="no";
+					}
+                    
+                    var intentionIds = intentionId + '★' + oilPrice + '★' + oilNumbers  + '★' + gyfgs +
+                    '★' +extractType  + '★' + ykdd + '★' + ysfs + '★' + chukuliang + '★' + bilOnsaleId +
+                    '★' + hetong + '★' + youhui;
                 oillist.push(intentionIds);
             }
         }

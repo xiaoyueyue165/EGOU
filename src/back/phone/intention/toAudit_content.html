@@ -310,8 +310,6 @@
                     checkArr.forEach(function (v, i) {
                         v.dataset.num = i;
                         myCheckArr[i].id=i;
-
-
                     })
 
                     if ($("#checkall")[0].className === "m-check m-check-active") {
@@ -347,19 +345,7 @@
         appcan.window.openToast('数据加载中...', '0', '5', '1');
     }
 
-    //确认审核(单)
-    function confirmIntention(id, oilAmot, cusId, gyfgs, youhui, orgType) {
-
-        var url = URL + "/app/oil/order/updateBatchOrderByNotERP";
-        var paramJsonStr = "orderIds=" + id + "&cusIds=" + cusId + "&b2s=" + oilAmot + "&gyfgss=" + gyfgs + "&youhui=" +
-            youhui + "&orgType=" + orgType + "&state=3";
-        var func = okOrderCallback;
-        var dataType = "text";
-        ajaxPostQuery(url, paramJsonStr, func, dataType);
-        appcan.window.openToast('审批中...', '0', '5', '1');
-
-    }
-    //多个审核 通过
+    //单个，多个审核  通过
     appcan.button("#confirmYXD", "ani-act", function () {
 
         var oillist = [];
@@ -369,15 +355,20 @@
             gyfgss = [],
             youhui = [],
             orgType = [];
-
+        var youhuiNum=0; // 计算 stateYesZhong 的个数，订单全部为 stateYesZhong 状态时多个审批，否则单个审批
+       
         for (var i = 0; i < listNum; i++) {
-
             if (getId(i).className == "m-check singleSelection m-check-active") {
                 var element = $$('.orderId')[i];
                 var itemData = element.dataset;
                 if (itemData.orderid && itemData.state != 0) {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
+                }
+                // TODO: stateYesZhong 需要考虑提价总公司进行审批
+                // TODO:测试 stateYes
+                if(itemData.youhui === "stateYesZhong"){
+                 youhuiNum++;
                 }
                 orderIdArr.push(itemData.orderid);
                 cusIds.push(itemData.cusid);
@@ -387,27 +378,74 @@
                 orgType.push(itemData.orgtype1);
             }
         }
-
-        if (orderIdArr.length == 0) {
-            appcan.window.openToast('请选择要提交的意向单', '1000', '5', '0');
-            return;
-        }
-
         if (orderIdArr.length == 0) {
             uexWindow.alert("提示", "您没有需要提交的意向单！", "确定");
             return;
         }
 
         var url = URL + "/app/oil/order/updateBatchOrderByNotERP";
-        var paramJsonStr = "orderIds=" + orderIdArr.join(",") + "&cusIds=" + cusIds.join(",") + "&b2s=" + b2s.join(
-            ",") + "&gyfgss=" + gyfgss.join(',') + "&youhui=" + youhui.join(',') + "&orgType=" + orgType.join(
-            ",") + "&state" + "=3";
-        var func = okOrderCallback;
         var dataType = "text";
-        ajaxPostQuery(url, paramJsonStr, func, dataType);
+        // 当前提交意向单的选定个数
+        var selectNum =  getSelectNum();
+        var isInFGS = true; // 区分是否进入分公司多个审批
+        // 是否选中单个
+        if(selectNum === 1 && youhuiNum === 1){
+          // TODO:是否提交总公司审批？
+          isInFGS = false;
+          twoAlert("是否提交总公司审批?","是", "否", yesZong, falseZong)
+          // 单个审批
+        }else if(selectNum >1 && youhuiNum >0){
+            if(youhuiNum<selectNum){
+                isInFGS = false;
+                oneAlert("包含权限不足的单据！");
+					return;
+				}
+				if(youhuiNum==selectNum){
+                isInFGS = false;
+				oneAlert("请单条逐个审批！");
+					return;
+				}
+        }
+       
+        // 提交总公司审批？
+           // - 是，提交总公司审批
+        function yesZong(){
+            var paramJsonStr = "orderIds=" + orderIdArr.join(",") + "&cusIds=" + cusIds.join(",") + "&b2s=" + b2s.join(
+            ",") + "&gyfgss=" + gyfgss.join(',') + "&youhui=" + youhui.join(',') + "&orgType=" + orgType.join(
+            ",") + "&state" + "=1"; // 分公司审批通过
+       
+        ajaxPostQuery(url, paramJsonStr,okOrderCallback, dataType);
         appcan.window.openToast('加载中...', '0', '5', '1');
+        }
+          // 否，不提交总公司审批
+        function falseZong(){
+            var paramJsonStr = "orderIds=" + orderIdArr.join(",") + "&cusIds=" + cusIds.join(",") + "&b2s=" + b2s.join(
+            ",") + "&gyfgss=" + gyfgss.join(',') + "&youhui=" + youhui.join(',') + "&orgType=" + orgType.join(
+            ",") + "&state" + "=4"; // 审批未通过
+       
+        ajaxPostQuery(url, paramJsonStr,failedOrderCallback, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+        }
+         if(isInFGS){
+         // 分公司多个审批通过
+         twoAlert("确定审核通过?","是","否",function(){
+            var paramJsonStr = "orderIds=" + orderIdArr.join(",") + "&cusIds=" + cusIds.join(",") + "&b2s=" + b2s.join(
+            ",") + "&gyfgss=" + gyfgss.join(',') + "&youhui=" + youhui.join(',') + "&orgType=" + orgType.join(
+            ",") + "&state" + "=3"; //一级审批，合资直接审核通过
+        ajaxPostQuery(url, paramJsonStr,okOrderCallback, dataType);
+        appcan.window.openToast('加载中...', '0', '5', '1');
+        },function(){})
+         }
 
     })
+
+    // TODO:获取当前选中的意向单个数
+    function getSelectNum(){
+        var selectCheckArr = $$(".m-check-active");
+        var isCheckAll = $("#checkall").hasClass("m-check-active");
+        var len = isCheckAll ? selectCheckArr.length -1 :selectCheckArr.length;
+        return len;
+    }
 
     //多个审核 不通过
     appcan.button("#faliedYXD", "ani-act", function () {
@@ -422,7 +460,7 @@
 
         for (var i = 0; i < listNum; i++) {
 
-            if (getId(i)[0].className == "m-check singleSelection m-check-active") {
+            if (getId(i).className == "m-check singleSelection m-check-active") {
                 var element = $$('.orderId')[i];
                 var itemData = element.dataset;
                 var orderID = itemData.orderid;
@@ -462,10 +500,11 @@
 
         } else if (data === "0") {
             oneAlert("部分订单审核未通过，账户余额不足!")
-        } else if (data === "3") {
-            oneAlert("订单已在别处审核通过!")
+        } else {
+            oneAlert("订单已审核通过!")
         }
         uexWindow.reload();
+        return;
     }
 
     function failedOrderCallback(data) {
@@ -475,10 +514,11 @@
             oneAlert("订单全部审核不通过!")
         } else if (data === "0") {
             oneAlert("部分订单审核失败!")
-        } else if (data === "3") {
-            oneAlert("订单已在别处审核不通过!")
+        } else {
+            oneAlert("订单已审核不通过!")
         }
         uexWindow.reload();
+        return;
     }
 </script>
 

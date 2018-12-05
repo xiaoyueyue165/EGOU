@@ -82,7 +82,7 @@
                     <div id="{{$index}}" data-state="{{$value.state}}" class="m-check singleSelection"></div>
                 </div>
                 操作&nbsp;
-                <div id="position{{$index}}">
+                <div id="position{{$index}}" class="position">
 
                 </div>
             </div>
@@ -112,11 +112,11 @@
 
                 <div id='' class='ub ub-ac t-col1'>
                     <!-- 油品名称 -->
-
+                   
                     {{$value.oilinfoName}}
-
-                    <input type="hidden" name="orderId" class="orderId" data-sendId={{$value.sendId}} data-state={{$value.state}} data-snoticeCode="{{$value.noticeCode}}"
-                        data-noticeCode="{{$value.noticeCode1}}" data-applyNum={{$value.applyNum}} data-noticesubId={{$value.noticesubId}}
+                  
+                    <input type="hidden" name="orderId" class="orderId" data-sendId={{$value.sendId}} data-state={{$value.state}} data-snoticeCode="{{$value.noticeCode}}" 
+                        data-noticeCode="{{$value.noticeCode1}}" data-applyNum={{$value.applyNum}} data-depotName="{{$value.depotName}}" data-cusCompany="{{$value.cusCompany}}" data-orgAttribute="{{$value.orgAttribute}}" data-noticesubId={{$value.noticesubId}}
                     />
 
                 </div>
@@ -378,6 +378,7 @@
 
             var totalCount = data.rows;
             listData = totalCount;
+            currentLength = listData.length;
             listNum += totalCount.length;
             dataLength = listNum;
 
@@ -396,10 +397,12 @@
                 if (ISPAGE) {
                     var checkArr = $$('.checkBox');
                     var myCheckArr = $$('.singleSelection');
+                    var positionArr = $$(".position");
                     dataLength = checkArr.length;
                     checkArr.forEach(function (v, i) {
                         v.dataset.num = i;
-                        myCheckArr[i].id=i;
+                        myCheckArr[i].id = i;
+                        positionArr[i].id = 'position' + i;
                     })
 
                     if ($("#checkall")[0].className === "m-check m-check-active") {
@@ -408,10 +411,10 @@
                     }
 
                 }
-                if (totalCount.length<pageSize || (dataLength <15 &&!getId("btn-load-more"))) {
+                if (totalCount.length < pageSize || (dataLength < 15 && !getId("btn-load-more"))) {
                     document.querySelector(" .list-content:last-child .gap").style.height = "5em";
                 }
-             
+
 
                 loadMore.init({
                     ele: "more",
@@ -454,8 +457,16 @@
                         orderList[i].orderId + "\",\"" + orderList[i].oilinfoId + "\",\"" + orderList[i].extractType +
                         "\",\"" + orderList[i].ysfs + "\",\"" + orderList[i].oilinfoName + "\",\"" + orderList[
                             i].applyNum + "\",\"" + orderList[i].sendId + "\")'>分配</span></div>";
+                    if (listNum > 15) {
+                        var index = listNum - currentLength + i;
+                        console.log(index);
+                        
+                        $("#position" + index)[0].innerHTML = appendHtml;
+                    } else {
+                        $("#position" + i)[0].innerHTML = appendHtml;
+                    }
 
-                    $("#position" + i)[0].innerHTML = appendHtml;
+
                 }
                 if (state == '0' && companyType == '合资' && noticeCode1 != undefined) {
                     // 合资公司分配过可修改关联的付油通知单号
@@ -466,8 +477,13 @@
                         "\",\"" + orderList[i].ysfs + "\",\"" + orderList[i].oilinfoName + "\",\"" + orderList[
                             i].applyNum + "\",\"" + orderList[i].sendId + "\",\"" + orderList[i].noticeCode1 +
                         "\")'>更改</span></div>";
+                    if (listNum > 15) {
+                        var index = listNum - currentLength + i;
+                        $("#position" + index)[0].innerHTML = appendHtml;
+                    } else {
+                        $("#position" + i)[0].innerHTML = appendHtml;
+                    }
 
-                    $("#position" + i)[0].innerHTML = appendHtml;
                 }
 
             }
@@ -517,17 +533,39 @@
         var orderIdArr = [],
             noticeCodes = [];
         for (var i = 0; i < listNum; i++) {
-
+           
             if (getId(i).className == "m-check singleSelection m-check-active") {
-                var currentData =$$('.orderId')[i].dataset;
-
-                if (currentData.state != "0") {
+                var currentData = $$('.orderId')[i].dataset;
+                if(currentData.noticecode!=null){
+                    if (currentData.state != "0" ) {
                     uexWindow.alert("提示", "只能审核状态为未审核的，请重新选择！", "确定");
                     return;
+                }else {
+              // TODO:客户属性存在时的审核控制
+                 var orgAttribute = currentData.orgattribute;
+                   if(orgAttribute != null){ //客户属性存在时，允许审核
+                    orderIdArr.push(currentData.sendid);
+                    noticeCodes.push(currentData.snoticecode);
+                  }else{
+                    oneAlert("请先分配"+currentData.cuscompany+"的客户属性！")
+                    return;
+                  }
                 }
-
-                orderIdArr.push(currentData.sendid);
-                noticeCodes.push(currentData.snoticecode);
+                }else {
+                // TODO:同盛买油
+                if(currentData.depotname == null){//同盛--油船买油
+                    if(currentData.orgatribute != null){//客户属性存在时，允许审核
+                     orderIdArr.push(currentData.sendid);
+                     noticeCodes.push(currentData.snoticecode);
+                    }else {
+                    oneAlert("请先分配"+currentData.cuscompany+"的客户属性！","确定",function(){});
+                    return;
+                    }
+                }else {
+                    oneAlert("只能审核存在关联付油通知单编码的数据，请操作分配！","确定",function(){});
+                    return;
+                }
+                }
             }
         }
 
@@ -562,7 +600,7 @@
             noticesubIds = "";
         for (var i = 0; i < listNum; i++) {
 
-           if (getId(i).className == "m-check singleSelection m-check-active") {
+            if (getId(i).className == "m-check singleSelection m-check-active") {
                 var element = $$('.orderId')[i];
                 var itemData = element.dataset;
                 if (itemData.state != 0) {

@@ -226,7 +226,7 @@
 
             alert('准备加载第' + newPageNo + '页')
 
-            Orders.queryMentOilOrder(newPageNo);
+            mentionOil.queryMentOilOrder(newPageNo);
         });
         mentionOil.init();
 
@@ -378,7 +378,7 @@
         $('#loadMore').remove();
         alert("正在加载第" + current_page + "页， 共" + max_page + "页 " + totalNum + "条数据")
         ISPAGE = true;
-        Order.queryMentOilOrder(null, current_page);
+        mentionOil.queryMentOilOrder(null, current_page);
         appcan.window.openToast('数据加载中...', '0', '5', '1');
     }
 

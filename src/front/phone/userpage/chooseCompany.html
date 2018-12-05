@@ -85,6 +85,8 @@
     <script type="text/javascript" charset="utf-8" src="../common/comm.js"></script>
 </body>
 <script>
+    // 清空公司用户登录展示协议状态
+    appcan.locStorage.remove('isCompanyCus');
     appcan.ready(function () {
         //去除滚动条
         uexWindow.setWindowScrollbarVisible('false');

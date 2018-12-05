@@ -13,72 +13,8 @@
 	<link rel="stylesheet" href="../build/css/appcan.icon.css" />
 	<link rel="stylesheet" href="../build/css/appcan.control.css" />
 	<link rel="stylesheet" type="text/css" href="css/quickbuy.css" />
+	<link rel="stylesheet" type="text/css" href="css/buyOil.css" />
 	<link rel="stylesheet" type="text/css" href="../common/css/yue.css" />
-	<style type="text/css">
-		table {
-			width: 100%;
-		}
-
-		td {
-			width: 50%;
-			padding: 0.2em;
-			text-align: center;
-		}
-
-		.border-transparent {
-			border: 0.1em solid transparent;
-		}
-
-		.pos {
-			position: absolute;
-			margin-left: 0.2em;
-		}
-
-		.pr {
-			position: relative;
-		}
-
-		.pop-body {
-			height: 100%;
-			position: fixed;
-			width: 100%;
-			z-index: 8;
-			background: rgba(0, 0, 0, 0.5) !important
-		}
-
-		form {
-			padding: 1em 0.5em 0;
-		}
-
-		.Inp-text {
-			text-align: left;
-			padding-left: 0.4em !important;
-			border: 1px solid #ccc !important;
-			box-sizing: border-box;
-		}
-
-		.dun:after {
-			content: '吨';
-		}
-
-		.yuan:after {
-			content: '元';
-		}
-
-		.flex {
-			width: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-
-		}
-
-		.box {
-			width: 8.25em !important;
-			border-radius: 0.2em;
-
-		}
-	</style>
 </head>
 
 <body class="um-vp " ontouchstart="">
@@ -112,25 +48,24 @@
 								</div>
 							</td>
 						</tr>
-
 						<tr>
 							<td>提油方式：</td>
 							<td>
-								<select id="psfs" name="psfs" class="mySelect" style="font-size:1em;" onchange="change();"> </select>
+								<select id="psfs" name="psfs" class="mySelect" style="font-size:1em;" onchange="getWujiaWenJia();"> </select>
 								<span style="visibility:hidden">吨</span>
 							</td>
 						</tr>
 						<tr>
 							<td>运输方式：</td>
 							<td>
-								<select id="ysfs" name="ysfs" class="mySelect ellipsis" style="font-size:1em;"> </select>
+								<select id="ysfs" name="ysfs" class="mySelect ellipsis" style="font-size:1em;" onchange="getWujiaWenJia()"> </select>
 								<span style="visibility:hidden">吨</span>
 							</td>
 						</tr>
 						<tr>
 							<td>销售单位：</td>
 							<td>
-								<select id="gyfgs" name="gyfgs" class="mySelect ellipsis" style="font-size:1em;"> </select>
+								<select id="gyfgs" name="gyfgs" class="mySelect ellipsis" style="font-size:1em;" onchange="getWujiaWenJia()"> </select>
 								<span style="visibility:hidden">吨</span>
 							</td>
 						</tr>
@@ -147,6 +82,7 @@
 								<div class="yuan">
 									<input id="shangxian" type="hidden" value="" />
 									<input id="xiaxian" type="hidden" value="" />
+									<input id="companyprice" type="hidden" value="" />
 									<input id="oilPrice" class="m-input" type="text" name="oilPrice" value="" style="text-align: left;" onblur="panduanJiage(this)"
 									/>
 								</div>
@@ -160,12 +96,12 @@
 					</div>
 					<span class="chuku">按出库量结算</span>
 				</div>
-				<div class="margin-t-2x">
+			<!-- 	<div class="margin-t-2x">
 					<div class="checkbox umar-r um3">
 						<input id="youhui" type="checkbox" onchange="youhuiChange()" class="uabs ub-con" />
 					</div>
-					<span class="chuku">减免运费</span>
-				</div>
+					<span class="chuku">优惠价格</span>
+				</div> -->
 				<div id="btn" class="ub ub-ac">
 					<div id="confirmBtn" class="uinn5 ubt ubr bc-border ub ub-f1 ub-pc">
 						<span class="mf-color" onclick="shopping()">确认</span>
@@ -183,14 +119,14 @@
 	<script type="text/javascript" src="../common/comm.js"></script>
 	<script type="text/javascript" charset="utf-8" src="../common/template-web.js"></script>
 	<script type="text/javascript" src="../common/jquery.min.js" charset="utf-8"></script>
-	<script src="../common/axios.js"></script>
-	<script id="checkcity" type="text/html">
 
+	<!-- 销售单位 -->
+	<script id="checkcity" type="text/html">
 		{{each list}}
 		<option value={{$value.basOrgId}}>{{$value.orgName}}</option>
 		{{/each}}
-
 	</script>
+<!-- 油库地点 -->
 	<script id="checkoil" type="text/html" charset="utf-8">
 		{{each list as value i}} {{if value.depotName== '海滨油库'}}
 		<option selected="selected" value={{value.oildepotId}}>{{value.depotName}}</option>
@@ -198,8 +134,8 @@
 		<option value={{value.oildepotId}}>{{value.depotName}}</option>
 		{{/if}} {{/each}}
 	</script>
+<!-- 运输方式 -->
 	<script id="checkYsfs" type="text/html">
-
 		{{each list}}
 		<option value={{$value.dicId}}>{{$value.dicName}}</option>
 		{{/each}}
@@ -214,14 +150,15 @@
 			hetongId = "", //合同文件ID
 			shengyu = "", //合同文件剩余量
 			biaoshi = "", //控股公司、普通客户、并表站
-			cusId = "";
+			cusId = "",
+			isHetongByOil = false;
 		appcan.ready(function () {
 
 			appcan.window.subscribe("listPageRefresh", function (param) {
 				if (param == "true") {
 					$("#loginlabel").html("");
 					$("#oilDataList").html("");
-					showOilList();
+					initPage();
 				}
 			})
 			appcan.window.subscribe("userForCompany", function (data) {
@@ -229,16 +166,15 @@
 					window.location.reload();
 				}
 			});
-			showOilList();
+			initPage();
 		});
 
 		// 渲染油品列表
-		function showOilList() {
+		function initPage() {
 			var username = appcan.locStorage.getVal("username");
 			if (username) {
-				$('#isLogin').html('正在登录...')
+				$('#isLogin').html('正在登录...');
 			}
-
 			var url = URL + "/app/oil/queryOilPriceList";
 			var paramJsonStr = "limit=" + limit + "&offset=" + offset;
 			var func = showOilDetailCallback;
@@ -256,6 +192,8 @@
 			var pojoList = data.pojoList,
 				loginName = data.loginName,
 				cusCompany = appcan.locStorage.getVal('cusCompany'),
+				// 是否可以选择合同购油的方式买油
+				canHetongBugOil = data.hetong,
 				listData = [],
 				username = appcan.locStorage.getVal('username');
 			if (username) {
@@ -263,10 +201,8 @@
 				var nameStr = cusCompany ? cusCompany : loginName;
 				$('#isLogin').html('<span class="mf-size1 umar-r">' + nameStr + '</span>已登录')
 			}
-
 			// 循环遍历
 			for (var i = 0; i < pojoList.length; i++) {
-
 				//油品ID
 				var oilinfoId = pojoList[i].oilinfoId,
 					//油品名称
@@ -289,7 +225,7 @@
 				}
 
 				var oilInfoparam = "&quot;" + oilinfoId + "&quot;,&quot;" + pcDiscount + "&quot;,&quot;" + pickupDiscount +
-					"&quot;,&quot;" + oilinfoName + "&quot";
+					"&quot;,&quot;" + oilinfoName +"&quot";
 
 				var htmlstr = "",
 					addOrderStr = "",
@@ -302,18 +238,12 @@
 					if (!marketPrice && username) {
 						addOrderStr = "<div class='uc-a3 border-transparent uinn2 padding-l2 mf-size2  gray'>&nbsp;&nbsp;&nbsp;</div>";
 					} else {
-						addOrderStr = "<div class='uc-a3 a-border2 uinn2 padding-l2 mf-size2 btn-cart-add-gray gray' onclick='showToast(" +
+						addOrderStr = "<div class='uc-a3 a-border2 uinn2 padding-l2 mf-size2 btn-cart-add-gray gray' onclick='showOilDetailToast(" +
 							oilInfoparam + ");'>加入意向单</div>";
 					}
-
 				}
 
-				htmlstr += "<div class='item-wrapper'>" + "<div class='ub ub-ver ub-ac item-content'>" +
-					"<div id='name' class='ub ub-pc t-section mf-color2' value='" + oilinfoId + "'>" + baseInfo;
-
-				htmlstr += "<div id='price' class='ub ub-pc uc-a3 c-block' value='" + oilInfoparam + "'>" + pcDiscount + "</div>";
-
-				htmlstr += "<div id='add' class='action-add'>" + addOrderStr + "</div></div></div>";
+				htmlstr += "<div class='item-wrapper'>" + "<div class='ub ub-ver ub-ac item-content'><div id='name' class='ub ub-pc t-section mf-color2' value='" + oilinfoId + "'>" + baseInfo+ "<div id='price' class='ub ub-pc uc-a3 c-block' value='" + oilInfoparam + "'>" + pcDiscount + "</div>"+"<div id='add' class='action-add'>" + addOrderStr + "</div></div></div>";
 
 				$("#oilDataList").css("opacity", "0");
 				$("#oilDataList").append(htmlstr);
@@ -321,24 +251,31 @@
 					opacity: 1
 				}, 500);
 			}
+			if (canHetongBugOil){
+       var html = '<div class="item-wrapper"><div class="ub ub-ver ub-ac item-content"><div id="name" class="ub ub-pc t-section mf-color2" value="EAB84D17703548CCA57510DB48A7103D"><span class="title">合同购油</span></div><div id="price" class="ub ub-pc uc-a3 c-block" >暂未知价格</div><div id="add" class="action-add"><div class="uc-a3 a-border2 uinn2 padding-l2 mf-size2 btn-cart-add-gray gray" onclick="buyOilWithHeTong();">加入意向单</div></div></div></div>';
+			 $("#oilDataList").append(html);
+			}
+			// 油品列表高度加长
 			var height = document.querySelector('.item-wrapper').clientHeight + 'px';
-			console.dir(document.querySelector('.item-wrapper'))
-
 			var box = '<div style="height:' + height + ';width:100%;float:left;"> &nbsp</div>';
 			$("#oilDataList").append(box);
+      var oilArr = JSON.parse(appcan.locStorage.getVal("oilObj"));
+			console.log(oilArr);
+			// 选择合同购油跳转时，在这里默认打开购油弹窗
+			if(oilArr){
+				//TODO:区分 oilObj
+				isHetongByOil = true; // 是采用合同买油的方式
+				showOilDetailToast(oilArr[0],oilArr[1],oilArr[2],oilArr[3]);
+			}
 
 		}
 		// 获取详情，销售单位、油库列表
 		function showOilInfo() {
-
-			var func = showOilInfoCallback;
-			ajaxPostQuery(URL + "/app/oil/buyOilInfoList", "", func, "text");
-			appcan.window.openToast('加载中...', '0', '5', '1');
-			appcan.initBounce();
-		}
-
-		function showOilInfoCallback(data) {
-			appcan.window.closeToast();
+      $.ajax({
+				method: "POST",
+				url:URL + "/app/oil/buyOilInfoList",
+				data:"sid=" + appcan.locStorage.getVal("sid"),
+			}).done(function(data){
 			var data = JSON.parse(data);
 			var companyList = data.companyList;
 			var html = template('checkcity', {
@@ -350,11 +287,9 @@
 			var html1 = template('checkoil', {
 				list: oildepotList
 			})
-
 			$("#ykdd").html(html1);
 			var tongshengText = appcan.locStorage.getVal("cusCompany");
 			if (tongshengText == "上海中油同盛石油有限公司") {
-
 				$("#ykdd").append(
 					"<option value='1234567890' selected='selected'>同盛水上库</option><option value='0987654321' selected='selected'>同盛油罐车</option>"
 				);
@@ -363,51 +298,33 @@
 			var html2 = template('checkYsfs', {
 				list: ysfsList
 			})
-
 			$("#ysfs").html(html2);
-
+			})
 		}
 
-		// 物件文件调整价格
+		// 根据物件文件调整价格
 		function getWujiaWenJia(oilPrice, oilinfoId) {
 
-			var tyfstext;
-			var ysfstext;
-			var xsdwtext;
-
-			var oilPrice = rmoney(oilPrice.slice(1, -2));
-
+			var tyfstext,ysfstext,xsdwtext;
+			var oilPrice = oilPrice ? rmoney(oilPrice.slice(1, -2)) : rmoney($("#oilPrice").val());
+			var oilinfoId =  oilinfoId || appcan.locStorage.getVal("oilinfoIdOne");
+     
+			var getSelectVal = function(id){
+			var dom = document.getElementById(id);
+			for (i = 0; i < dom.length; i++) { 
+				if (dom[i].selected == true) {
+					return dom[i].text;
+					break;
+				}
+			}
+			}
 			// 配送费方式 首次获取失败
-			var tiyou = document.getElementById("psfs");
-			for (i = 0; i < tiyou.length; i++) { //下拉框的长度就是它的选项数.
-				if (tiyou[i].selected == true) {
-					tyfstext = tiyou[i].text;
-					//获取当前选择项的值.
-					break;
-				}
-			}
+			tyfstext = getSelectVal("psfs");
 			// 运输方式
-			var ysfs = document.getElementById("checkYsfs");
-			for (i = 0; i < ysfs.length; i++) { //下拉框的长度就是它的选项数.
-				if (ysfs[i].selected == true) {
-					ysfstext = ysfs[i].text;
-					//获取当前选择项的值.
-					break;
-				}
-			}
-			if (ysfstext == undefined) {
-				ysfstext = "公路";
-			}
+			ysfstext =getSelectVal("checkYsfs");
+			ysfstext ||	(ysfstext = "公路");
 			// 购油分公司
-			// xsdw 获取失败
-			var xsdw = document.getElementById("gyfgs");
-			for (i = 0; i < xsdw.length; i++) { //下拉框的长度就是它的选项数.
-				if (xsdw[i].selected == true) {
-					xsdwtext = xsdw[i].value;
-					//获取当前选择项的值.
-					break;
-				}
-			}
+			xsdw = getSelectVal("gyfgs");
 
 			var sid = appcan.locStorage.getVal('sid');
 
@@ -438,6 +355,8 @@
 						// 上限，下限
 						$("#shangxian").val(modelList.shangxian);
 						$("#xiaxian").val(modelList.xiaxian);
+						// 分公司限价
+						$("#companyprice").val(modelList.companyprice);
 
 						if (modelList.biaoshi == "控股") {
 							if (modelList.szhyCode == "91310115671102008B") { //中油临港当做并表站处理
@@ -460,16 +379,30 @@
 
 						document.getElementById("oilPrice").removeAttribute("readonly");
 					}
-					youhuiChange();
+					// youhuiChange();
 
 				}
 			});
 
 		}
 
-		//弹出框
-		function showToast(oilinfoId, oilPrice, pickupDiscount, oilinfoName) {
-
+		function buyOilWithHeTong(){
+			var isReturn = false;
+			 syncLoadData(URL+"/sys/buyOil/queryBuyOilDateTime",null,function(data){
+		    	var data = JSON.parse(data);
+	        var buyState = data.buyState;
+	        if(buyState=="no"){
+						isReturn = true;
+						oneAlert("未到营业时间！");
+					}
+			 });
+			if(isReturn){return;}
+			// 打开合同购油页面
+			appcan.window.open("chooseHeTongBuyOil","buyOilWithHeTong.html", 10);
+			
+		}
+		//购油弹出框
+		function showOilDetailToast(oilinfoId, oilPrice, pickupDiscount, oilinfoName) {
 			//存储变量
 			lsSetItems({
 				"oilinfoIdOne": oilinfoId,
@@ -477,64 +410,43 @@
 				"pickupDiscount": pickupDiscount,
 				"oilinfoNameOne": oilinfoName
 			})
-
 			//登录验证
-			var username = appcan.locStorage.getVal("username");
-
-			if (!username) {
-
-				appcan.window.alert({
-					title: "提示",
-					content: "请先登录再进行购油",
-					buttons: ['确定', '取消'],
-					callback: function (err, data, dataType, optId) {
-						if (data == '0') {
-							appcan.locStorage.setVal("tag", "listpage");
-							appcan.window.open("login", "../userpage/login.html", 10);
-						}
-						if (data == '1') {
-
-						}
-						console.log(err, data, dataType, optId);
-					}
-				});
-
+			if (!appcan.locStorage.getVal("username")) {
+				oneAlert("请先登录再进行购油","确定",function(){
+					appcan.locStorage.setVal("tag", "listpage");
+					appcan.window.open("login", "../userpage/login.html", 10);
+				})
 				return;
-
 			}
-
-			// 获取油品详情
+			 //TODO:运营时间控制
+			 var isReturn = false;
+			 syncLoadData(URL+"/sys/buyOil/queryBuyOilDateTime",null,function(data){
+		    	var data = JSON.parse(data);
+	        var buyState = data.buyState;
+	        if(buyState=="no"){
+						isReturn = false;
+						// oneAlert("未到营业时间！");
+					}
+			 });
+			if(isReturn){return;}
 			showOilInfo();
 
 			$(".wrapper")[0].style.display = 'block';
 			$("#pop")[0].className = "pop-body";
-
+    	//显示油品名称
+    	$('#oilName').html(oilinfoName);
 			// 显示配送方式
 			var options = '<option id="peisong" value="0">配送</option>' + '<option id="ziti" value="1">自提</option>';
 			document.getElementById('psfs').innerHTML = options;
 
-			// 物价文件调整价格
+			// 物价文件调整价格 区分是否是合同买油
+	/* 		isHetongByOil ?	document.getElementById("oilPrice").value = fmoney(oilPrice) : getWujiaWenJia(oilPrice, oilinfoId); */
+			
 			getWujiaWenJia(oilPrice, oilinfoId);
-			//显示
-			$('#oilName').html(oilinfoName);
-
-			//三个接口
-			/*
-			 axios.all([queryOildepot(), queryYsfs(), queryCompany()]).then(axios.spread(function(acct, perms) {
-
-			 $(".wrapper")[0].style.display = 'block';
-			 $("#pop")[0].className = "pop-body";
-			 document.getElementById('psfs').innerHTML = options;
-			 // 鐗╀环鏂囦欢璋冩暣浠锋牸
-			 getWujiaWenJia(oilPrice, oilinfoId);
-			 //鏄剧ず
-			 $('#oilName').html(oilinfoName);
-			 }));
-			 */
-
+		
 		}
 
-		//自提配送切换 0配送1自提
+/* 		//自提配送切换 0配送1自提
 		function change() {
 			var myselect = document.getElementById("psfs");
 			nowIndex = myselect.selectedIndex,
@@ -555,7 +467,7 @@
 				$('#oilPrice').val(fmoney(oilPriceOne));
 			}
 
-		}
+		} */
 
 		//加入购物车,弹出框点击确定
 		function shopping() {
@@ -568,20 +480,10 @@
 			if (device == "iPhone") {
 				document.getElementById('num').removeAttribute("onblur");
 				document.getElementById('oilPrice').removeAttribute("onblur");
-
-				var Toast = function () {
-					appcan.window.alert({
-						title: "提示",
-						content: "购油数量最小为0.001吨,不能大于500吨！",
-						buttons: ['确定'],
-						callback: function (err, data, dataType, optId) {
-							console.log(err, data, dataType, optId);
-						}
-					});
-					document.getElementById("num").value = 1;
-				}
+				
 				if (parseFloat(oilNumber) > 500 || parseFloat(oilNumber) < 0.001) {
-					Toast();
+					oneAlert("购油数量最小为0.001吨,不能大于500吨！","确定",function(){});
+					document.getElementById("num").value = 1;
 					return;
 				}
 
@@ -591,51 +493,30 @@
 				if (nowPrice.indexOf(',') != -1) {
 					nowPrice = rmoney(nowPrice);
 				}
-
-				if (parseFloat(nowPrice) > parseFloat(shang) || parseFloat(nowPrice) < parseFloat(xia)) {
-					appcan.window.alert({
-						title: "提示",
-					//	content: "超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">",
-						content: "超过上下限价格控制范围，请重新输入!",
-						buttons: ['确定'],
-						callback: function (err, data, dataType, optId) {
-							console.log(err, data, dataType, optId);
-						}
-					});
+				if (parseFloat(nowPrice) > parseFloat(shang)) {
+					oneAlert("超过国家最高限价，请输入正确价格!","确定",function(){})
 					document.getElementById("oilPrice").value = fmoney(yuanshiPrice);
 					return;
 				}
 			}
 
-			var oilinfoId = appcan.locStorage.getVal("oilinfoIdOne");
-			var paramJsonStr = "oilinfoId=" + oilinfoId;
-
-			var url = URL + "/front/bill/checkPriceStrategy";
-			var dataType = "text";
-			var func = afterPriceStrategyAdd;
-
+			var oilinfoId = appcan.locStorage.getVal("oilinfoIdOne"),
+			 paramJsonStr = "oilinfoId=" + oilinfoId,
+			url = URL + "/front/bill/checkPriceStrategy",
+			dataType = "text",
+			func = afterPriceStrategyAdd;
 			ajaxPostQuery(url, paramJsonStr, func, dataType);
-
-
 
 			//先关闭提交页面
 			$(".wrapper")[0].style.display = 'none';
 			$('#pop')[0].className = "";
 
-			appcan.window.alert({
-				title: "请注意",
-				content: "油品已加入到您的意向单",
-				buttons: ['继续购油', '查看意向单'],
-				callback: function (err, data, dataType, optId) {
-					if (data == '1') {
-						//购油编辑页面跳转1
-						appcan.window.open("register", "intentionList/intentionList.html", 10);
-					}
-					if (data == '0') {
-						console.log('关闭弹窗')
-					}
-				}
-			});
+			twoAlert("油品已加入到您的意向单",'继续购油', '查看意向单',function(){
+				console.log('关闭弹窗')
+			},function(){
+				//购油编辑页面跳转1
+				appcan.window.open("register", "intentionList/intentionList.html", 10);
+			})
 		}
 
 		//比价回调,插入意向单
@@ -644,18 +525,31 @@
 			oilPrice = document.getElementById("oilPrice").value;
 			oilRealPrice = oilPrice ? rmoney(oilPrice) : '';
 			var biaoshi = document.getElementById("biaoshi").value;
+			var companyprice = $("#companyprice").val();
+			var shang = $("#shangxian").val();
+			var xia = $("#xiaxian").val();
 			ykdd = $('#ykdd').val()
-			var chukuliang = "",
-				youhui = null;
+
+			// 客户提交价格与分公司限价对比
+      var youhuiState="";
+			if(biaoshi=="并表站"){
+				youhuiState="bingbiaozhan";
+			}else{
+				if(parseFloat(oilRealPrice)<parseFloat(xia)){ //若订单价格＜下限价格，系统默认审批不通过
+					youhuiState="stateNo";
+				}else if(parseFloat(oilRealPrice)>=parseFloat(xia) 
+						&& parseFloat(oilRealPrice)<parseFloat(companyprice)){//若下限价格 ≤订单价格＜分公司限价
+					youhuiState="stateYesZhong";
+				}else if(parseFloat(oilRealPrice)>=parseFloat(companyprice)){//若订单价格≥分公司限价
+					youhuiState="stateYes";
+				}
+			}
+			// 出库量
+			var chukuliang = "";
 			if (document.getElementById("chukuliang").checked) {
 				chukuliang = "是";
 			} else {
 				chukuliang = "否";
-			}
-			if (document.getElementById("youhui").checked) {
-				youhui = "是";
-			} else {
-				youhui = "否";
 			}
 			// alert(chukuliang)
 			if (typeof data == "string") {
@@ -665,7 +559,6 @@
 			if (Number(data.price) > Number($('#oilPrice').val())) {
 				alert("请根据价格策略填写价格！")
 			} else {
-
 				//插入意向单
 				var oilinfoId = appcan.locStorage.getVal("oilinfoIdOne"),
 					//油品id
@@ -673,10 +566,9 @@
 
 					paramJsonStr = "oilinfoId=" + oilinfoId + "&oilPrice=" + oilRealPrice + "&oilNumber=" + oilNumber +
 					"&extractType=" + fangshi + "&oilinfoName=" + oilinfoName + "&ysfs=" + $('#ysfs').val() + "&chukuliang=" +
-					chukuliang + "&ykdd=" + ykdd + "&gyfgs=" + $('#gyfgs').val() + "&youhui=" + youhui + "&hetongId=" + hetongId,
+					chukuliang + "&ykdd=" + ykdd + "&gyfgs=" + $('#gyfgs').val() + "&youhui=" + youhuiState + "&hetongId=" + hetongId,
 					dataType = "text",
-					func =
-					afterAdd;
+					func =function(){console.log("插入成功");};
 
 				if (biaoshi === "并表站") {
 					//上海中油上中油气站有限公司、上海中油高盈工贸有限公司特殊处理
@@ -693,89 +585,12 @@
 						ajaxPostQuery(url, paramJsonStr, func, dataType);
 					}
 				} else {
-
 					var url = URL + "/front/bill/insertBill";
 					appcan.window.openToast('正在提交表单...', '0', '5', '1');
 					ajaxPostQuery(url, paramJsonStr, func, dataType);
 				}
 			}
 		}
-
-		/* 	var queryOptions = {
-				company: '/app/bill/checkCompany',
-				oildepot: '/front/oildepot/selectXiaLaOildepot',
-				ysfs: '/front/oildepot/selectXiaLaOildepot'
-			} */
-		// queryUseOptions('company', queryOptions.company)
-		/* 		function queryUseOptions(type, str) {
-
-					var url = URL + str,
-						sid = appcan.locStorage.getVal("sid");
-					paramJsonStr = "sid=" + sid;
-
-					$.ajax({
-						type: 'post',
-						url: url,
-						cache: true,
-						data: paramJsonStr,
-						success: function (data) {
-
-							if (typeof data == "string") {
-								data = JSON.parse(data);
-							}
-							switch (type) {
-								// 所属公司列表
-								case "company":
-									var html = template('checkcity', {
-										list: data
-									})
-
-									$("#gyfgs").html(html);
-									break;
-								//油库列表
-								case "oildepot":
-									var html = template('checkoil', {
-										list: data
-									})
-
-									$("#ykdd").html(html);
-									break;
-								// 运输方式
-								case "ysfs":
-									var html = template('checkYsfs', {
-										list: data
-									})
-
-									$("#ysfs").html(html);
-									break;
-
-								default:
-									break;
-							}
-
-
-						}
-					})
-				} */
-		function youhuiChange() {
-			var youhui = "";
-			document.getElementById("youhui").checked ? youhui = "是" : youhui = "否";
-
-			if (youhui == "是" && fangshi == "0") {
-				var oilRealPrice = $('#oilPrice').val();
-
-				if (biaoshi != "并表站") {
-					var nowPrice = fmoney(yuanshiPrice - 30);
-					$('#oilPrice').val(nowPrice);
-				}
-			} else if (biaoshi == "并表站") {
-				$('#oilPrice').val(fmoney(0));
-			} else {
-				$('#oilPrice').val(fmoney(yuanshiPrice));
-			}
-
-		}
-
 
 		function panduanJiage(that) {
 			var shang = $("#shangxian").val();
@@ -785,9 +600,8 @@
 			if (nowPrice.indexOf(',') != -1) {
 				nowPrice = rmoney(nowPrice);
 			}
-			if (parseFloat(nowPrice) > parseFloat(shang) || parseFloat(nowPrice) < parseFloat(xia)) {
-				alert("超过上下限价格控制范围，请重新输入!");
-				// alert("超过上下限价格，请重新输入！<上限：" + shang + "，下限：" + xia + ">");
+			if (parseFloat(nowPrice) > parseFloat(shang)) {
+				oneAlert("超过国家最高限价，请输入正确价格!","确定",function(){})
 				document.getElementById("oilPrice").value = fmoney(yuanshiPrice);
 				return;
 			}
@@ -795,36 +609,18 @@
 
 		function panduanNum(that) {
 			var num = that.value;
-
 			if (biaoshi == "普通") {
 				if (parseFloat(num) > 500 || parseFloat(num) < 0.01) {
-					appcan.window.alert({
-						title: "提示",
-						content: "购油数量最小为0.001吨,不能大于500吨！",
-						buttons: ['确定'],
-						callback: function (err, data, dataType, optId) {
-							console.log(err, data, dataType, optId);
-						}
-					});
+					oneAlert("购油数量最小为0.001吨,不能大于500吨！","确定",function(){})
 					document.getElementById("num").value = 1;
 					return;
 				}
-
-			}
-		}
-		//插入成功
-		function afterAdd(data) {
-			appcan.window.closeToast();
-			if (typeof data == "string") {
-				data = JSON.parse(data)
 			}
 		}
 
 		function cancel() {
-
 			$(".wrapper")[0].style.display = 'none';
 			$('#pop')[0].className = "";
-
 		}
 
 		//未登录用户，去登录
@@ -833,10 +629,26 @@
 			appcan.window.open("login", "../userpage/login.html", 10);
 		}
 
-
 		appcan.button("#nav-left", "btn-act", function () {
 			appcan.window.close(-1);
 		});
+
+    // TODO:优惠价格 屏蔽
+		function youhuiChange() {
+			var youhui = "";
+			document.getElementById("youhui").checked ? youhui = "是" : youhui = "否";
+			if (youhui == "是" && fangshi == "0") {
+				var oilRealPrice = $('#oilPrice').val();
+				if (biaoshi != "并表站") {
+					var nowPrice = fmoney(yuanshiPrice - 30);
+					$('#oilPrice').val(nowPrice);
+				}
+			} else if (biaoshi == "并表站") {
+				$('#oilPrice').val(fmoney(0));
+			} else {
+				$('#oilPrice').val(fmoney(yuanshiPrice));
+			}
+		}
 	</script>
 </body>
 

@@ -15,13 +15,17 @@
   <style>
     #cusCompany,
     #cusCompany1,
-    #cusCompany2 {
+    #cusCompany2,#oilinfoId {
       width: 7em;
       border: 0;
       outline: 0;
       -webkit-appearance: none;
       font: 1.2em;
       background-color: transparent;
+    }
+    #createDate1,#createDate2 {
+      width: 3.6em;
+      padding: 0.2em 0.6em;
     }
   </style>
 </head>
@@ -38,12 +42,21 @@
 
         </div>
         <div class="pop-info">
-          <label for="cusName">客户名称：</label>
+          <label for="cusCompany">客户名称：</label>
           <input type="text" class="mf-size0" id="cusCompany" name="cusCompany" placeholder="请输入客户名称" />
         </div>
         <div class="pop-info">
-          <label for="cusName">订单编号：</label>
+          <label for="oilinfoId">油品名称：</label>
+          <select id="oilinfoIdSelect" name="oilinfoId" class="mySelect" style="font-size:1em;"></select>
+        </div>
+        <div class="pop-info">
+          <label for="cusCompany2">订单编号：</label>
           <input type="text" class="mf-size0" id="cusCompany2" name="ordersaleCode" placeholder="请输入订单编号" />
+        </div>
+        <div class="pop-info">
+          <label for="cusCompany2">时间：</label>
+          <input class="date wry ulev-1" name="createDate1" id="createDate1" type="input" value=""> 至
+          <input class="date wry ulev-1" name="createDate2" id="createDate2" type="input" value="">
         </div>
       </form>
 
@@ -72,15 +85,27 @@
 
 </script>
 
+<script id="oilinfoId" type="text/html">
+
+  {{each list}}
+  <option value={{$value.OILINFO_ID}}>{{$value.OILINFO_NAME}}</option>
+  {{/each}}
+
+</script>
+
 <script>
   var SelectData = {
-    "gyfgs": []
+    "gyfgs": [],
+    "oilList": []
   }
+  var index = '';
+
   // 分页参数传递
   var pagerParam = {
 
   }
   getGYFGS();
+  getOilInfo();
 
   appcan.ready(function () {
     appcan.initBounce();
@@ -88,21 +113,21 @@
     var html1 = template('gyfgs', {
       list: SelectData.gyfgs
     })
+    // 油品列表
+    var oilListHtml = template('oilinfoId', {
+      list: SelectData.oilList
+    })
 
     $("#gyfgsSelect").html(html1);
+    $("#oilinfoIdSelect").html(oilListHtml);
     $("#gyfgsSelect").prepend("<option value=''>请选择</option>");
+    $("#oilinfoIdSelect").prepend("<option value=''>请选择</option>");
+    // 绑定时间选择器
+    uexControl.cbOpenDatePicker = cbOpenDatePicker;
+    $("#createDate1").click(getNativityDate);
+    $("#createDate2").click(getNativityDate);
   })
 
-
-  function getGYFGS() {
-    var paramJsonStr = "&pager.pageNo=" + pageNo + "&pager.pageSize=" + 100;
-    var func = GYFGS;
-    syncLoadData(URL + "/backgrd/bilOutstorePlan/selectERPCompany", paramJsonStr, func);
-  }
-
-  function GYFGS(data) {
-    SelectData.gyfgs = JSON.parse(data);
-  }
 
   appcan.button("#confirmBtn", "act-ani", function () {
 
@@ -219,6 +244,9 @@
   function closepop() {
     appcan.closePopover("searchByCus");
   }
+
+
+ 
 </script>
 
 </html>

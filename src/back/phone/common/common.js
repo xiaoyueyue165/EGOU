@@ -1,14 +1,16 @@
 //线上
 var URL = "http://egou.cnpc.com.cn:8080/SHXS";
 var PICURL = "http://egou.cnpc.com.cn:8080";
+// var URL = "http://127.0.0.1:8080/SHXS";
+//var PICURL = "http://127.0.0.1:8080";
 
 // 9002
 // var URL = "http://106.38.74.232:9002/SHXS";
 // var PICURL = "http://106.38.74.232:9002";
 
 // 194
-// var URL = "http://11.11.153.194:8080/SHXS";
-// var PICURL = "http://11.11.153.194:8080";
+//  var URL = "http://11.11.153.194:8080/SHXS";
+//  var PICURL = "http://11.11.153.194:8080";
 
 // 岩
 // var URL = "http://11.0.36.205:8080/SHXS";
@@ -737,4 +739,40 @@ function toFixed(number, fractionDigits) {
 	var times = Math.pow(10, fractionDigits);
 	var roundNum = Math.round(number * times) / times;
 	return roundNum.toFixed(fractionDigits);
+}
+// ------------------------------------查询页面公共方法 ------------------------------------
+// 购油分公司 查询页面专用
+function getGYFGS() {
+	var paramJsonStr = "&pager.pageNo=" + pageNo + "&pager.pageSize=" + 100;
+	var func = GYFGS;
+	syncLoadData(URL + "/backgrd/bilOutstorePlan/selectERPCompany", paramJsonStr, func);
+}
+
+function GYFGS(data) {
+	SelectData.gyfgs = JSON.parse(data);
+}
+// 油品列表数据 查询页面专用
+function getOilInfo() {
+	var paramJsonStr = "";
+	var func = getOilInfoCallback;
+	syncLoadData(URL + "/backgrd/oil/order/queryOilName", paramJsonStr, func);
+}
+
+function getOilInfoCallback(data) {
+	SelectData.oilList = JSON.parse(data);
+}
+
+// appcan的方式获取时间
+function getNativityDate() {
+	var mydate = new Date();
+	var year = mydate.getFullYear();
+	var month = mydate.getMonth() + 1;
+	var day = mydate.getDate();
+	uexControl.openDatePicker(year, month, day);
+	index = $(this);
+}
+
+function cbOpenDatePicker(opId, dataType, data) {
+	var obj = eval('(' + data + ')');
+	$(index).val(obj.year + '-' + obj.month + '-' + obj.day);
 }

@@ -227,19 +227,26 @@
                                     "cusId": cusId
                                 }) : '';
 
+                                  lsSetItems({
+                                    "agreementState": "close",
+                                    "isCompanyCus":data.userForCompany || ''
+                                });
+                                    appcan.window.open("agreement","../buyOil/intentionList/agreement.html", 10);
+                                }
+
                                 //跳转关联公司
-                                if (data.userForCompany == "1") {
-                                    appcan.window.open("chooseCompany",
-                                        "chooseCompany.html", 10);
-                                    appcan.window.publish("afterLogin", data.userId);
-                                    uexWindow.evaluateScript("login", 0, "closeLoginPage()");
-                                    return;
-                                };
+                                // if (data.userForCompany == "1") {
+                                //     appcan.window.open("chooseCompany","chooseCompany.html", 10);
+                                //     appcan.window.publish("afterLogin", data.userId);
+                                //     uexWindow.evaluateScript("login", 0, "closeLoginPage()");
+
+                                //     return;
+                                // };
                                 if (data.userStr != 1) {
 
                                     appcan.window.publish("afterLogin", data.userId);
-                                    uexWindow.evaluateScript("login", 0, "closeLoginPage()");
-                                }
+                                    //uexWindow.evaluateScript("login", 0, "closeLoginPage()");
+                                  
 
                             } else {
                                 appcan.window.closeToast();

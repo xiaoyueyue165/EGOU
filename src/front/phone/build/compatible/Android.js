@@ -1,11 +1,11 @@
 var titHeight = 0;
 appcan.locStorage.setVal('Homepage', 0);
 var idx = appcan.locStorage.getVal("tabviewindex") == null ? 0 : appcan.locStorage.getVal("tabviewindex");
-
+var isMyCcount =  appcan.locStorage.getVal('tabviewSelect') || false;
 appcan.ready(function () {
     appcan.window.disableBounce();
     //禁用页面弹动效果
-
+    
     //open indexPage
     appcan.frame.open({
         id: "content",
@@ -19,7 +19,7 @@ appcan.ready(function () {
             inData: ""
         }],
         left: 0,
-        index: 0,
+        index: isMyCcount? 1:0,
         change: function (err, res) {
             tabview.moveTo(res.multiPopSelectedIndex);
             changeIcon(res.multiPopSelectedIndex);
@@ -39,23 +39,41 @@ var tabview = appcan.tab({
     hasAnim: false,
     hasLabel: true,
     hasBadge: true,
-    index: idx,
+    index: isMyCcount? 1:0,
     data: [{
-        id: "1",
+        id: "0",
         label: "首页",
         icon: "iconhome_act ub-img ub"
     }, {
-        id: "3",
+        id: "1",
         label: "我的账户",
-        icon: "iconuser ub-img ub"
+        icon: 'iconuser ub-img ub'
     }]
 });
 
+if(isMyCcount){
+    var home = document.getElementsByClassName('iconhome_act')[0],
+    server = document.getElementsByClassName('iconservice')[0],
+    user = document.getElementsByClassName('iconuser')[0];
+    setStyle(home, {
+        backgroundImage: "url('index/myImg/t_icon_home.png')"
+    })
+    setStyle(user, {
+        backgroundImage: "url('index/myImg/t_icon_user_active.png')"
+    });
+    // setStyle(server, {
+    // backgroundImage : "url('index/myImg/t_icon_service.png')"
+    // });
+
+    appcan.locStorage.remove('tabviewSelect');
+    appcan.locStorage.remove('agreementState');
+}
+
+
+
 tabview.on("click", function (obj, index) { /*TAB变更时切换多浮动窗口*/
     appcan.window.selectMultiPopover("content", index);
-
     changeIcon(index);
-
 })
 // {
 // inPageName : "p2",
